@@ -2,6 +2,7 @@
 # Ignore backup files
 */*~
 */*/*~
+*/*/*/*~
 .gitignore~
 
 # Ignore directories for data/documentation/libraries.
