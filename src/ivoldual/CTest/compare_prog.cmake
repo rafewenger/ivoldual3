@@ -1,0 +1,1 @@
+../../cmake_scripts/compare_prog.cmake
