@@ -106,6 +106,7 @@ def compare_ivoldual_on_options(ivoldual_progA, ivoldual_progB, arg_list, \
     global min_diff
     global num_diff
     global flag_sort
+    global flag_check_manifold
 
     arg_listA = arg_list + \
         [ "-s", "-o", outA_off, str(isovalueI), str(isovalueII), filepath]
@@ -189,6 +190,8 @@ def compare_ivoldual(ivoldual_progA, ivoldual_progB, testname,\
 
     compare_func.compare()
     compare_func.compareI(["-trimesh"])
+    compare_func.compareI(["-subdivide"])
+    compare_func.compareI(["-subdivide", "-trimesh"])
     compare_func.compareI(["-split_hex"])
     compare_func.compareI(["-subsample", "2"])
     if (testname in supersample_test_list):
