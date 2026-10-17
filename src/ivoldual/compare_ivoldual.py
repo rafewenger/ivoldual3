@@ -14,6 +14,7 @@ from pydos2unix import dos2unix
 ijkmeshdiff_prog = 'ijkmeshdiff'
 ijkmeshinfo_prog = 'ijkmeshinfo'
 flag_all_tri=True
+flag_check_manifold=True
 flag_report_error=True
 flag_sort=False
 min_diff = 0.0
@@ -128,8 +129,9 @@ def compare_ivoldual_on_options(ivoldual_progA, ivoldual_progB, arg_list, \
     if (result.returncode != 0):
         num_diff += 1
 
-        # Check oriented manifold condition and self intersections.
-        check_manifold(outA_off)
+        if flag_check_manifold:
+            # Check oriented manifold condition.
+            check_manifold(outA_off)
 
     
 # *** compare ivoldual data structure ***
@@ -165,6 +167,17 @@ class compare_ivoldual_datastruct:
         compare_ivoldual_on_options\
             (self.progA, self.progB, arg_list, \
              self.isovalueI, self.isovalueII, self.filepath)
+
+# Compare ivoldual with option -trimesh.
+def compare_ivoldual_trimesh(compare_func):
+
+    compare_func.compareI(["-trimesh"])
+
+    
+# Compare ivoldual with option -trimesh_uniform.
+def compare_ivoldual_trimesh_uniform(compare_func):
+    compare_func.compareI(["-trimesh_uniform"])
+    
         
 # Compare ivoldual.
 def compare_ivoldual(ivoldual_progA, ivoldual_progB, testname,\
@@ -272,7 +285,7 @@ def usage_msg():
     print("OPTIONS:")
     print("  [-min_diff {min difference}]")
     print("  [-testnames \"list of tests\"]")
-    print("  [-trimesh_uniform | -no_tri]")
+    print("  [-trimesh_uniform | -no_tri] [-skip_manifold_check]")
     print("  [-sort]")
     print("  [-integer_isovalues]")
     print("  [-o {report filename}] [-usage]")
@@ -311,6 +324,8 @@ if __name__ == "__main__":
             flag_all_tri = False
             flag_trimesh = False
             flag_trimesh_uniform = False
+        elif (arg0 == '-skip_manifold_check'):
+            flag_check_manifold = False
         elif (arg0 == '-integer_isovalues'):
             flag_integer_isovalues = True
         elif (arg0 == '-o'):
