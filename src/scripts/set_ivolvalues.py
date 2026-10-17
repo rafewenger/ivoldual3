@@ -33,7 +33,7 @@ def set_isovalues_int(scalar_data):
 
     # Integer isovalues
     set_scalar_data(scalar_data, 'aneurysm_30_255', 'aneurysm.nhdr', 'volvis', 30, 255)
-    set_scalar_data(scalar_data, 'engine_70-140', 'engine.nhdr', 'volvis', 70, 140)
+    set_scalar_data(scalar_data, 'engine_70_140', 'engine.nhdr', 'volvis', 70, 140)
     set_scalar_data(scalar_data, 'frog_45_100', 'Frog.nhdr', 'vollib', 45, 100)
     set_scalar_data(scalar_data, 'fuel_70_150', 'fuel.nhdr', 'volvis', 70, 150)
     set_scalar_data(scalar_data, 'lobster_20_150', 'lobster.nhdr', 'volvis', 20, 150)
