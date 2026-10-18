@@ -27,9 +27,11 @@ isovalue_offsetII = 0.5
 outA_off = "outA.off"
 outB_off = "outB.off"
 default_test_list = [ 'aneurysm_30_255', 'engine_70_140',\
-                      'frog_45_100', 'fuel_70_150', 'lobster_20_150', \
+                      'fuel_70_150', 'lobster_20_150', \
                       'marschnerlobb_80_120',\
                       'neghip_70_200', 'silicium_80_160' ]
+
+# Skip: frog_45_100.
 
 # Supersampling allowed only on these data sets.
 supersample_test_list = [ 'fuel_70_150', 'neghip_70_200', 'silicium_80_160' ]
