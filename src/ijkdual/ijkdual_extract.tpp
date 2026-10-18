@@ -1,6 +1,6 @@
-/// @file ijkdual_extract.txx
+/// @file ijkdual_extract.tpp
 /// @brief Template functions for extracting dual isosurface mesh
-/// - Version 0.3.0
+/// - Version 0.3.1
 
 /*
   IJK: Isosurface Jeneration Kode

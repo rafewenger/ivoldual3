@@ -1,6 +1,6 @@
-/// @file isodual.cxx
+/// @file isodual.cpp
 /// @brief Marching cubes/hypercubes isosurface generation
-/// - Version 0.3.0
+/// - Version 0.3.1
 
 /*
   IJK: Isosurface Jeneration Kode
@@ -28,8 +28,8 @@
 #include "ijkmesh.tpp"
 #include "ijktime.tpp"
 
-#include "ijkdual.txx"
-#include "ijkdual_extract.txx"
+#include "ijkdual.tpp"
+#include "ijkdual_extract.tpp"
 
 #include "isodual.h"
 #include "isodual_datastruct.h"

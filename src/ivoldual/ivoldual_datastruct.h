@@ -27,7 +27,7 @@
 
 #include "ijkcube.tpp"
 #include "ijkmesh_datastruct.tpp"
-#include "ijkdual_mesh.txx"
+#include "ijkdual_mesh.tpp"
 
 #include "ijkdual_datastruct.h"
 #include "ivoldual_types.h"

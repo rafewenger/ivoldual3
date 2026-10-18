@@ -1,6 +1,6 @@
-/// @file ijkdual_mesh.txx
+/// @file ijkdual_mesh.tpp
 /// @brief ijkdual template classes for polyhedral mesh data structures.
-/// - Version 0.3.0
+/// - Version 0.3.1
 
 /*
   IJK: Isosurface Jeneration Kode

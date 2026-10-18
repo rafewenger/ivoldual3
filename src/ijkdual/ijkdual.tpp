@@ -1,7 +1,7 @@
-/// @file ijkdual.txx
+/// @file ijkdual.tpp
 /// @brief Templates for dual contouring isosurface generation 
 ///   in arbitrary dimensions.
-/// - Version 0.3.0
+/// - Version 0.3.1
 
 /*
   IJK: Isosurface Jeneration Kode
@@ -29,10 +29,10 @@
 
 #include "ijk.tpp"
 #include "ijktime.tpp"
-#include "ijkdual_position.txx"
+#include "ijkdual_position.tpp"
 #include "ijkfacet_intersection_table.tpp"
 
-#include "ijkdual_extract.txx"
+#include "ijkdual_extract.tpp"
 
 #include "ijkdual_types.h"
 #include "ijkdual_datastruct.h"

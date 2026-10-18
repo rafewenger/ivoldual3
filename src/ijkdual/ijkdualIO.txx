@@ -1,6 +1,6 @@
-/// @file ijkdualIO.txx
+/// @file ijkdualIO.tpp
 /// @brief IO templates for ijkdual.
-/// - Version 0.3.0
+/// - Version 0.3.1
 
 
 /*

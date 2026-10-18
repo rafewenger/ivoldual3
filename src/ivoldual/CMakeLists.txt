@@ -56,8 +56,8 @@ ADD_EXECUTABLE(ivoldual ivoldual_main.cpp ivoldual.cpp ivoldualIO.cpp
                         ivoldual_compute.cpp ivoldual_query.cpp
                         ivoldual_move.cpp ivoldual_reposition.cpp
 			ivoldual_divide_hex.cpp
-                        ../ijkdual/isodual.cxx
-                        ../ijkdual/ijkdual_datastruct.cxx)
+                        ../ijkdual/isodual.cpp
+                        ../ijkdual/ijkdual_datastruct.cpp)
 
 TARGET_INCLUDE_DIRECTORIES(ivoldual PRIVATE
                                     "${IVOL_DIR}/include"

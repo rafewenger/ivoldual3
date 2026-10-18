@@ -1,6 +1,6 @@
-/// @file ijkdual_datastruct.cxx
+/// @file ijkdual_datastruct.cpp
 /// @brief ijkdual data structures.
-/// - Version 0.3.0
+/// - Version 0.3.1
 
 /*
   IJK: Isosurface Jeneration Kode

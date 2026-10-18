@@ -1,6 +1,6 @@
-/// @file ijkdual_position.txx
+/// @file ijkdual_position.tpp
 /// @brief Position dual isosurface vertices.
-/// - Version 0.3.0
+/// - Version 0.3.1
 
 /*
   IJK: Isosurface Jeneration Kode

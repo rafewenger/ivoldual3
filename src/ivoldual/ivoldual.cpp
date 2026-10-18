@@ -27,9 +27,9 @@
 #include "ijkmesh_datastruct.tpp"
 #include "ijktime.tpp"
 
-#include "ijkdual.txx"
-#include "ijkdual_extract.txx"
-#include "ijkdual_position.txx"
+#include "ijkdual.tpp"
+#include "ijkdual_extract.tpp"
+#include "ijkdual_position.tpp"
 #include "ijkdual_query.txx"
 
 #include "ivoldual_ivolpoly.tpp"
