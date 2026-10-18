@@ -288,7 +288,7 @@ if __name__ == "__main__":
     ivoldual_prog = command_line_argument[0]
     command_line_argument.pop(0)
 
-    ivoldual_options = command_line_argument[1:]
+    ivoldual_options = command_line_argument
 
     pathA,fileA = os.path.split(ivoldual_prog)
     if (pathA == ""):
