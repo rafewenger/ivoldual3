@@ -24,6 +24,7 @@
 
 
 #include "ijkcoord.tpp"
+#include "ijkcube.tpp"
 
 #include "ivoldual_compute.h"
 

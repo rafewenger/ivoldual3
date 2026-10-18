@@ -1,15 +1,18 @@
-/// @file ijkdualtable.tpp
-/// @brief Class containing dual lookup table of isosurface vertices.
-/// - Version 0.3.1
+/*!
+ *  @file ijkdualtable.tpp
+ *  @brief Class containing dual lookup table of isosurface vertices.
+ *  - Version 0.6.0
+ */
+
 
 /*
   IJK: Isosurface Jeneration Kode
-  Copyright (C) 2012-2026 Rephael Wenger
+  Copyright (C) 2012-2025 Rephael Wenger
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public License
   (LGPL) as published by the Free Software Foundation; either
-  version 2.1 of the License, or any later version.
+  version 3.0 of the License, or any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,8 +24,8 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _IJKDUALTABLE_
-#define _IJKDUALTABLE_
+#ifndef _IJKDUALTABLE_TPP_
+#define _IJKDUALTABLE_TPP_
 
 #include <climits>
 #include <limits>
@@ -32,8 +35,7 @@
 #include "ijkbits.tpp"
 #include "ijkcube.tpp"
 
-/// Classes and routines for storing and manipulating 
-///   dual isosurface lookup table.
+/// Classes and routines for storing and manipulating dual isosurface lookup table.
 namespace IJKDUALTABLE {
 
   // **************************************************
@@ -51,17 +53,20 @@ namespace IJKDUALTABLE {
   //! @name ISODUAL CUBE TABLE ROUTINES
   // **************************************************
 
-  /// Create isodual cube table entry ientry.
+  /// @brief Create isodual cube table entry ientry.
   /// @tparam TI_TYPE Table index type.
-  template <typename TI_TYPE, typename NTYPE, typename FIND_TYPE,
+  template <typename TI_TYPE, typename FIND_TYPE,
             typename CUBE_TYPE, typename ENTRY_TYPE>
   void create_isodual_cube_table_entry
-  (const TI_TYPE ientry, const NTYPE num_poly_vertices,
+  (const TI_TYPE ientry,
    const bool flag_separate_neg, const bool flag_separate_opposite,
    const CUBE_TYPE & cube,
    FIND_TYPE & find_component, 
    ENTRY_TYPE & table_entry)
   {
+    typedef typename CUBE_TYPE::NUMBER_TYPE NUMBER_TYPE;
+    
+    const NUMBER_TYPE num_cube_vertices = cube.NumVertices();
     const bool flag_separate_pos = (!flag_separate_neg);
 
     find_component.ClearAll();
@@ -69,18 +74,18 @@ namespace IJKDUALTABLE {
 
     if (flag_separate_opposite) {
       if (flag_separate_neg) {
-        if (IJK::is_two_opposite_ones(ientry, num_poly_vertices))
+        if (IJK::is_two_opposite_ones(ientry, num_cube_vertices))
           { find_component.NegateVertexFlags(); };
       }
       else {
-        if (IJK::is_two_opposite_zeros(ientry, num_poly_vertices))
+        if (IJK::is_two_opposite_zeros(ientry, num_cube_vertices))
           { find_component.NegateVertexFlags(); };
       }
     }
 
 
-    NTYPE num_components(0);
-    for (NTYPE i = 0; i < num_poly_vertices; i++) {
+    NUMBER_TYPE num_components(0);
+    for (NUMBER_TYPE i = 0; i < num_cube_vertices; i++) {
       if (find_component.Component(i) == 0) {
 
         if (find_component.VertexFlag(i) == flag_separate_pos) {
@@ -90,8 +95,8 @@ namespace IJKDUALTABLE {
       }
     }
 
-    NTYPE num_zeros, num_ones;
-    IJK::count_bits(ientry, num_poly_vertices, num_zeros, num_ones);
+    NUMBER_TYPE num_zeros, num_ones;
+    IJK::count_bits(ientry, num_cube_vertices, num_zeros, num_ones);
     if (num_zeros == 0 || num_ones == 0) {
       // All vertices are negative or all vertices are positive.
       table_entry.num_vertices = 0;
@@ -100,9 +105,9 @@ namespace IJKDUALTABLE {
       table_entry.num_vertices = num_components;
     }
 
-    for (NTYPE ie = 0; ie < cube.NumEdges(); ie++) {
-      NTYPE iv0 = cube.EdgeEndpoint(ie, 0);
-      NTYPE iv1 = cube.EdgeEndpoint(ie, 1);
+    for (NUMBER_TYPE ie = 0; ie < cube.NumEdges(); ie++) {
+      const NUMBER_TYPE iv0 = cube.EdgeEndpoint(ie, 0);
+      const NUMBER_TYPE iv1 = cube.EdgeEndpoint(ie, 1);
 
       if (find_component.VertexFlag(iv0) == find_component.VertexFlag(iv1)) {
         table_entry.is_bipolar[ie] = false;
@@ -119,6 +124,7 @@ namespace IJKDUALTABLE {
       }
     }
 
+    table_entry.SetIncidentIsoPoly(cube.NumEdges());
   }
 
 
@@ -126,10 +132,17 @@ namespace IJKDUALTABLE {
   //! @name AMBIGUITY ROUTINE
   // **************************************************
 
-  /// Return true if cube with given configuration is ambiguous.
-  /// @param ientry Index of +/- configuration.
-  /// @param[out] facet_bits Bits indicating ambiguous facets.
-  /// @param[out] num_ambiguous_facets Number of ambiguous facets.
+  /*!
+   *  @brief  Return true if cube with given configuration is ambiguous.
+   *  @param ientry Index of +/- configuration.
+   *  @param[out] ambiguous_facet_bits Integer representing set 
+   *    of ambiguous facets.
+   *    - k'th bit of facet_set is 1 if facet k is ambiguous.
+   *    - Facet k is orthogonal to axis (k\%dimension).
+   *    - If k < dimension, facet k contains cube vertex 0.
+   *    - If k >= dimension, facet k contains cube vertex with largest index.
+   *  @param[out] num_ambiguous_facets Number of ambiguous facets.
+   */
   template <typename TI_TYPE, typename CUBE_TYPE, typename FBITS_TYPE,
             typename NTYPE, typename FIND_TYPE>
   bool is_cube_ambiguous
@@ -160,7 +173,12 @@ namespace IJKDUALTABLE {
   }
 
 
-  /// Return true if cube facet kf is ambiguous.
+  /*!
+   *  @brief Return true if cube facet kf is ambiguous.
+   *    - Facet kf is orthogonal to axis (kf%dimension).
+   *    - If kf < dimension, facet kf contains cube vertex 0.
+   *    - If kf >= dimension, facet kf contains cube vertex with largest index.
+   */
   template <typename TI_TYPE, typename FTYPE, typename FIND_TYPE>
   bool is_cube_facet_ambiguous
   (const TI_TYPE ientry, const FTYPE kf, 
@@ -180,10 +198,15 @@ namespace IJKDUALTABLE {
   }
 
 
-  /// Compute ambiguous cube facets.
-  /// param[out] facet_set Integer representing set of ambiguous facets.
-  ///   k'th bit of facet_set is 1 if facet k is ambiguous.
-  /// @param[out] num_ambiguous_facets Number of ambiguous facets.
+  /*!
+   *  @brief Compute ambiguous cube facets.
+   *  @param[out] facet_bits Integer representing set of ambiguous facets.
+   *    - k'th bit of facet_set is 1 if facet k is ambiguous.
+   *    - Facet k is orthogonal to axis (k%dimension).
+   *    - If k < dimension, facet k contains cube vertex 0.
+   *    - If k >= dimension, facet k contains cube vertex with largest index.
+   *  @param[out] num_ambiguous_facets Number of ambiguous facets.
+   */
   template <typename TI_TYPE, typename NTYPE, typename NTYPE2,
             typename FBITS_TYPE, typename FIND_TYPE>
   void compute_ambiguous_cube_facets
@@ -211,25 +234,37 @@ namespace IJKDUALTABLE {
   //! @name ISODUAL CUBE TABLE AMBIG ROUTINES
   // **************************************************
 
-  /// Create isodual cube table ambig entry ientry.
+  /// @brief Create isodual cube table ambig entry ientry.
   /// @tparam TI_TYPE Table index type.
-  template <typename TI_TYPE, typename NTYPE, typename FIND_TYPE,
+  template <typename TI_TYPE, typename FIND_TYPE,
             typename CUBE_TYPE, typename ENTRY_TYPE>
   void create_isodual_cube_table_ambig_entry
-  (const TI_TYPE ientry, const NTYPE num_poly_vertices,
+  (const TI_TYPE ientry,
    const bool flag_separate_neg, const bool flag_separate_opposite,
    const CUBE_TYPE & cube,
    FIND_TYPE & find_component, 
    ENTRY_TYPE & table_entry)
   {
+    const int num_cube_facets = cube.NumFacets();
+    
     create_isodual_cube_table_entry
-      (ientry, num_poly_vertices, flag_separate_neg, flag_separate_opposite,
+      (ientry, flag_separate_neg, flag_separate_opposite,
        cube, find_component, table_entry);
 
     table_entry.is_ambiguous = 
       is_cube_ambiguous(ientry, cube, table_entry.ambiguous_facet_bits,
                         table_entry.num_ambiguous_facets, find_component);
 
+    if (table_entry.num_ambiguous_facets > 0) {
+      table_entry.index_of_some_ambiguous_facet =
+        IJK::get_first_one_bit
+        (table_entry.ambiguous_facet_bits, num_cube_facets);
+    }
+    else {
+      // Undefined, but set to 0.
+      table_entry.index_of_some_ambiguous_facet = 0;
+    }
+    
     table_entry.num_active_facets =
       cube.ComputeNumActiveCubeFacets(ientry);
   }
@@ -239,7 +274,7 @@ namespace IJKDUALTABLE {
   //! @name IVOLDUAL CUBE TABLE ROUTINES
   // **************************************************
 
-  /// Set position of polytope vertices relative to interval volume.
+  /// @brief Set position of polytope vertices relative to interval volume.
   template <typename TI_TYPE, typename NTYPE, typename ENTRY_TYPE>
   void set_position_relative_to_interval_volume4
   (const TI_TYPE ientry, const NTYPE num_poly_vertices, 
@@ -284,7 +319,7 @@ namespace IJKDUALTABLE {
   }
 
 
-  /// Compute lifted ivol indices.
+  /// @brief Compute lifted ivol indices.
   /// @param num_cube_vertices Number of vertices of cube (not lifted cube).
   template <typename TI_TYPE, typename NTYPE, 
             typename TI_TYPE_L, typename TI_TYPE_U>
@@ -326,8 +361,7 @@ namespace IJKDUALTABLE {
   }
 
 
-  /// Compute lower and upper isosurface table indices
-  ///   from interval volume table index.
+  /// @brief Compute lower and upper isosurface table indices from interval volume table index.
   /// @param num_cube_vertices Number of vertices of cube.
   template <typename TI_TYPE, typename NTYPE, 
             typename TI_TYPE_L, typename TI_TYPE_U>
@@ -410,76 +444,14 @@ namespace IJKDUALTABLE {
     }
   }
 
-  /* OBSOLETE
-  /// Modify the ivoldual table entries of the lower and upper lifted cubes
-  ///   if the facet shared by the two cubes is ambiguous, no facet shared
-  ///   with a third cube is ambiguous and each cube contains only
-  ///   one isosurface vertex.
-  /// Replace the table entries by their complements.
-  template <typename NTYPE, typename CUBE_TYPE,
-            typename TI_TYPE_L, typename TI_TYPE_U, 
-            typename ISODUAL_ENTRY_TYPE>
-  void modify_ambiguous_lifted_ivoldual_entries
-  (const NTYPE num_table_entries,
-   const CUBE_TYPE & lifted_cube,
-   const TI_TYPE_L ilower, const ISODUAL_ENTRY_TYPE & lower_isodual,
-   const TI_TYPE_U iupper, const ISODUAL_ENTRY_TYPE & upper_isodual,
-   TI_TYPE_L & new_ilower,
-   TI_TYPE_U & new_iupper)
-  {
-    typedef typename CUBE_TYPE::DIMENSION_TYPE DTYPE;
 
-    const DTYPE dimension = lifted_cube.Dimension();
-    const NTYPE num_facets = lifted_cube.NumFacets();
-    NTYPE ilower_facet, iupper_facet;
-
-    new_ilower = ilower;
-    new_iupper = iupper;
-
-    if (lower_isodual.NumAmbiguousFacets() == 0 &&
-        upper_isodual.NumAmbiguousFacets() == 0) { return; }
-
-    if (lower_isodual.NumVertices() > 1 ||
-        upper_isodual.NumVertices() > 1) { return; }
-
-    if (dimension < 1) { return; }
-
-    ilower_facet = dimension-1;
-    iupper_facet = ilower_facet+dimension;
-
-    if (!lower_isodual.IsFacetAmbiguous(iupper_facet)) {
-      // The facet between the upper and lower lifted cubes is not ambiguous.
-      return; 
-    }
-
-    for (NTYPE jf = 0; jf < num_facets; jf++) {
-      if (jf == ilower_facet || jf == iupper_facet) { 
-        // Skip the facet between the upper and lower lifted cubes
-        //   and the facet on the lifted boundary.
-        continue; 
-      }
-
-      if (lower_isodual.IsFacetAmbiguous(jf) ||
-          upper_isodual.IsFacetAmbiguous(jf)) {
-        // Lower or upper cube has some ambiguous facet adjacent
-        //   to a third cube.
-        // Don't change table entry.
-        return;
-      }
-    }
-
-    // Flip ivoldual table entries.
-    new_ilower = compute_complement(ilower, num_table_entries);
-    new_iupper = compute_complement(iupper, num_table_entries);
-  }
-  */
-
-  /// *** NEW VERSION ***
-  /// Modify the ivoldual table entries of the lower and upper lifted cubes
-  ///   if at least one of the cubes is ambiguous, no facet shared
-  ///   with a third cube is ambiguous and each cube contains only
-  ///   one isosurface vertex.
-  /// Replace the table entries by their complements.
+  /*!
+   *  Modify the ivoldual table entries of the lower and upper lifted cubes
+   *    if at least one of the cubes is ambiguous, no facet shared
+   *    with a third cube is ambiguous and each cube contains only
+   *    one isosurface vertex.
+   *  Replace the table entries by their complements.
+   */
   template <typename NTYPE, typename CUBE_TYPE,
             typename TI_TYPE_L, typename TI_TYPE_U, 
             typename ISODUAL_ENTRY_TYPE>
@@ -533,7 +505,7 @@ namespace IJKDUALTABLE {
   }
 
 
-  /// Compute ivoldual cube ambiguity information
+  /// @brief Compute ivoldual cube ambiguity information
   /// @tparam TI_TYPE Table index type.
   template <typename CUBE_TYPE, typename ISODUAL_ENTRY_TYPE,
             typename ENTRY_TYPE>
@@ -543,7 +515,6 @@ namespace IJKDUALTABLE {
    const ISODUAL_ENTRY_TYPE & upper_isodual,
    ENTRY_TYPE & table_entry)
   {
-    typedef typename CUBE_TYPE::DIMENSION_TYPE DTYPE;
     typedef typename CUBE_TYPE::NUMBER_TYPE NTYPE;
     typedef typename ENTRY_TYPE::FACET_BITS_TYPE FBITS_TYPE;
 
@@ -584,7 +555,7 @@ namespace IJKDUALTABLE {
   }
 
 
-  /// Compute ivoldual cube non manifold information
+  /// @brief Compute ivoldual cube non manifold information
   /// @tparam TI_TYPE Table index type.
   template <typename ISODUAL_ENTRY_TYPE, typename ENTRY_TYPE>
   void compute_ivoldual_cube_non_manifold_information
@@ -618,7 +589,7 @@ namespace IJKDUALTABLE {
   }
 
 
-  /// Create ivoldual cube table entry ientry.
+  /// @brief Create ivoldual cube table entry ientry.
   /// @tparam TI_TYPE Table index type.
   template <typename TI_TYPE, typename NTYPE, typename FIND_TYPE,
             typename CUBE_TYPE, typename ISODUAL_ENTRY_TYPE,
@@ -651,12 +622,10 @@ namespace IJKDUALTABLE {
       (ientry, num_cube_vertices, ilower, iupper);
 
     create_isodual_cube_table_ambig_entry
-      (ilower, num_lifted_cube_vertices, 
-       flag_separate_neg, flag_separate_opposite,
+      (ilower, flag_separate_neg, flag_separate_opposite,
        lifted_cube, find_component, lower_isodual);
     create_isodual_cube_table_ambig_entry
-      (iupper, num_lifted_cube_vertices, 
-       flag_separate_neg, flag_separate_opposite,
+      (iupper, flag_separate_neg, flag_separate_opposite,
        lifted_cube, find_component, upper_isodual);
 
     TI_TYPE new_ilower, new_iupper;
@@ -668,12 +637,10 @@ namespace IJKDUALTABLE {
       ilower = new_ilower;
       iupper = new_iupper;
       create_isodual_cube_table_ambig_entry
-        (ilower, num_lifted_cube_vertices, 
-         flag_separate_neg, flag_separate_opposite,
+        (ilower, flag_separate_neg, flag_separate_opposite,
          lifted_cube, find_component, lower_isodual);
       create_isodual_cube_table_ambig_entry
-        (iupper, num_lifted_cube_vertices, 
-         flag_separate_neg, flag_separate_opposite,
+        (iupper, flag_separate_neg, flag_separate_opposite,
          lifted_cube, find_component, upper_isodual);
     }
 
@@ -753,8 +720,7 @@ namespace IJKDUALTABLE {
   //! @name IVOLDUAL QUERY ROUTINES
   // **************************************************
 
-  /// Return true if ivol vertex is incident on an isosurface polytope
-  ///   dual to edge ie.
+  /// Return true if ivol vertex is incident on an isosurface polytope dual to edge ie.
   template <typename DUAL_TABLE_TYPE, typename TI_TYPE, typename VTYPE,
             typename ETYPE>
   bool is_ivol_vertex_on_iso_poly_dual_to_edge
@@ -835,9 +801,11 @@ namespace IJKDUALTABLE {
   }
 
 
-  /// Return true if lower isosurface intersects edge ie.
-  /// - If true, return interval volume vertex on lower isosurface 
-  ///   quadrilateral which is dual to edge ie.
+  /*!
+   *  @brief Return true if lower isosurface intersects edge ie.
+   *  - If true, return interval volume vertex on lower isosurface 
+   *    quadrilateral which is dual to edge ie.
+   */
   template <typename DUAL_TABLE_TYPE, typename TI_TYPE, typename ETYPE,
             typename VTYPE>
   bool does_lower_isosurface_intersect_edge
@@ -897,9 +865,11 @@ namespace IJKDUALTABLE {
   }
 
 
-  /// Return true if upper isosurface intersects edge ie.
-  /// - If true, return interval volume vertex on upper isosurface 
-  ///   quadrilateral which is dual to edge ie.
+  /*!
+   *  @brief Return true if upper isosurface intersects edge ie.
+   *  - If true, return interval volume vertex on upper isosurface 
+   *    quadrilateral which is dual to edge ie.
+   */
   template <typename DUAL_TABLE_TYPE, typename TI_TYPE, typename ETYPE,
             typename VTYPE>
   bool does_upper_isosurface_intersect_edge
@@ -936,7 +906,7 @@ namespace IJKDUALTABLE {
   }
 
 
-  /// Return true if ivol vertex is doubly connected across facet jfacet.
+  /// @brief Return true if ivol vertex is doubly connected across facet jfacet.
   /// @pre table dimension is 3.
   template <typename DUAL_TABLE_TYPE, typename TI_TYPE, typename VTYPE,
             typename FTYPE>
@@ -975,9 +945,11 @@ namespace IJKDUALTABLE {
   }
 
 
-  /// Return true if ivol vertex is doubly connected across some facet.
-  /// @pre table dimension is 3.
-  /// @param[out] dc_facet Ivol vertex is doubly connected across dc_facet.
+  /*!
+   *  Return true if ivol vertex is doubly connected across some facet.
+   *  @pre table dimension is 3.
+   *  @param[out] dc_facet Ivol vertex is doubly connected across dc_facet.
+   */
   template <typename DUAL_TABLE_TYPE, typename TI_TYPE, typename VTYPE,
             typename FTYPE>
   bool is_ivol3D_vertex_doubly_connected
@@ -1007,9 +979,12 @@ namespace IJKDUALTABLE {
     return(false);
   }
 
-  /// Return true if ivol vertex is doubly connected across some facet.
-  /// - Version which does not return dc_facet.
-  /// @pre table dimension is 3.
+
+  /*!
+   *  @brief Return true if ivol vertex is doubly connected across some facet.
+   *  - Version which does not return dc_facet.
+   *  @pre table dimension is 3.
+   */
   template <typename DUAL_TABLE_TYPE, typename TI_TYPE, typename VTYPE>
   bool is_ivol3D_vertex_doubly_connected
   (const DUAL_TABLE_TYPE & table, const TI_TYPE it, const VTYPE ivolv)
@@ -1055,9 +1030,11 @@ namespace IJKDUALTABLE {
   }
 
 
-  /// Convert integer to boolean flags.
-  /// @param[out] flag[] Array of boolean flags.
-  /// @pre flag[] is pre-allocated to size at least num_flags.
+  /*!
+   *  @brief Convert integer to boolean flags.
+   *  @param[out] flag[] Array of boolean flags.
+   *  @pre flag[] is pre-allocated to size at least num_flags.
+   */
   template <typename TI_TYPE, typename NTYPE>
   void convert2bool
   (const TI_TYPE ival, bool flag[], const NTYPE num_flags)
@@ -1085,26 +1062,41 @@ namespace IJKDUALTABLE {
   // **************************************************
 
   /// Entry in the dual isosurface lookup table.
-  template <typename NTYPE, typename ISOV_TYPE>
+  template <typename NTYPE, typename ISOV_TYPE,
+            typename ISOP_TYPE>
   class ISODUAL_TABLE_ENTRY {
 
   public:
-
     typedef ISOV_TYPE ISO_VERTEX_INDEX_TYPE;
+    typedef ISOP_TYPE ISO_POLY_INDEX_TYPE;
 
     NTYPE num_vertices;         ///< Number of dualiso vertices in cube.
-    ISODUAL_TABLE_ENTRY();      ///< constructor
-    ~ISODUAL_TABLE_ENTRY();     ///< destructor
 
-    /// incident_isovertex[kf] = Isosurface vertex incident on face kf.
-    ///       Face kf is dual to polytope edge kf.
+    /// @brief incident_isovertex[kf] = Isosurface vertex incident on face kf.
+    /// - Isosurface face kf is dual to polytope edge kf.
     ISOV_TYPE * incident_isovertex;
 
-    /// is_bipolar[ke] = True if polytope edge ke is bipolar.
-    ///       Cube edge ke is dual to isosurface face kf.
+    /// @brief  is_bipolar[ke] = True if polytope edge ke is bipolar.
+    /// - Cube edge ke is dual to isosurface face ke.
     bool * is_bipolar;
 
+    /// @brief List of isosurface polytopes incident on isosurface vertices.
+    /// - Isosurface face kf is dual to polytope edge kf.
+    ISOP_TYPE * incident_isopoly;
 
+    /// @brief first_incident_isopoly[j] points to first polytope
+    ///   incident on isosurface vertex j.
+    ISOP_TYPE ** first_incident_isopoly;
+
+    /// @brief num_incident_isopoly[j] number of polytopes
+    ///   incident on isosurface vertex j.
+    NTYPE * num_incident_isopoly;
+
+
+  public:
+    ISODUAL_TABLE_ENTRY();      ///< constructor
+    ~ISODUAL_TABLE_ENTRY();     ///< destructor
+    
     /// Return number of dual isosurface vertices in cube.
     NTYPE NumVertices() const
     { return(num_vertices); }
@@ -1114,20 +1106,45 @@ namespace IJKDUALTABLE {
     bool IsBipolar(const NTYPE2 ke) const
     { return(is_bipolar[ke]); }
 
-    /// Return incident isovertex.
+    /// Return incident isosurface vertex.
     template <typename NTYPE2>
-    ISOV_TYPE IncidentIsoVertex(const NTYPE2 ke) const
-    { return(incident_isovertex[ke]); }
+    inline ISOV_TYPE IncidentIsoVertex(const NTYPE2 ke) const
+    { return incident_isovertex[ke]; }
 
-    /// Allocate incident_isovert[] and is_bipolar[].
-    /// - num_poly_vertices is not used in this Allocate()
-    ///   but other table entries may use it.
+    /// @brief Return pointer to index of first isosurface polytope
+    ///   incident on isosurface vertex k.
+    template <typename NTYPE2>
+    ISOP_TYPE * FirstIncidentIsoPoly(const NTYPE2 k) const
+    { return first_incident_isopoly[k]; }
+
+    /// @brief Return number of isosurface polytopes
+    ///   incident on isosurface vertex k.
+    template <typename NTYPE2>
+    NTYPE NumIncidentIsoPoly(const NTYPE2 k) const
+    { return num_incident_isopoly[k]; }
+
+    /*!
+     *  @brief Allocate incident_isovert[] and is_bipolar[].
+     *  - num_poly_vertices is not used in this Allocate()
+     *    but other table entries may use it.
+     */
     template <typename NUMV_TYPE, typename NUME_TYPE>
     void Allocate(const NUMV_TYPE num_poly_vertices,
                   const NUME_TYPE num_poly_edges);
 
-    bool Check(IJK::ERROR & error_msg) const;
-    void FreeAll();                            // free all memory
+    /// @brief Set incident_isopoly and first_incident_isopoly.
+    void SetIncidentIsoPoly(const NTYPE num_mesh_poly_edges);
+    
+    /// @brief Free arrays incident_isopoly[], first_incident_isopoly[]
+    ///    and num_incident_isopoly[].
+    void FreeIncidentIsoPoly();
+
+    /// @brief Free all memory.
+    void FreeAll();
+
+    /// @brief Check data structure for inconsistencies.
+    /// - Return true if no inconsistencies found.
+    bool Check(const NTYPE num_mesh_poly_edges, IJK::ERROR & error_msg) const;
   };
 
 
@@ -1135,18 +1152,18 @@ namespace IJKDUALTABLE {
   // ISODUAL AMBIG TABLE ENTRY
   // **************************************************
 
-  /// Entry in the dual isosurface lookup table 
-  ///   with ambig cube/facet information.
-  template <typename NTYPE, typename ISOV_TYPE, 
+  /// Entry in the dual isosurface lookup table with ambig polytope/facet information.
+  template <typename NTYPE, typename ISOV_TYPE, typename ISOP_TYPE,
             typename FBITS_TYPE>
   class ISODUAL_AMBIG_TABLE_ENTRY:
-    public ISODUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE> {
+    public ISODUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE,ISOP_TYPE> {
 
   public:
 
     typedef FBITS_TYPE FACET_BITS_TYPE;
+    typedef ISOP_TYPE ISO_POLY_INDEX_TYPE;
 
-    /// True if cube is ambiguous.
+    /// True if polytope is ambiguous.
     bool is_ambiguous;
     
     /// Number of ambiguous facets.
@@ -1155,10 +1172,21 @@ namespace IJKDUALTABLE {
     /// Number of active facets (with both positive and negative vertices.)
     NTYPE num_active_facets;
 
-    /// Integer representing set of ambiguous facets.
-    /// - k'th bit of ambiguous_facet is 1 if facet k is ambiguous.
+    /*!
+     *  @brief Integer representing set of ambiguous facets.
+     *  - k'th bit of ambiguous_facet is 1 if facet k is ambiguous.
+     *  - For cubes:
+     *    - Facet k is orthogonal to axis (k\%dimension).
+     *    - If k < dimension, facet k contains cube vertex 0.
+     *    - If k >= dimension, facet k contains cube vertex with largest index.
+     *    .
+     */
     FBITS_TYPE ambiguous_facet_bits;    
 
+    /// @brief Index of some ambiguous facet.
+    /// - Undefined if no facets are ambiguous.
+    NTYPE index_of_some_ambiguous_facet;
+    
     ISODUAL_AMBIG_TABLE_ENTRY();      ///< constructor
     ~ISODUAL_AMBIG_TABLE_ENTRY();     ///< destructor
 
@@ -1166,17 +1194,36 @@ namespace IJKDUALTABLE {
 
     /// Return true if cube is ambiguous.
     bool IsAmbiguous() const
-    { return(is_ambiguous); };
+    { return is_ambiguous; };
 
-    /// Return true if facet jf is ambiguous.
+    /*!
+     *  @brief Return true if facet jf is ambiguous.
+     *  - For cubes:
+     *    - Facet jf is orthogonal to axis (jf\%dimension).
+     *    - If jf < dimension, facet jf contains cube vertex 0.
+     *    - If jf >= dimension, facet jf contains cube vertex with largest index.
+     *    .
+     */
     template <typename FTYPE>
     bool IsFacetAmbiguous(const FTYPE jf) const
     { return((ambiguous_facet_bits & (FBITS_TYPE(1) << jf)) != 0); };
 
-    /// Return ambiguous facet bits.
+    /*!
+     *  @brief Return ambiguous facet bits.
+     *  - For cubes:
+     *    - Facet jf is orthogonal to axis (jf\%dimension).
+     *    - If jf < dimension, facet jf contains cube vertex 0.
+     *    - If jf >= dimension, facet jf contains cube vertex with largest index.
+     *    .
+     */
     FBITS_TYPE AmbiguousFacetBits() const
     { return(ambiguous_facet_bits); };
 
+    /// @brief Return index of some ambiguous facet.
+    /// @pre NumAmbiguousFacets() > 0.
+    NTYPE IndexOfSomeAmbiguousFacet() const
+    { return index_of_some_ambiguous_facet; }
+    
     /// Return number of ambiguous facets.
     NTYPE NumAmbiguousFacets() const
     { return(num_ambiguous_facets); };
@@ -1194,8 +1241,7 @@ namespace IJKDUALTABLE {
   // IVOLDUAL TABLE ENTRY
   // **************************************************
 
-  /// Information about the interval volume vertices in an isosurface cube
-  /// dual to a grid edge.
+  /// Information about the interval volume vertices in an isosurface cube dual to a grid edge.
   template <typename ISOV_TYPE>
   class IVOLDUAL_POLY_EDGE_INFO {
 
@@ -1203,18 +1249,17 @@ namespace IJKDUALTABLE {
     void Init();
 
   public:
-    /// Lower isosurface vertex incident on interval volume polytope 
-    ///   dual to edge.
+    /// Lower isosurface vertex incident on interval volume polytope dual to edge.
     ISOV_TYPE lower_incident_isovertex;
 
-    /// Upper isosurface vertex incident on interval volume polytope 
-    ///   dual to edge.
+    /// Upper isosurface vertex incident on interval volume polytope dual to edge.
     ISOV_TYPE upper_incident_isovertex;
 
-    /// If flag_dual_ivolpoly is true, then some isosurface polytope
-    ///   is dual to the edge.
-    /// - If true, then both lower_incident_isovertex
-    ///   and upper_incident_isovertex are set.
+    /*!
+     *  @brief If flag_dual_ivolpoly is true, then some isosurface polytope is dual to the edge.
+     *  - If true, then both lower_incident_isovertex
+     *    and upper_incident_isovertex are set.
+     */
     bool flag_dual_ivolpoly;
 
     IVOLDUAL_POLY_EDGE_INFO() 
@@ -1230,8 +1275,7 @@ namespace IJKDUALTABLE {
   };
 
 
-  /// Information about the interval volume vertices in an isosurface cube
-  /// dual to a grid vertex.
+  /// Information about the interval volume vertices in an isosurface cube dual to a grid vertex.
   template <typename ISOV_TYPE, typename VERTEX_TYPE>
   class IVOLDUAL_POLY_VERTEX_INFO {
 
@@ -1250,9 +1294,11 @@ namespace IJKDUALTABLE {
     /// Type of vertex.
     VERTEX_TYPE vertex_type;
 
-    /// Interval volume vertex incident on isosurface polytope dual to edge.
-    /// - incident_ivol_vertex is defined if and only if relative_position
-    ///     is IN_INTERVAL_VOLUME.
+    /*!
+     *  @brief Interval volume vertex incident on isosurface polytope dual to edge.
+     *  - incident_ivol_vertex is defined if and only if relative_position
+     *      is IN_INTERVAL_VOLUME.
+     */
     ISOV_TYPE incident_ivol_vertex;
 
     /// True, if grid vertex is below interval volume.
@@ -1267,15 +1313,17 @@ namespace IJKDUALTABLE {
     bool IsAboveIntervalVolume() const
     { return(relative_position == ABOVE_INTERVAL_VOLUME); }
 
-    /// Return position of vertex with respect to interval volume.
-    ///   Could be below, in, or above interval volume.
+    /// @brief Return position of vertex with respect to interval volume.
+    /// - Could be below, in, or above interval volume.
     RELATIVE_POSITION RelativePosition() const
     { return(relative_position); }
 
-    /// Return vertex_type.
-    /// - When there are 4 vertex types, vertices with type 0 are below
-    ///   the interval volume, vertices with type 3 are above the interval
-    ///   volume, and vertices with type 1 or 2 are in the interval volume.
+    /*!
+     *  Return vertex_type.
+     *  - When there are 4 vertex types, vertices with type 0 are below
+     *    the interval volume, vertices with type 3 are above the interval
+     *    volume, and vertices with type 1 or 2 are in the interval volume.
+     */
     VERTEX_TYPE VertexType() const
     { return(vertex_type); }
 
@@ -1308,13 +1356,17 @@ namespace IJKDUALTABLE {
     /// True if ivol vertex is on lower isosurface.
     bool flag_lower_isosurface;
 
-    /// True if ivol vertex is on upper isosurface.
-    /// - An ivol vertex cannot be on both the lower and upper isosurface
-    ///   although an internal ivol vertex could be on neither.
+    /*!
+     *  @brief True if ivol vertex is on upper isosurface.
+     *  - An ivol vertex cannot be on both the lower and upper isosurface
+     *    although an internal ivol vertex could be on neither.
+     */
     bool flag_upper_isosurface;
 
-    /// True if ivol vertex was generated from lower lifted cube.
-    /// False if ivol vertex was generated from upper lifted cube.
+    /*!
+     *  @brief True if ivol vertex was generated from lower lifted cube.
+     *  - False if ivol vertex was generated from upper lifted cube.
+     */
     bool flag_in_lower_lifted_cube;
 
     IVOLDUAL_IVOLV_INFO()
@@ -1335,8 +1387,8 @@ namespace IJKDUALTABLE {
   };
 
   /// Entry in the dual interval volume lookup table.
-  template <typename NTYPE, typename ISOV_TYPE, typename FBITS_TYPE,
-            typename TI_TYPE>
+  template <typename NTYPE, typename ISOV_TYPE, typename ISOP_TYPE,
+            typename FBITS_TYPE, typename TI_TYPE>
   class IVOLDUAL_TABLE_ENTRY {
 
   protected:
@@ -1350,6 +1402,8 @@ namespace IJKDUALTABLE {
   public:
 
     typedef ISOV_TYPE IVOL_VERTEX_INDEX_TYPE;
+    typedef ISOP_TYPE IVOL_POLY_INDEX_TYPE;
+    typedef ISOP_TYPE ISO_POLY_INDEX_TYPE;
     typedef FBITS_TYPE FACET_BITS_TYPE;
     typedef typename 
     IVOLDUAL_POLY_VERTEX_INFO<ISOV_TYPE,NTYPE>::RELATIVE_POSITION
@@ -1380,15 +1434,17 @@ namespace IJKDUALTABLE {
     /// Number of active facets (dual to some interval volume edge.)
     NTYPE num_active_facets;
 
-    /// Integer representing set of ambiguous facets.
-    /// - k'th bit of ambiguous_facet is 1 if facet k is ambiguous.
+    /*!
+     *  @brief Integer representing set of ambiguous facets.
+     *  - k'th bit of ambiguous_facet is 1 if facet k is ambiguous.
+     */
     FBITS_TYPE ambiguous_facet_bits;    
 
-    /// Integer representing set of ambiguous facets in lower lifted cube.
+    /// @brief Integer representing set of ambiguous facets in lower lifted cube.
     /// - k'th bit of ambiguous_facet is 1 if facet k is ambiguous.
     FBITS_TYPE ambiguous_facet_bits_in_lower_lifted;    
 
-    /// Integer representing set of ambiguous facets in upper lifted cube.
+    /// @brief Integer representing set of ambiguous facets in upper lifted cube.
     /// - k'th bit of ambiguous_facet is 1 if facet k is ambiguous.
     FBITS_TYPE ambiguous_facet_bits_in_upper_lifted;
 
@@ -1410,83 +1466,93 @@ namespace IJKDUALTABLE {
     NTYPE NumVertices() const
     { return(NumVerticesInLowerLifted() + NumVerticesInUpperLifted()); }
 
-    /// True, if grid vertex is below interval volume.
+    /// @brief True, if grid vertex is below interval volume.
     /// @param iv Index of the vertex in the grid polytope.
     template <typename ITYPE>
     bool IsBelowIntervalVolume(const ITYPE iv) const
-    { return(poly_vertex_info[iv].IsBelowIntervalVolume()); }
+    { return (poly_vertex_info[iv].IsBelowIntervalVolume()); }
 
-    /// True, if grid vertex is in interval volume.
+    /// @brief True, if grid vertex is in interval volume.
     /// @param iv Index of the vertex in the grid polytope.
     template <typename ITYPE>
     bool IsInIntervalVolume(const ITYPE iv) const
-    { return(poly_vertex_info[iv].IsInIntervalVolume()); }
+    { return (poly_vertex_info[iv].IsInIntervalVolume()); }
 
-    /// True, if grid vertex is above interval volume.
+    /// @brief True, if grid vertex is above interval volume.
     /// @param iv Index of the vertex in the grid polytope.
     template <typename ITYPE>
     bool IsAboveIntervalVolume(const ITYPE iv) const
-    { return(poly_vertex_info[iv].IsAboveIntervalVolume()); }
+    { return (poly_vertex_info[iv].IsAboveIntervalVolume()); }
 
-    /// Return the relative position.
+    /// @brief Return the relative position.
     /// @param iv Index of the vertex in the grid polytope.
     template <typename ITYPE>
     RELATIVE_POSITION RelativePosition(const ITYPE iv) const
-    { return(poly_vertex_info[iv].RelativePosition()); }
+    { return (poly_vertex_info[iv].RelativePosition()); }
 
-    /// Return vertex type of grid vertex.
+    /// @brief Return vertex type of grid vertex.
     /// @param iv Index of the vertex in the grid polytope.
     template <typename ITYPE>
     NTYPE VertexType(const ITYPE iv) const
-    { return(poly_vertex_info[iv].VertexType()); }
+    { return (poly_vertex_info[iv].VertexType()); }
 
-    /// Return lower isosurface table index.
+    /// @brief Return lower isosurface table index.
     TI_TYPE LowerIsosurfaceTableIndex() const
-    { return(lower_isosurface_table_index); }
+    { return lower_isosurface_table_index; }
 
-    /// Return upper isosurface table index.
+    /// @brief Return upper isosurface table index.
     TI_TYPE UpperIsosurfaceTableIndex() const
-    { return(upper_isosurface_table_index); }
+    { return upper_isosurface_table_index; }
 
-    /// True, if interval volume is non-manifold.
+    /// @brief Return true if interval volume is non-manifold.
     bool IsNonManifold() const
-    { return(is_non_manifold); }
+    { return is_non_manifold;  }
 
-    /// True, if configuration is ambiguous.
+    /// @brief Return true if configuration is ambiguous.
     bool IsAmbiguous() const
-    { return(is_ambiguous); }
+    { return is_ambiguous; }
 
-    /// Return number of ambiguous facets.
+    /// @brief Return number of ambiguous facets.
     NTYPE NumAmbiguousFacets() const
-    { return(num_ambiguous_facets); };
+    { return num_ambiguous_facets; };
 
-    /// Return ambiguous facet bits.
+    /*!
+     *  @brief Return ambiguous facet bits.
+     *  - Facet jf is orthogonal to axis (jf\%dimension).
+     *  - If jf < dimension, facet jf contains cube vertex 0.
+     *  - If jf >= dimension, facet jf contains cube vertex with largest index.
+     */
     FBITS_TYPE AmbiguousFacetBits() const
     { return(ambiguous_facet_bits); };
 
-    /// Return ambiguous facet bits in lower lifted cube.
+    /// @brief Return ambiguous facet bits in lower lifted cube.
     /// - Note: Ignores facets orthogonal to lifting direction.
     FBITS_TYPE AmbiguousFacetBitsInLowerLifted() const
     { return(ambiguous_facet_bits_in_lower_lifted); };
 
-    /// Return ambiguous facet bits in upper lifted cube.
+    /// @brief Return ambiguous facet bits in upper lifted cube.
     /// - Note: Ignores facets orthogonal to lifting direction.
     FBITS_TYPE AmbiguousFacetBitsInUpperLifted() const
     { return(ambiguous_facet_bits_in_upper_lifted); };
 
-    /// True, if facet jf is ambiguous.
+    /*!
+     *  @brief Return true if facet jf is ambiguous.
+     *  - Facet jf is orthogonal to axis (jf\%dimension).
+     *  - If jf < dimension, facet jf contains cube vertex 0.
+     *  - If jf >= dimension, facet jf contains cube vertex with largest index.
+     */
     template <typename FTYPE>
     bool IsFacetAmbiguous(const FTYPE jf) const
     { return((ambiguous_facet_bits & (FBITS_TYPE(1) << jf)) != 0); };
 
-    /// True, if facet jf in lower lifted cube is ambiguous.
+    /// @brief True, if facet jf in lower lifted cube is ambiguous.
     /// - Note: Ignores facets orthogonal to lifting direction.
     template <typename FTYPE>
     bool IsFacetInLowerLiftedAmbiguous(const FTYPE jf) const
     { return((ambiguous_facet_bits_in_lower_lifted & 
               (FBITS_TYPE(1) << jf)) != 0); };
 
-    /// True, if facet jf in upper lifted cube is ambiguous.
+    /// @brief True, if facet jf in upper lifted cube is ambiguous.
     /// - Note: Ignores facets orthogonal to lifting direction.
     template <typename FTYPE>
     bool IsFacetInUpperLiftedAmbiguous(const FTYPE jf) const
@@ -1504,8 +1570,16 @@ namespace IJKDUALTABLE {
     void Allocate(const NUMV_TYPE num_poly_vertices,
                   const NUME_TYPE num_poly_edges);
 
-    bool Check(IJK::ERROR & error_msg) const;
+
+    /// @brief Free all memory.
     void FreeAll();                            // free all memory
+
+    /// @brief Check data structure.
+    /// @param num_mesh_poly_edges Number of edges of mesh polytope.
+    /// - Currently ignored, but included for compatibility
+    ///   with ISODUAL_TABLE_ENTRY.
+    bool Check(const NTYPE num_mesh_poly_edges, IJK::ERROR & error_msg) const;
+    
   };
 
 
@@ -1513,8 +1587,7 @@ namespace IJKDUALTABLE {
   // CLASS ISODUAL_CUBE_FACE_INFO
   // *************************************************
 
-  /// Class with routines to query number of positive or negative vertices
-  ///   in a cube facet and number of active facets.
+  /// Class with routines to query number of positive or negative vertices in a cube facet and number of active facets.
   template <typename DTYPE, typename NTYPE, typename VTYPE>
   class ISODUAL_CUBE_FACE_INFO:public IJK::CUBE_FACE_INFO<DTYPE,NTYPE,VTYPE> {
 
@@ -1523,14 +1596,21 @@ namespace IJKDUALTABLE {
     ISODUAL_CUBE_FACE_INFO(const DTYPE dimension):
       IJK::CUBE_FACE_INFO<DTYPE,NTYPE,VTYPE>(dimension) {};
 
+    /*!
+     *  @brief Compute number of '-' vertices and number of '+' vertices in cube facet.
+     *  @param[out] num_zeros Number of '-' vertices.
+     *  @param[out] num_ones Number of '+' vertices.
+     */
     template <typename TI_TYPE>
     void ComputeNumCubeFacetBits
     (const TI_TYPE ientry, const NTYPE ifacet,
      NTYPE & num_zeros, NTYPE & num_ones) const;
 
+    /// Return true if cube facet has at least one '-' vertex and at least one '+' vertex.
     template <typename TI_TYPE>
     bool IsCubeFacetActive(const TI_TYPE ientry, const NTYPE ifacet) const;
 
+    /// Return number of cube facets with at least one '-' vertex and at least one '+' vertex.
     template <typename TI_TYPE>
     NTYPE ComputeNumActiveCubeFacets(const TI_TYPE ientry) const;
   };
@@ -1540,31 +1620,39 @@ namespace IJKDUALTABLE {
   // ISODUAL TABLE BASE
   // **************************************************
 
-  /// Dual isosurface lookup table.
-  /// Stores isosurface vertices and incident faces for each configuration 
-  ///   of +/- labels at polytope vertex.
+  /*!
+   *  @brief Dual isosurface lookup table.
+   *  - Stores isosurface vertices and incident faces for each configuration 
+   *    of +/- labels at polytope vertex.
+   */
   template <typename DTYPE, typename NTYPE, typename TI_TYPE,
             typename ENTRY_TYPE>
   class ISODUAL_TABLE_BASE {
 
   public:
 
-    /// Index of entry in isosurface lookup table.
-    /// Define within ISODUAL_TABLE_BASE for use in templates.
+    /// @brief Index of entry in isosurface lookup table.
+    /// - Define within ISODUAL_TABLE_BASE for use in templates.
     typedef TI_TYPE TABLE_INDEX;    
 
     typedef DTYPE DIMENSION_TYPE;
-
+    typedef NTYPE NUMBER_TYPE;
+    typedef typename ENTRY_TYPE::ISO_POLY_INDEX_TYPE
+    ISO_POLY_INDEX_TYPE;
+    
   protected:
 
     DTYPE dimension;               ///< Dimension.
     NTYPE num_poly_vertices;       ///< Number of polytope vertices.
     NTYPE num_poly_edges;          ///< Number of polytope edges;
-    NTYPE num_poly_facets;          ///< Number of polytope facets;
+    NTYPE num_poly_facets;         ///< Number of polytope facets;
     ENTRY_TYPE * entry;            ///< Array of dual isosurface table entries.
     TI_TYPE num_table_entries;     ///< Number of entries in table.
 
-    /// Maximum number of vertices allowed for cube.
+    /// Maximum number of isosurface vertices in any single table entry.
+    NTYPE max_num_isov_per_table_entry;
+
+    /// Maximum number of vertices allowed for any cube.
     NTYPE max_num_vertices; 
 
     /// True, if array entry[] is allocated.
@@ -1574,7 +1662,10 @@ namespace IJKDUALTABLE {
     template <typename DTYPE2>
     void Init(const DTYPE2 dimension);
 
+    /// @brief Compute max_num_isov_per_table_entry.
+    void ComputeMaxNumIsovPerTableEntry();
 
+    
   public:
     ISODUAL_TABLE_BASE();
     template <typename DTYPE2>
@@ -1582,17 +1673,17 @@ namespace IJKDUALTABLE {
     ~ISODUAL_TABLE_BASE();             ///< Destructor
 
     // Get functions.
-    DTYPE Dimension() const            ///< Return dimension.
+    DTYPE Dimension() const            /// Return dimension.
     { return(dimension); };
-    NTYPE NumPolyVertices() const      ///< Return number of polytope vertices.
+    NTYPE NumPolyVertices() const      /// Return number of polytope vertices.
     { return(num_poly_vertices); };
-    NTYPE NumPolyEdges() const         ///< Return number of polytope edges.
+    NTYPE NumPolyEdges() const         /// Return number of polytope edges.
     { return(num_poly_edges); };
-    NTYPE NumPolyFacets() const        ///< Return number of polytope facets.
+    NTYPE NumPolyFacets() const        /// Return number of polytope facets.
     { return(num_poly_facets); };
 
     /// Return number of lookup table entries.
-    NTYPE NumTableEntries() const { return(num_table_entries); };
+    TI_TYPE NumTableEntries() const { return(num_table_entries); };
 
     /// Return complement of table index it
     template <typename TI_TYPE2>
@@ -1604,25 +1695,63 @@ namespace IJKDUALTABLE {
     NTYPE NumIsoVertices(const TI_TYPE2 it) const
     { return(entry[it].NumVertices()); }; 
 
-    /// Return index of isosurface vertex incident on face kf.
-    /// Undefined if polytope edge k is not bipolar.
-    /// @param it Index of table entry.
-    /// @param kf Isosurface face kf, dual to polytope edge kf.
+    /*!
+     *  @brief Return true if edge ke is bipolar.
+     *  @param it Index of table entry.
+     *  @param ke Polytope edge ke, dual to isosurface face ke.
+     */
     template <typename TI_TYPE2>
-    NTYPE IncidentIsoVertex
-    (const TI_TYPE2 it, const NTYPE kf) const
-    { return(entry[it].incident_isovertex[kf]); };
+    bool IsBipolar(const TI_TYPE2 it, const NTYPE ke) const
+    { return(this->entry[it].is_bipolar[ke]); };
 
-    /// Return true if vertex iv is positive.
+    /*!
+     *  @brief Return index of isosurface vertex incident on face kf.
+     *  - Undefined if polytope edge k is not bipolar.
+     *  @param it Index of table entry.
+     *  @param kf Isosurface face kf, dual to polytope edge kf.
+     */
+    template <typename TI_TYPE2>
+    inline NTYPE IncidentIsoVertex
+    (const TI_TYPE2 it, const NTYPE kf) const
+    { return entry[it].incident_isovertex[kf]; };
+
+    /*!
+     *  @brief Return pointer to index of first isosurface polytope
+     *    incident on isosurface vertex kv.
+     *  @param it Index of table entry.
+     *  @param kv Isosurface vertex index.
+     */
+    template <typename TI_TYPE2>
+    ISO_POLY_INDEX_TYPE const * FirstIncidentIsoPoly
+    (const TI_TYPE2 it, const NTYPE kv) const
+    { return(entry[it].first_incident_isopoly[kv]); };
+
+    /*!
+     *  @brief Return number of isosurface polytopes
+     *    incident on isosurface vertex kv.
+     *  @param it Index of table entry.
+     *  @param kv Isosurface vertex index.
+     */
+    template <typename TI_TYPE2>
+    NTYPE NumIncidentIsoPoly(const TI_TYPE2 it, const NTYPE kv) const
+    { return(entry[it].num_incident_isopoly[kv]); };
+    
+    /// @brief Return true if vertex iv is positive.
     /// @param iv Vertex index.
     template <typename TI_TYPE2>
     bool IsPositive(const TI_TYPE2 it, const NTYPE iv) const;
 
-    /// Return maximum number of polytope vertices permitted in any table.
-    /// Note: Even tables for polytopes of this size are probably impossible 
-    ///   to compute/store.
+    /*!
+     *  @brief Return maximum number of polytope vertices permitted in any table.
+     *  - Note: Even tables for polytopes of this size are probably impossible 
+     *    to compute/store.
+     */
     NTYPE MaxNumVertices() const { return(max_num_vertices); };
 
+    /// @brief Return max number of isosurface vertices per table entry.
+    NTYPE MaxNumIsoVerticesPerTableEntry() const
+    { return max_num_isov_per_table_entry; }
+    
     /// Return true if table memory is allocated.
     bool IsTableAllocated() const
     { return(is_table_allocated); };
@@ -1669,18 +1798,22 @@ namespace IJKDUALTABLE {
     public ISODUAL_TABLE_BASE<DTYPE,NTYPE,TI_TYPE,ENTRY_TYPE> {
 
   protected:
-    //! If true, separate negative vertices.
+    /// If true, separate negative vertices.
     bool flag_separate_neg;
 
-    //! If true, always separate two diagonally opposite
-    //!   positive or negative vertices.
+    /// If true, always separate two diagonally opposite positive or negative vertices.
     bool flag_always_separate_opposite;     
 
-    /// Create table entries.
-    /// @param flag_separate_opposite If true, always separate two
-    ///        diagonally opposite positive or negative vertices.
+    /*!
+     *  @brief Create table entries.
+     *  @param flag_separate_opposite If true, always separate two
+     *         diagonally opposite positive or negative vertices.
+     */
     void CreateTableEntries
       (const bool flag_separate_neg, const bool flag_separate_opposite);
+
+    /// @brief Set incident isosurface polytopes for each table entry.
+    void SetIncidentIsoPoly();
 
   public:
     ISODUAL_CUBE_TABLE() {};
@@ -1705,13 +1838,6 @@ namespace IJKDUALTABLE {
 
 
     // Get functions.
-
-    /// Return true if edge ke is bipolar.
-    /// @param it Index of table entry.
-    /// @param ke Polytope edge ke, dual to isosurface face ke.
-    template <typename TI_TYPE2>
-    bool IsBipolar(const TI_TYPE2 it, const NTYPE ke) const
-    { return(this->entry[it].is_bipolar[ke]); };
 
     template <typename DTYPE2>
     void Create(const DTYPE2 dimension);
@@ -1753,22 +1879,40 @@ namespace IJKDUALTABLE {
     bool IsAmbiguous(const TI_TYPE it) const
     { return(this->entry[it].IsAmbiguous()); }
 
-    /// Return true if cube facet jf in configuration it is ambiguous.
+    /*!
+     *  @brief Return true if facet jf in configuration table_index is ambiguous.
+     *  - Facet jf is orthogonal to axis (jf\%dimension).
+     *  - If jf < dimension, facet jf contains cube vertex 0.
+     *  - If jf >= dimension, facet jf contains cube vertex with largest index.     
+     */
     template <typename FTYPE>
     bool IsFacetAmbiguous
-    (const TI_TYPE it, const FTYPE jf) const
-    { return(this->entry[it].IsFacetAmbiguous(jf)); }
+    (const TI_TYPE table_index, const FTYPE jf) const
+    { return(this->entry[table_index].IsFacetAmbiguous(jf)); }
 
-    FACET_BITS_TYPE AmbiguousFacetBits(const TI_TYPE it) const
-    { return(this->entry[it].AmbiguousFacetBits()); }
+    /*!
+     *  @brief Return ambiguous facet bits in configuration table_index.
+     *  - Facet jf is orthogonal to axis (jf\%dimension).
+     *  - If jf < dimension, facet jf contains cube vertex 0.
+     *  - If jf >= dimension, facet jf contains cube vertex with largest index.
+     */
+    FACET_BITS_TYPE AmbiguousFacetBits(const TI_TYPE table_index) const
+    { return(this->entry[table_index].AmbiguousFacetBits()); }
 
     /// Return number of ambiguous facets.
     NTYPE NumAmbiguousFacets(const TI_TYPE it) const
     { return(this->entry[it].NumAmbiguousFacets()); }
 
-    /// Return number of activefacets.
+    /// @brief Return index of ambiguous facet.
+    /// @pre Table entry table_index has at least one ambiguous facet.
+    NTYPE IndexOfSomeAmbiguousFacet(const TI_TYPE table_index) const
+    { return(this->entry[table_index].IndexOfSomeAmbiguousFacet()); };
+
+
+    /// Return number of active facets.
     NTYPE NumActiveFacets(const TI_TYPE it) const
     { return(this->entry[it].NumActiveFacets()); }
+
   };
 
 
@@ -1776,24 +1920,30 @@ namespace IJKDUALTABLE {
   // ISODUAL CUBE TABLE AMBIG
   // **************************************************
 
-  //! Isodual cube table plus ambiguity information.
-  //! @tparam TI_TYPE Table index type.
+  /// @brief Isodual cube table plus ambiguity information.
+  /// @tparam TI_TYPE Table index type.
   template <typename DTYPE, typename NTYPE, typename TI_TYPE,
             typename ENTRY_TYPE>
   class ISODUAL_CUBE_TABLE_AMBIG:
     public ISODUAL_TABLE_AMBIG_BASE<DTYPE,NTYPE,TI_TYPE,ENTRY_TYPE> {
 
+  public:
+    typedef typename ENTRY_TYPE::FACET_BITS_TYPE FACET_BITS_TYPE;
+    typedef NTYPE NUMBER_TYPE;
+    typedef DTYPE DIMENSION_TYPE;
+
   protected:
-    //! If true, separate negative vertices.
+    /// If true, separate negative vertices.
     bool flag_separate_neg;
 
-    //! If true, always separate two diagonally opposite
-    //!   positive or negative vertices.
+    /// @brief If true, always separate two diagonally opposite positive or negative vertices.
     bool flag_always_separate_opposite;     
 
-    /// Create table entries.
-    /// @param flag_separate_opposite If true, always separate two
-    ///        diagonally opposite positive or negative vertices.
+    /*!
+     *  @brief Create table entries.
+     *  @param flag_separate_opposite If true, always separate two
+     *         diagonally opposite positive or negative vertices.
+     */
     void CreateTableEntries
     (const bool flag_separate_neg, const bool flag_separate_opposite);
 
@@ -1823,9 +1973,11 @@ namespace IJKDUALTABLE {
 
     // Get functions.
 
-    /// Return true if edge ke is bipolar.
-    /// @param it Index of table entry.
-    /// @param ke Polytope edge ke, dual to isosurface face ke.
+    /*!
+     *  @brief Return true if edge ke is bipolar.
+     *  @param it Index of table entry.
+     *  @param ke Polytope edge ke, dual to isosurface face ke.
+     */
     template <typename TI_TYPE2>
     bool IsBipolar(const TI_TYPE2 it, const NTYPE ke) const
     { return(this->entry[it].is_bipolar[ke]); };
@@ -1834,6 +1986,60 @@ namespace IJKDUALTABLE {
     bool FlagSeparateNeg() const
     { return(flag_separate_neg); }
 
+    /*!
+     *  @brief Return number of isosurface polytopes incident on isov
+     *    and containing edge dual to facet kf.
+     *  @tparam CUBE_TYPE Either IJK::CUBE_FACE_INFO, or a class
+     *    derived from IJK::CUBE_FACE_INFO, or a class with similar
+     *    vertices, edges, and facets.
+     *  @param cube Cube used to determine isosurface polytopes
+     *    dual to facet edges.
+     */
+    template <typename IT_TYPE2, typename ITYPE3, typename ITYPE4,
+	      typename CUBE_TYPE>
+    NTYPE CountNumIncidentIsoPolyDualToFacetEdges
+    (const IT_TYPE2 it, const ITYPE3 isov, const ITYPE4 kf,
+     const CUBE_TYPE & cube) const;
+
+    /*!
+     *  @brief Return number of isosurface edges incident on isov
+     *    and dual to facet kf.
+     *  - Equals (CountNumIncidentIsoPolyDualToEdges()/2).
+     *  @tparam CUBE_TYPE Either IJK::CUBE_FACE_INFO, or a class
+     *    derived from IJK::CUBE_FACE_INFO, or a class with similar
+     *    vertices, edges, and facets.
+     *  @param cube Cube used to determine isosurface polytopes
+     *    dual to facet edges.
+     */
+    template <typename IT_TYPE2, typename ITYPE3, typename ITYPE4,
+	      typename CUBE_TYPE>
+    NTYPE CountNumIncidentIsoEdgesDualToFacet
+    (const IT_TYPE2 it, const ITYPE3 isov, const ITYPE4 kf,
+     const CUBE_TYPE & cube) const
+    { 
+      return
+	(CountNumIncidentIsoPolyDualToFacetEdges(it,isov,kf,cube)/2); 
+    }
+
+    /*!
+     *  @brief Get orthogonal direction and side of (first) ambiguous facet.
+     *  - Returns orthogonal direction and side of first ambiguous facet,
+     *    if cube has more than one ambiguous facet.
+     *  - Undefined, if cube has no ambiguous facets.
+     *  @pre Cube has at least one ambiguous facet.
+     *  @param[out] orth_dir Direction orthgonal to ambiguous facet.
+     *  @param[out] side Side of cube. 0 or 1.
+     */
+    template <typename IT_TYPE2, typename DTYPE2,
+              typename SIDE_TYPE>
+    void GetAmbiguousFacet
+    (const IT_TYPE2 it, DTYPE2 & orth_dir, SIDE_TYPE & side) const;
+
+    /// Return number of bipolar edges incident on vertex.
+    template <typename TI_TYPE2, typename VTYPE>
+    NTYPE ComputeNumIncidentBipolarEdges
+    (const TI_TYPE2 it, const VTYPE iv) const;
+
     template <typename DTYPE2>
     void Create(const DTYPE2 dimension);
     template <typename DTYPE2>
@@ -1841,6 +2047,10 @@ namespace IJKDUALTABLE {
     template <typename DTYPE2>
     void Create(const DTYPE2 dimension, const bool flag_separate_neg, 
                 const bool flag_separate_opposite);
+
+    /// @brief Check data structure for inconsistencies.
+    /// - Return true if no inconsistencies found.
+    bool Check(IJK::ERROR & error_msg) const;
   };
 
 
@@ -1920,8 +2130,7 @@ namespace IJKDUALTABLE {
     NTYPE UpperIncident(const TI_TYPE2 ientry, const NTYPE2 ie) const
     { return(this->entry[ientry].poly_edge_info[ie].upper_incident_isovertex); }
 
-    /// Return incident interval volume vertex on polytope dual 
-    ///   to cube vertex iv.
+    /// Return incident interval volume vertex on polytope dual to cube vertex iv.
     template <typename TI_TYPE2, typename NTYPE2>
     NTYPE IncidentIVolVertex(const TI_TYPE2 ientry, const NTYPE2 iv) const
     { return(this->entry[ientry].poly_vertex_info[iv].incident_ivol_vertex); }
@@ -1952,57 +2161,57 @@ namespace IJKDUALTABLE {
     (const TI_TYPE2 ientry, const VTYPE ivolv) const
     { return(this->entry[ientry].ivolv_info[ivolv].flag_in_lower_lifted_cube); }
 
-    /// True, if grid vertex is below interval volume.
+    /// @brief True, if grid vertex is below interval volume.
     /// @param iv Index of the vertex in the grid polytope.
     template <typename TI_TYPE2, typename VTYPE>
     bool IsBelowIntervalVolume(const TI_TYPE2 ientry, const VTYPE iv) const
     { return(this->entry[ientry].IsBelowIntervalVolume(iv)); }
 
-    /// True, if grid vertex is in interval volume.
+    /// @brief True, if grid vertex is in interval volume.
     /// @param iv Index of the vertex in the grid polytope.
     template <typename TI_TYPE2, typename VTYPE>
     bool IsInIntervalVolume(const TI_TYPE2 ientry, const VTYPE iv) const
     { return(this->entry[ientry].IsInIntervalVolume(iv)); }
 
-    /// True, if grid vertex is above interval volume.
+    /// @brief True, if grid vertex is above interval volume.
     /// @param iv Index of the vertex in the grid polytope.
     template <typename TI_TYPE2, typename VTYPE>
     bool IsAboveIntervalVolume(const TI_TYPE2 ientry, const VTYPE iv) const
     { return(this->entry[ientry].IsAboveIntervalVolume(iv)); }
 
-    /// Return the relative position.
+    /// @brief Return the relative position.
     /// @param iv Index of the vertex in the grid polytope.
     template <typename TI_TYPE2, typename VTYPE>
     RELATIVE_POSITION RelativePosition
     (const TI_TYPE2 ientry, const VTYPE iv) const
     { return(this->entry[ientry].RelativePosition(iv)); }
 
-    /// True, if some neighbor of grid vertex is below interval volume.
+    /// @brief True, if some neighbor of grid vertex is below interval volume.
     /// @param iv Index of the vertex in the grid polytope.
     template <typename TI_TYPE2, typename VTYPE>
     bool IsSomeNeighborBelowIntervalVolume
     (const TI_TYPE2 ientry, const VTYPE iv) const;
 
-    /// True, if some neighbor of grid vertex is above interval volume.
+    /// @brief True, if some neighbor of grid vertex is above interval volume.
     /// @param iv Index of the vertex in the grid polytope.
     template <typename TI_TYPE2, typename VTYPE>
     bool IsSomeNeighborAboveIntervalVolume
     (const TI_TYPE2 ientry, const VTYPE iv) const;
 
 
-    /// True, if some neighbor of grid vertex is below interval volume.
+    /// @brief True, if some neighbor of grid vertex is below interval volume.
     /// @param iv Index of the vertex in the grid polytope.
     template <typename TI_TYPE2, typename VTYPE>
     NTYPE NumNeighborsBelowIntervalVolume
     (const TI_TYPE2 ientry, const VTYPE iv) const;
 
-    /// True, if some neighbor of grid vertex is above interval volume.
+    /// @brief True, if some neighbor of grid vertex is above interval volume.
     /// @param iv Index of the vertex in the grid polytope.
     template <typename TI_TYPE2, typename VTYPE>
     NTYPE NumNeighborsAboveIntervalVolume
     (const TI_TYPE2 ientry, const VTYPE iv) const;
 
-    /// Return vertex type of grid vertex.
+    /// @brief Return vertex type of grid vertex.
     /// @param iv Index of the vertex in the grid polytope.
     template <typename TI_TYPE2, typename VTYPE>
     NTYPE VertexType(const TI_TYPE2 ientry, const VTYPE iv) const
@@ -2018,13 +2227,13 @@ namespace IJKDUALTABLE {
     TI_TYPE UpperIsosurfaceTableIndex(const TI_TYPE2 ientry) const
     { return(this->entry[ientry].UpperIsosurfaceTableIndex()); }
 
-    /// Return true if interval volume vertex ivolv is on lower isosurface.
+    /// @brief Return true if interval volume vertex ivolv is on lower isosurface.
     /// @param ivolv Index of the interval volume vertex.
     template <typename TI_TYPE2, typename VTYPE>
     bool OnLowerIsosurface(const TI_TYPE2 ientry, const VTYPE ivolv) const
     { return(this->entry[ientry].ivolv_info[ivolv].flag_lower_isosurface); }
 
-    /// Return true if interval volume vertex ivolv is on upper isosurface.
+    /// @brief Return true if interval volume vertex ivolv is on upper isosurface.
     /// @param ivolv Index of the interval volume vertex.
     template <typename TI_TYPE2, typename VTYPE>
     bool OnUpperIsosurface(const TI_TYPE2 ientry, const VTYPE ivolv) const
@@ -2036,23 +2245,27 @@ namespace IJKDUALTABLE {
     (const TI_TYPE2 ientry, const NTYPE2 ie) const
     { return(does_lower_isosurface_intersect_edge(*this, ientry, ie)); }
 
-    /// Return true if lower isosurface intersects edge ie.
-    /// - If true, return interval volume vertex on lower isosurface 
-    ///   quadrilateral which is dual to edge ie.
+    /*!
+     *  @brief Return true if lower isosurface intersects edge ie.
+     *  - If true, return interval volume vertex on lower isosurface 
+     *    quadrilateral which is dual to edge ie.
+     */
     template <typename TI_TYPE2, typename NTYPE2, typename IVOLV_TYPE2>
     bool DoesLowerIsosurfaceIntersectEdge
     (const TI_TYPE2 ientry, const NTYPE2 ie, IVOLV_TYPE2 & ivolv) const
     { return(does_lower_isosurface_intersect_edge(*this, ientry, ie, ivolv)); }
 
-    /// Return true if upper isosurface intersects edge ie.
+    /// @brief Return true if upper isosurface intersects edge ie.
     template <typename TI_TYPE2, typename NTYPE2, typename IVOLV_TYPE2>
     bool DoesUpperIsosurfaceIntersectEdge
     (const TI_TYPE2 ientry, const NTYPE2 ie, IVOLV_TYPE2 & ivolv) const
     { return(does_upper_isosurface_intersect_edge(*this, ientry, ie, ivolv)); }
 
-    /// Return true if upper isosurface intersects edge ie.
-    /// - If true, return interval volume vertex on upper isosurface 
-    ///   quadrilateral which is dual to edge ie.
+    /*!
+     *  @brief Return true if upper isosurface intersects edge ie.
+     *  - If true, return interval volume vertex on upper isosurface 
+     *    quadrilateral which is dual to edge ie.
+     */
     template <typename TI_TYPE2, typename NTYPE2>
     bool DoesUpperIsosurfaceIntersectEdge
     (const TI_TYPE2 ientry, const NTYPE2 ie) const
@@ -2062,7 +2275,7 @@ namespace IJKDUALTABLE {
     FACET_BITS_TYPE AmbiguousFacetBitsInLowerLifted(const TI_TYPE it) const
     { return(this->entry[it].AmbiguousFacetBitsInLowerLifted()); }
 
-    /// Return ambiguous facet bits in upper lifted cube.
+    /// @brief Return ambiguous facet bits in upper lifted cube.
     FACET_BITS_TYPE AmbiguousFacetBitsInUpperLifted(const TI_TYPE it) const
     { return(this->entry[it].AmbiguousFacetBitsInUpperLifted()); }
 
@@ -2106,7 +2319,7 @@ namespace IJKDUALTABLE {
     template <typename DTYPE2>
     void SetDimension(const DTYPE2 d);
 
-    /// Check number of vertex types.
+    /// @brief Check number of vertex types.
     /// - Should be 4.
     bool CheckNumVertexTypes(IJK::ERROR & error);
 
@@ -2125,8 +2338,8 @@ namespace IJKDUALTABLE {
   // **************************************************
 
 
-  //! Interval volume cube table.
-  //! @tparam TI_TYPE Table index type.
+  /// @brief Interval volume cube table.
+  /// @tparam TI_TYPE Table index type.
   template <const int NUM_VERTEX_TYPES,
             typename DTYPE, typename NTYPE, typename TI_TYPE,
             typename ENTRY_TYPE>
@@ -2138,7 +2351,7 @@ namespace IJKDUALTABLE {
 
     void Init();
 
-    /// Create table entries.
+    /// @brief Create table entries.
     /// @param flag_separate_neg Set flag_separate_neg to given value.
     void CreateTableEntries(const bool flag_separate_neg);
 
@@ -2165,24 +2378,27 @@ namespace IJKDUALTABLE {
   // IVOLDUAL CUBE DOUBLE TABLE
   // **************************************************
 
-  //! Interval volume cube table storing storing both interval volume patches
-  //!   which separate negative cube vertices and interval volume patches
-  //!   which separate positive cube vertices.  
-  //!   Equivalent, to two interval volume tables, one separating negative
-  //!   cube vertices and one separating positive cube vertices.
-  //! - This table has double the entries of IVOLDUAL_CUBE_TABLE.
-  //! - Half the entries have interval volume patches which separate 
-  //!     negative cube vertices and half have interval volume patches
-  //!     which separate positive cube vertices.
-  //! - If flag_separate_neg is true, then the first half of the table
-  //!     stores interval volume patches which separate negative cube vertices 
-  //!     and the second half stores interval volume patches which separate
-  //!     positive cube vertices.
-  //! - If flag_separate_neg is false, then the first half of the table
-  //!     stores interval volume patches which separate positive cube vertices 
-  //!     and the second half stores interval volume patches which separate
-  //!     negative cube vertices.
-  //! @tparam TI_TYPE Table index type.
+  /*!
+   *  @brief Interval volume cube table storing both seprate negative and separate positive.
+   *  - Interval volume cube table storing storing both interval volume patches
+   *    which separate negative cube vertices and interval volume patches
+   *    which separate positive cube vertices.  
+   *    Equivalent, to two interval volume tables, one separating negative
+   *    cube vertices and one separating positive cube vertices.
+   *  - This table has double the entries of IVOLDUAL_CUBE_TABLE.
+   *  - Half the entries have interval volume patches which separate 
+   *      negative cube vertices and half have interval volume patches
+   *      which separate positive cube vertices.
+   *  - If flag_separate_neg is true, then the first half of the table
+   *      stores interval volume patches which separate negative cube vertices 
+   *      and the second half stores interval volume patches which separate
+   *      positive cube vertices.
+   *  - If flag_separate_neg is false, then the first half of the table
+   *      stores interval volume patches which separate positive cube vertices 
+   *      and the second half stores interval volume patches which separate
+   *      negative cube vertices.
+   *  @tparam TI_TYPE Table index type.
+   */
   template <const int NUM_VERTEX_TYPES,
             typename DTYPE, typename NTYPE, typename TI_TYPE,
             typename ENTRY_TYPE>
@@ -2192,15 +2408,19 @@ namespace IJKDUALTABLE {
 
   protected:
 
-    /// Number of table entries with isosurface patches separating
-    ///   negative cube vertices.
-    /// - Also equals number of table entries with isosurface patches
-    ///   separating positive cube vertices.
+    /*!
+     *  @brief Number of table entries with isosurface patches 
+     *    separating negative cube vertices.
+     *  - Also equals number of table entries with isosurface patches
+     *    separating positive cube vertices.
+     */
     NTYPE num_negative_table_entries;
 
-    /// Create table entries.
-    /// @param flag_separate_neg If true, first half of table stores
-    ///        interval volume patches separating negative cube vertices.
+    /*!
+     *  @brief Create table entries.
+     *  @param flag_separate_neg If true, first half of table stores
+     *         interval volume patches separating negative cube vertices.
+     */
     void CreateTableEntries(const bool flag_separate_neg);
 
     /// Initialize.
@@ -2218,36 +2438,43 @@ namespace IJKDUALTABLE {
     IVOLDUAL_CUBE_DOUBLE_TABLE
     (const DTYPE2 dimension, const bool flag_separate_neg);
 
-    /// Return number of lookup table entries whose interval volume patch
-    ///   separates negative vertices.
+    /// @brief Return number of lookup table entries
+    ///   whose interval volume patch separates negative vertices.
     NTYPE NumNegativeTableEntries() const 
     { return(num_negative_table_entries); };
 
-    /// Return number of lookup table entries whose interval volume patch
-    ///   separates positive vertices.
+    /// @brief Return number of lookup table entries
+    ///   whose interval volume patch separates positive vertices.
     /// - Note: This number equals the number of negative table entries.
     NTYPE NumPositiveTableEntries() const 
     { return(num_negative_table_entries); };
 
-    /// Replace function SetNumTableEntries to also 
-    ///   set num_negative_table_entries.
+    /// @brief Replace function SetNumTableEntries
+    ///   to also set num_negative_table_entries.
     template <typename NTYPE2>
     void SetNumTableEntries(const NTYPE2 num_table_entries);
 
-    /// Return opposite table index.
-    /// - Opposite table index has same configuration of vertex labels
-    ///   as table_index.
-    /// - Opposite table index separates positive vertices if table_index
-    ///   separates negative vertices.
-    /// - Opposite table index separates negative vertices if table_index
-    ///   separates negative vertices.
+    /*!
+     *  @brief Return opposite table index.
+     *  - Opposite table index has same configuration of vertex labels
+     *    as table_index.
+     *  - Opposite table index separates positive vertices if table_index
+     *    separates negative vertices.
+     *  - Opposite table index separates negative vertices if table_index
+     *    separates negative vertices.
+     */
     template <typename TI_TYPE2>
     TI_TYPE OppositeTableIndex(const TI_TYPE2 table_index) const
     { return((table_index +
               NumNegativeTableEntries())%(this->NumTableEntries())); };
 
+    /// @brief Create interval volume lookup table.
     template <typename DTYPE2>
     void Create(const DTYPE2 dimension);
+
+    /// @overload
+    /// @brief Create interval volume lookup table. (Set flag_separate_neg.)
+    /// - Version that sets flag_separate_neg.
     template <typename DTYPE2>
     void Create(const DTYPE2 dimension, const bool flag_separate_neg);
   };
@@ -2293,25 +2520,25 @@ namespace IJKDUALTABLE {
     NTYPE NumCubeVertices() const
     { return(num_cube_vertices); }
 
-    /// Search starting at vertex i.
+    /// @brief Search starting at vertex i.
     /// @pre icomp is not zero.
     template <typename ITYPE0, typename ITYPE1>
     void Search(const ITYPE0 i, const ITYPE1 icomp);
 
-    /// Search facet starting at vertex i.
+    /// @brief Search facet starting at vertex i.
     /// @pre Facet kf contains vertex i.
     /// @pre icomp is not zero.
     template <typename ITYPE0, typename ITYPE1, typename ITYPE2>
     void SearchFacet(const ITYPE0 kf, const ITYPE1 i, const ITYPE2 icomp);
 
-    /// Compute number of components.
+    /// @brief Compute number of components.
     /// @param flag_positive If true, compute components of positive vertices.
     ///                      If false, compute components of negative vertices.
     template <typename TI_TYPE2>
     NTYPE ComputeNumComponents
     (const TI_TYPE2 ientry, const bool flag_positive);
 
-    /// Compute number of components in facet.
+    /// @brief Compute number of components in facet.
     /// @param flag_positive If true, compute components of positive vertices.
     ///                      If false, compute components of negative vertices.
     template <typename TI_TYPE2, typename ITYPE>
@@ -2325,24 +2552,78 @@ namespace IJKDUALTABLE {
   // **************************************************
 
   // constructor
-  template <typename NTYPE, typename ISOV_TYPE>
-  ISODUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE>::ISODUAL_TABLE_ENTRY()
+  template <typename NTYPE, typename ISOV_TYPE, typename ISOP_TYPE>
+  ISODUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE,ISOP_TYPE>::ISODUAL_TABLE_ENTRY()
   {
     num_vertices = 0;
     incident_isovertex = NULL;
     is_bipolar = NULL;
+    incident_isopoly = NULL;
+    first_incident_isopoly = NULL;
+    num_incident_isopoly = NULL;
   }
 
+  
+  // Set arrays incident_isopoly and first_incident_isopoly.
+  template <typename NTYPE, typename ISOV_TYPE, typename ISOP_TYPE>
+  void ISODUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE,ISOP_TYPE>::
+  SetIncidentIsoPoly(const NTYPE num_mesh_poly_edges)
+  {
+    typedef ISOP_TYPE * ISOP_PTR_TYPE;
+
+    FreeIncidentIsoPoly();
+    
+    if (NumVertices() <= 0) {
+      // Nothing to set.
+      return;
+    }
+
+    // Allocate incident arrays[].
+    incident_isopoly = new ISOP_TYPE[num_mesh_poly_edges];
+    first_incident_isopoly = new ISOP_PTR_TYPE[NumVertices()];
+    num_incident_isopoly = new NTYPE[NumVertices()];
+
+    ISOP_PTR_TYPE current_isopoly_ptr = incident_isopoly;
+    for (NTYPE k = 0; k < NumVertices(); k++) {
+      num_incident_isopoly[k] = 0;
+      first_incident_isopoly[k] = current_isopoly_ptr;
+      for (NTYPE ie = 0; ie < num_mesh_poly_edges; ie++) {
+        if (IsBipolar(ie)) {
+          if (IncidentIsoVertex(ie) == k) {
+            // Add ie to incident_isopoly[].
+            *current_isopoly_ptr = ie;
+            current_isopoly_ptr++;
+            num_incident_isopoly[k]++;
+          }
+        }
+
+      }
+    }
+
+    if (current_isopoly_ptr > incident_isopoly + num_mesh_poly_edges) {
+      IJK::PROCEDURE_ERROR error("ISODUAL_TABLE_ENTRY::SetIncidentIsoPoly");
+      error.AddMessage
+        ("Programming error. Added too many incident isosurface polytopes.");
+      error.AddMessage("  Added ", current_isopoly_ptr-incident_isopoly,
+                       " incident isosurface polytopes.");
+      error.AddMessage("  At most ", num_mesh_poly_edges,
+                       " are dual to edges of a single mesh element.");
+      throw error;
+    }
+  }
+  
+  
   // destructor
-  template <typename NTYPE, typename ISOV_TYPE>
-  ISODUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE>::~ISODUAL_TABLE_ENTRY()
+  template <typename NTYPE, typename ISOV_TYPE, typename ISOP_TYPE>
+  ISODUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE,ISOP_TYPE>::~ISODUAL_TABLE_ENTRY()
   {
     FreeAll();
   }
 
-  template <typename NTYPE, typename ISOV_TYPE>
+  
+  template <typename NTYPE, typename ISOV_TYPE, typename ISOP_TYPE>
   template <typename NUMV_TYPE, typename NUME_TYPE>
-  void ISODUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE>::
+  void ISODUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE,ISOP_TYPE>::
   Allocate(const NUMV_TYPE num_poly_vertices,
            const NUME_TYPE num_poly_edges)
   {
@@ -2352,33 +2633,32 @@ namespace IJKDUALTABLE {
     is_bipolar = new bool[num_poly_edges];
   }
 
-  template <typename NTYPE, typename ISOV_TYPE>
-  bool ISODUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE>::
-  Check(IJK::ERROR & error_msg) const
+
+  // @brief Free arrays incident_isopoly[] and first_incident_isopoly[].
+  template <typename NTYPE, typename ISOV_TYPE, typename ISOP_TYPE>
+  void ISODUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE,ISOP_TYPE>::
+  FreeIncidentIsoPoly()
   {
-    if (num_vertices < 0) {
-      error_msg.AddMessage
-        ("Error.  Dual isosurface table entry contains negative number of isosurface vertices.");
-      return(false);
+    if (incident_isopoly != NULL) {
+      delete [] incident_isopoly;
+      incident_isopoly = NULL;
     }
 
-    if (incident_isovertex == NULL) {
-      error_msg.AddMessage
-        ("Memory for incident isosurface vertices not allocated.");
-      return(false);
+    if (first_incident_isopoly != NULL) {
+      delete [] first_incident_isopoly;
+      first_incident_isopoly = NULL;
     }
 
-    if (is_bipolar == NULL) {
-      error_msg.AddMessage("Memory for bipolar edge flags not allocated.");
-      return(false);
+    if (num_incident_isopoly != NULL) {
+      delete [] num_incident_isopoly;
+      num_incident_isopoly = NULL;
     }
-
-    return(true);
   }
-
+  
+  
   // Free all memory.
-  template <typename NTYPE, typename ISOV_TYPE>
-  void ISODUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE>::FreeAll()
+  template <typename NTYPE, typename ISOV_TYPE, typename ISOP_TYPE>
+  void ISODUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE,ISOP_TYPE>::FreeAll()
   {
     if (incident_isovertex != NULL) {
       delete [] incident_isovertex;
@@ -2390,24 +2670,115 @@ namespace IJKDUALTABLE {
       is_bipolar = NULL;
     }
 
+    FreeIncidentIsoPoly();
+
     num_vertices = 0;
   }
 
 
+  template <typename NTYPE, typename ISOV_TYPE, typename ISOP_TYPE>
+  bool ISODUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE,ISOP_TYPE>::
+  Check(const NTYPE num_mesh_poly_edges, IJK::ERROR & error_msg) const
+  {
+    if (num_vertices < 0) {
+      error_msg.AddMessage
+        ("Error.  Dual isosurface table entry contains negative number of isosurface vertices.");
+      return false;
+    }
+
+    if (incident_isovertex == NULL) {
+      error_msg.AddMessage
+        ("Memory for incident isosurface vertices not allocated.");
+      return false;
+    }
+
+    if (is_bipolar == NULL) {
+      error_msg.AddMessage("Memory for bipolar edge flags not allocated.");
+      return false;
+    }
+
+
+    if (NumVertices() > 0) {
+
+      if (incident_isopoly == NULL) {
+        error_msg.AddMessage
+          ("Memory for incident isosurface polytopes not allocated.");
+        return false;
+      }
+
+      if (num_incident_isopoly == NULL) {
+        error_msg.AddMessage
+          ("Memory for number of incident isosurface polytopes not allocated.");
+        return false;
+      }
+
+      if (first_incident_isopoly == NULL) {
+        error_msg.AddMessage
+          ("Memory for first incident isosurface polytopes not allocated.");
+        return false;
+      }
+
+      for (NTYPE k = 0; k < NumVertices(); k++) {
+        ISOP_TYPE * current_ptr = FirstIncidentIsoPoly(k);
+        for (NTYPE j = 0; j < NumIncidentIsoPoly(k); j++) {
+          const NTYPE ie = *current_ptr;
+
+          if (ie < 0) {
+            error_msg.AddMessage
+              ("Negative index ", ie, " in incident isosurface polytope.");
+            return false;
+          }
+            
+          
+          if (ie >= num_mesh_poly_edges) {
+            error_msg.AddMessage
+              ("Incorrect index ", ie, " in incident isosurface polytope.");
+            error_msg.AddMessage
+              ("  Index must be less than ", num_mesh_poly_edges, ".");
+            return false;
+          }
+          
+          if (!IsBipolar(ie)) {
+            error_msg.AddMessage("Edge ", ie, " is NOT bipolar.");
+            error_msg.AddMessage
+              ("  Isosurface mesh polytopes are only dual to bipolar edges.");
+            return false;
+          }
+
+          if (IncidentIsoVertex(ie) != k) {
+            error_msg.AddMessage
+              ("Isosurface mesh polytope ", ie, " is incident on vertex ", k);
+            error_msg.AddMessage
+              ("  but IncidentIsoVertex(", ie, ") = ", IncidentIsoVertex(ie), ".");
+            return false;
+          }
+        }
+      }
+    }
+    
+    return true;
+  }
+
+  
   // **************************************************
   // ISODUAL AMBIG TABLE ENTRY MEMBER FUNCTIONS
   // **************************************************
 
   // constructor
-  template <typename NTYPE, typename ISOV_TYPE, typename FACET_BITS_TYPE>
-  ISODUAL_AMBIG_TABLE_ENTRY<NTYPE,ISOV_TYPE,FACET_BITS_TYPE>::
+  template <typename NTYPE, typename ISOV_TYPE, typename ISOP_TYPE,
+            typename FACET_BITS_TYPE>
+  ISODUAL_AMBIG_TABLE_ENTRY<NTYPE,ISOV_TYPE,ISOP_TYPE,FACET_BITS_TYPE>::
   ISODUAL_AMBIG_TABLE_ENTRY()
   {
     ClearAmbig();
   }
 
-  template <typename NTYPE, typename ISOV_TYPE, typename FACET_BITS_TYPE>
-  void ISODUAL_AMBIG_TABLE_ENTRY<NTYPE,ISOV_TYPE,FACET_BITS_TYPE>::ClearAmbig()
+  
+  template <typename NTYPE, typename ISOV_TYPE, typename ISOP_TYPE,
+            typename FACET_BITS_TYPE>
+  void ISODUAL_AMBIG_TABLE_ENTRY<NTYPE,ISOV_TYPE,ISOP_TYPE,
+                                 FACET_BITS_TYPE>::
+  ClearAmbig()
   {
     is_ambiguous = false;
     num_ambiguous_facets = 0;
@@ -2415,15 +2786,18 @@ namespace IJKDUALTABLE {
     ambiguous_facet_bits = 0;
   }
 
+  
   // destructor
-  template <typename NTYPE, typename ISOV_TYPE, typename FACET_BITS_TYPE>
-  ISODUAL_AMBIG_TABLE_ENTRY<NTYPE,ISOV_TYPE,FACET_BITS_TYPE>::
+  template <typename NTYPE, typename ISOV_TYPE, typename ISOP_TYPE,
+            typename FACET_BITS_TYPE>
+  ISODUAL_AMBIG_TABLE_ENTRY<NTYPE,ISOV_TYPE,ISOP_TYPE,
+                            FACET_BITS_TYPE>::
   ~ISODUAL_AMBIG_TABLE_ENTRY()
   {
     ClearAmbig();
   }
 
-
+  
   // **************************************************
   // IVOLDUAL TABLE ENTRY MEMBER FUNCTIONS
   // **************************************************
@@ -2470,9 +2844,9 @@ namespace IJKDUALTABLE {
   }
 
   // constructor
-  template <typename NTYPE, typename ISOV_TYPE, typename FBITS_TYPE,
-            typename TI_TYPE>
-  IVOLDUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE,FBITS_TYPE,TI_TYPE>::
+  template <typename NTYPE, typename ISOV_TYPE, typename ISOP_TYPE,
+            typename FBITS_TYPE, typename TI_TYPE>
+  IVOLDUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE,ISOP_TYPE,FBITS_TYPE,TI_TYPE>::
   IVOLDUAL_TABLE_ENTRY()
   {
     num_vertices_in_lower_lifted = 0;
@@ -2494,18 +2868,20 @@ namespace IJKDUALTABLE {
   }
 
   // destructor
-  template <typename NTYPE, typename ISOV_TYPE, typename FBITS_TYPE,
-            typename TI_TYPE>
-  IVOLDUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE,FBITS_TYPE,TI_TYPE>::
+  template <typename NTYPE, typename ISOV_TYPE, typename ISOP_TYPE,
+            typename FBITS_TYPE, typename TI_TYPE>
+  IVOLDUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE,ISOP_TYPE,
+                       FBITS_TYPE,TI_TYPE>::
   ~IVOLDUAL_TABLE_ENTRY()
   {
     FreeAll();
   }
 
-  template <typename NTYPE, typename ISOV_TYPE, typename FBITS_TYPE,
-            typename TI_TYPE>
+  template <typename NTYPE, typename ISOV_TYPE, typename ISOP_TYPE,
+            typename FBITS_TYPE, typename TI_TYPE>
   template <typename NUMV_TYPE, typename NUME_TYPE>
-  void IVOLDUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE,FBITS_TYPE,TI_TYPE>::
+  void IVOLDUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE,ISOP_TYPE,
+                            FBITS_TYPE,TI_TYPE>::
   Allocate(const NUMV_TYPE num_poly_vertices,
            const NUME_TYPE num_poly_edges)
   {
@@ -2519,10 +2895,11 @@ namespace IJKDUALTABLE {
 
 
   /// Create interval volume vertices.
-  template <typename NTYPE, typename ISOV_TYPE, typename FBITS_TYPE,
-            typename TI_TYPE>
+  template <typename NTYPE, typename ISOV_TYPE, typename ISOP_TYPE,
+            typename FBITS_TYPE, typename TI_TYPE>
   template <typename NUMV0_TYPE, typename NUMV1_TYPE>
-  void IVOLDUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE,FBITS_TYPE,TI_TYPE>::
+  void IVOLDUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE,ISOP_TYPE,
+                            FBITS_TYPE,TI_TYPE>::
   CreateIntervalVolumeVertices
   (const NUMV0_TYPE numv_in_lower_lifted, 
    const NUMV1_TYPE numv_in_upper_lifted)
@@ -2550,10 +2927,11 @@ namespace IJKDUALTABLE {
   }
 
 
-  template <typename NTYPE, typename ISOV_TYPE, typename FBITS_TYPE,
-            typename TI_TYPE>
-  bool IVOLDUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE,FBITS_TYPE,TI_TYPE>::
-  Check(IJK::ERROR & error_msg) const
+  template <typename NTYPE, typename ISOV_TYPE, typename ISOP_TYPE,
+            typename FBITS_TYPE, typename TI_TYPE>
+  bool IVOLDUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE,ISOP_TYPE,
+                            FBITS_TYPE,TI_TYPE>::
+  Check(const NTYPE num_mesh_poly_edges, IJK::ERROR & error_msg) const
   {
     if (num_vertices_in_lower_lifted < 0) {
       error_msg.AddMessage
@@ -2585,9 +2963,10 @@ namespace IJKDUALTABLE {
   }
 
   // Free all memory.
-  template <typename NTYPE, typename ISOV_TYPE, typename FBITS_TYPE,
-            typename TI_TYPE>
-  void IVOLDUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE,FBITS_TYPE,TI_TYPE>::FreeAll()
+  template <typename NTYPE, typename ISOV_TYPE, typename ISOP_TYPE,
+            typename FBITS_TYPE, typename TI_TYPE>
+  void IVOLDUAL_TABLE_ENTRY<NTYPE,ISOV_TYPE,ISOP_TYPE,
+                            FBITS_TYPE,TI_TYPE>::FreeAll()
   {
     if (poly_vertex_info != NULL) {
       delete [] poly_vertex_info;
@@ -2643,8 +3022,6 @@ namespace IJKDUALTABLE {
   void ISODUAL_TABLE_BASE<DTYPE,NTYPE,TI_TYPE,ENTRY_TYPE>::
   Init(const DTYPE2 dimension)
   {
-    const char * procname = "ISODUAL_TABLE_BASE::Init";
-
     max_num_vertices = 20;
     // Note: Even tables for polytopes of this size are probably impossible 
     //   to compute/store
@@ -2652,6 +3029,7 @@ namespace IJKDUALTABLE {
     num_table_entries = 0;
     entry = NULL;
     is_table_allocated = false;
+    max_num_isov_per_table_entry = 1;
 
     SetDimension(dimension);
   }
@@ -2778,7 +3156,7 @@ namespace IJKDUALTABLE {
       throw IJK::PROCEDURE_ERROR
         (procname, "Unable to allocate memory for dual isosurface table.");
 
-    for (int i = 0; i < num_table_entries; i++) {
+    for (NTYPE2 i = 0; i < num_table_entries; i++) {
       entry[i].Allocate(NumPolyVertices(), NumPolyEdges());
     }
 
@@ -2786,6 +3164,36 @@ namespace IJKDUALTABLE {
     is_table_allocated = true;
   }
 
+
+  // Compute max_num_isov_per_table_entry.
+  template <typename DTYPE, typename NTYPE, typename TI_TYPE,
+            typename ENTRY_TYPE>
+  void ISODUAL_TABLE_BASE<DTYPE,NTYPE,TI_TYPE,ENTRY_TYPE>::
+  ComputeMaxNumIsovPerTableEntry()
+  {
+    if (entry == NULL && num_table_entries > 0) {
+      IJK::PROCEDURE_ERROR error
+        ("ISODUAL_TABLE_BASE::ComputeNumIsovPerTableEntry");
+      
+      error.AddMessage
+        ("Programming error. Isosurface lookup table not allocated.");
+      error.AddMessage
+        ("  Allocacte and construct isosurface lookup table");
+      error.AddMessage
+        ("  before calling this routine.");
+      throw error;
+    }
+
+    max_num_isov_per_table_entry = 1;
+    for (TABLE_INDEX table_index = 0; table_index < NumTableEntries();
+         table_index++) {
+      if (max_num_isov_per_table_entry < NumIsoVertices(table_index)) {
+        max_num_isov_per_table_entry = NumIsoVertices(table_index);
+      }
+    }
+  }
+
+    
   // Return true if vertex iv is positive.
   template <typename DTYPE, typename NTYPE, typename TI_TYPE,
             typename ENTRY_TYPE>
@@ -2840,7 +3248,7 @@ namespace IJKDUALTABLE {
     }
 
     for (TI_TYPE it = 0; it < NumTableEntries(); it++)
-      if (!entry[it].Check(error_msg)) {
+      if (!entry[it].Check(NumPolyEdges(), error_msg)) {
         error_msg.AddMessage
           ("Error detected at isosurface table entry ", it, ".");
         return(false);
@@ -2938,13 +3346,24 @@ namespace IJKDUALTABLE {
 
     for (TI_TYPE ientry = 0; ientry < this->NumTableEntries(); ientry++) {
       create_isodual_cube_table_entry
-        (ientry, this->NumPolyVertices(), 
-         flag_separate_neg, flag_separate_opposite, cube,
+        (ientry, flag_separate_neg, flag_separate_opposite, cube,
          find_component, this->entry[ientry]);
     }
   }
 
 
+  // Set incident isosurface polytopes for each table entry.
+  template <typename DTYPE, typename NTYPE, typename TI_TYPE,
+            typename ENTRY_TYPE>
+  void ISODUAL_CUBE_TABLE<DTYPE,NTYPE,TI_TYPE,ENTRY_TYPE>::
+  SetIncidentIsoPoly()
+  {
+    for (TI_TYPE ientry = 0; ientry < this->NumTableEntries(); ientry++) {
+      this->entry[ientry].SetIncidentIsoPoly(this->NumPolyVertices());
+    }
+  }
+  
+  
   // **************************************************
   // ISODUAL CUBE TABLE AMBIG MEMBER FUNCTIONS
   // **************************************************
@@ -2958,9 +3377,10 @@ namespace IJKDUALTABLE {
          const bool flag_separate_opposite)
   {
     this->SetToCube(dimension);
-
+    
     TI_TYPE n = calculate_num_entries<TI_TYPE>(this->NumPolyVertices(), 2);
     this->SetNumTableEntries(n);
+
     CreateTableEntries(flag_separate_neg, flag_separate_opposite);
   }
 
@@ -3007,11 +3427,120 @@ namespace IJKDUALTABLE {
 
     for (TI_TYPE ientry = 0; ientry < this->NumTableEntries(); ientry++) {
       create_isodual_cube_table_ambig_entry
-        (ientry, this->NumPolyVertices(), 
-         flag_separate_neg, flag_separate_opposite, cube,
-         find_component, this->entry[ientry]);
+        (ientry, flag_separate_neg, flag_separate_opposite, cube,
+         find_component, this->entry[ientry]);      
     }
 
+  }
+
+
+  // Return number of isosurface polytopes incident on isov,
+  //   and containing edge dual to facet kf.
+  template <typename DTYPE, typename NTYPE, typename TI_TYPE,
+            typename ENTRY_TYPE>
+  template <typename IT_TYPE2, typename ITYPE3, typename ITYPE4,
+	    typename CUBE_TYPE>
+  NTYPE ISODUAL_CUBE_TABLE_AMBIG<DTYPE,NTYPE,TI_TYPE,ENTRY_TYPE>::
+  CountNumIncidentIsoPolyDualToFacetEdges
+  (const IT_TYPE2 it, const ITYPE3 isov, const ITYPE4 kf,
+   const CUBE_TYPE & cube) const
+  {
+    NTYPE num_incident_isopoly = 0;
+
+    for (NTYPE ie = 0; ie < cube.NumEdges(); ie++) {
+      if (!this->IsBipolar(it, ie)) { continue; }
+      if (this->IncidentIsoVertex(it, ie) != isov) { continue; }
+
+      const NTYPE edge_dir = cube.EdgeDir(ie);
+      const NTYPE facet_orth_dir = cube.FacetOrthDir(kf);
+      if (edge_dir == facet_orth_dir) {
+	// Edge ke is not contained in facet.
+	continue;
+      }
+
+      const NTYPE iv0 = cube.EdgeEndpoint(ie, 0);
+
+      if (cube.IsFacetIncidentOnVertex(kf, iv0))
+	{ num_incident_isopoly++; }
+    }
+
+    return num_incident_isopoly;
+  }
+
+
+  //@ Get orthogonal direction and side of (first) ambiguous facet.
+  template <typename DTYPE, typename NTYPE, typename TI_TYPE,
+            typename ENTRY_TYPE>
+  template <typename IT_TYPE2, typename DTYPE2,
+            typename SIDE_TYPE>
+  void ISODUAL_CUBE_TABLE_AMBIG<DTYPE,NTYPE,TI_TYPE,ENTRY_TYPE>::
+  GetAmbiguousFacet
+  (const IT_TYPE2 table_index, DTYPE2 & orth_dir, SIDE_TYPE & side) const
+  {
+    const int dimension = this->Dimension();
+    const NUMBER_TYPE kf = this->IndexOfSomeAmbiguousFacet(table_index);
+    orth_dir = IJK::cube_facet_orth_dir(dimension, kf);
+    side = IJK::cube_facet_side(dimension, kf);
+  }
+
+
+  template <typename DTYPE, typename NTYPE, typename TI_TYPE,
+            typename ENTRY_TYPE>
+  template <typename TI_TYPE2, typename VTYPE>
+  NTYPE ISODUAL_CUBE_TABLE_AMBIG<DTYPE,NTYPE,TI_TYPE,ENTRY_TYPE>::
+  ComputeNumIncidentBipolarEdges
+  (const TI_TYPE2 it, const VTYPE iv) const
+  {
+    const bool flag_pos = this->IsPositive(it, iv);
+
+    NTYPE num_bipolar_edges = 0;
+
+    for (int d = 0; d < this->Dimension(); d++) {
+      VTYPE jv;
+      IJK::compute_cube_vertex_neighbor(iv, d, jv);
+      if (this->IsPositive(it, jv) != flag_pos)
+        { num_bipolar_edges++; }
+    }
+
+    return num_bipolar_edges;
+  }
+
+
+
+  template <typename DTYPE, typename NTYPE, typename TI_TYPE,
+            typename ENTRY_TYPE>
+  bool ISODUAL_CUBE_TABLE_AMBIG<DTYPE,NTYPE,TI_TYPE,ENTRY_TYPE>::
+  Check(IJK::ERROR & error_msg) const
+  {
+    if (!ISODUAL_TABLE_AMBIG_BASE<DTYPE,NTYPE,TI_TYPE,ENTRY_TYPE>::
+        Check(error_msg))
+      { return false; }
+
+    for (TI_TYPE table_index = 0; table_index < this->NumTableEntries();
+         table_index++) {
+
+      if (this->NumAmbiguousFacets(table_index) > 0) {
+        int orth_dir, iside;
+        GetAmbiguousFacet(table_index, orth_dir, iside);
+        const int ifacet_ambiguous =
+          orth_dir + iside*this->Dimension();
+
+        if (!this->IsFacetAmbiguous(table_index, ifacet_ambiguous)) {
+          error_msg.AddMessage
+            ("Programming error. GetAmbiguousFacet() is incorrect.");
+          error_msg.AddMessage("  On table entry: ", table_index);
+          error_msg.AddMessage
+            ("  GetAmbiguousFacet() on table entry ", table_index);
+          error_msg.AddMessage
+            ("  returns facet ", ifacet_ambiguous,
+             " with orthogonal direction ", orth_dir,
+             " and on cube side ", iside, ".");
+          return false;
+        }
+      }
+    }
+
+    return true;
   }
 
 
@@ -3279,6 +3808,7 @@ namespace IJKDUALTABLE {
   CreateTableEntries(const bool flag_separate_neg)
   {
     typedef typename ENTRY_TYPE::IVOL_VERTEX_INDEX_TYPE IVOLV_TYPE;
+    typedef typename ENTRY_TYPE::IVOL_POLY_INDEX_TYPE IVOLP_TYPE;
     typedef typename ENTRY_TYPE::FACET_BITS_TYPE FACET_BITS_TYPE;
 
     IJK::PROCEDURE_ERROR error("IVOLDUAL_CUBE_TABLE::CreateTableEntries");
@@ -3295,7 +3825,8 @@ namespace IJKDUALTABLE {
     FIND_COMPONENT<DTYPE,NTYPE> find_component(dimension+1);
     ISODUAL_CUBE_FACE_INFO<NTYPE,NTYPE,NTYPE> lifted_cube(dimension+1);
 
-    ISODUAL_AMBIG_TABLE_ENTRY<NTYPE,IVOLV_TYPE,FACET_BITS_TYPE> 
+    ISODUAL_AMBIG_TABLE_ENTRY<NTYPE,IVOLV_TYPE,
+                              IVOLP_TYPE,FACET_BITS_TYPE> 
       lower_isodual, upper_isodual;
 
     lower_isodual.Allocate
@@ -3414,6 +3945,7 @@ namespace IJKDUALTABLE {
   CreateTableEntries(const bool flag_separate_neg)
   {
     typedef typename ENTRY_TYPE::IVOL_VERTEX_INDEX_TYPE IVOLV_TYPE;
+    typedef typename ENTRY_TYPE::IVOL_POLY_INDEX_TYPE IVOLP_TYPE;
     typedef typename ENTRY_TYPE::FACET_BITS_TYPE FACET_BITS_TYPE;
 
     IJK::PROCEDURE_ERROR error
@@ -3430,7 +3962,8 @@ namespace IJKDUALTABLE {
     ISODUAL_CUBE_FACE_INFO<NTYPE,NTYPE,NTYPE> cube(dimension);
     ISODUAL_CUBE_FACE_INFO<NTYPE,NTYPE,NTYPE> lifted_cube(dimension+1);
 
-    ISODUAL_AMBIG_TABLE_ENTRY<NTYPE,IVOLV_TYPE,FACET_BITS_TYPE> 
+    ISODUAL_AMBIG_TABLE_ENTRY
+      <NTYPE,IVOLV_TYPE,IVOLP_TYPE,FACET_BITS_TYPE> 
       lower_isodual, upper_isodual;
 
     lower_isodual.Allocate
@@ -3658,6 +4191,7 @@ namespace IJKDUALTABLE {
 
     for (NTYPE j = 0; j < this->NumFacetVertices(); j++) {
       const NTYPE jv = this->FacetVertex(ifacet, j);
+      // *** Replace by IsPositive(jv)
       const TI_TYPE mask = (TI_TYPE(1) << jv);
       if ((mask & ientry) == 0) {
         num_zeros++;
@@ -3682,6 +4216,7 @@ namespace IJKDUALTABLE {
     else 
       { return(false); }
   }
+
 
   template <typename DTYPE, typename NTYPE, typename VTYPE>
   template <typename TI_TYPE>
