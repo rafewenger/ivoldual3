@@ -17,6 +17,7 @@ flag_report_error=True
 num_non_manifold = 0
 num_self_intersections = 0
 flag_integer_isovalues = False
+flag_subdivide = False
 isovalue_offsetI = 0.5
 isovalue_offsetII = 0.5
 outA_off = "outA.off"
@@ -28,6 +29,10 @@ default_test_list = [ 'aneurysm_30_255', 'engine_70_140',\
 
 # Supersampling allowed only on these data sets.
 supersample_test_list = [ 'fuel_70_150', 'neghip_70_200', 'silicium_80_160' ]
+
+# Subdivide allowed only on these data sets.
+subdivide_test_list = [ 'fuel_70_150', 'marschnerlobb_80_120', \
+                        'neghip_70_200', 'silicium_80_160' ]
 
 
 # *** Generic subroutines ***
@@ -166,7 +171,7 @@ def check_ivoldual_on_isovalues \
 # Check manifold condition on ivoldual run on data.
 def check_ivoldual_manifold_on_data\
         (ivoldual_prog, ivoldual_options, testname, testdata):
-    
+
     print()
     print("*** Processing file: ", testdata['filename'], \
           "  Isovalues: ", \
@@ -194,9 +199,10 @@ def check_ivoldual_manifold(ivoldual_prog, ivoldual_options, scalar_data, \
         report_file = sys.stdout
         for testname in test_list:
             if testname in scalar_data:
-                check_ivoldual_manifold_on_data \
-                    (ivoldual_prog, ivoldual_options,
-                     testname, scalar_data[testname])
+                if (not(flag_subdivide) or (testname in subdivide_test_list)):
+                    check_ivoldual_manifold_on_data \
+                        (ivoldual_prog, ivoldual_options,
+                         testname, scalar_data[testname])
             else:
                 print("Error. Unable to find test: ", testname)
                 
@@ -208,9 +214,10 @@ def check_ivoldual_manifold(ivoldual_prog, ivoldual_options, scalar_data, \
 
             for testname in test_list:
                 if testname in scalar_data:
-                    check_ivoldual_manifold_on_data \
-                        (ivoldual_prog, ivoldual_options, \
-                         testname, scalar_data[testname])
+                    if (not(flag_subdivide) or (testname in subdivide_test_list)):
+                        check_ivoldual_manifold_on_data \
+                            (ivoldual_prog, ivoldual_options, \
+                             testname, scalar_data[testname])
                 else:
                     print("Error. Unable to find test: ", testname)
 
@@ -301,6 +308,9 @@ if __name__ == "__main__":
 
     ivoldual_options = command_line_argument
 
+    if ("-subdivide" in ivoldual_options):
+        flag_subdivide = True
+        
     pathA,fileA = os.path.split(ivoldual_prog)
     if (pathA == ""):
         ivoldual_prog = "./" + ivoldual_prog;
