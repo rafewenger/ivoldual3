@@ -18,6 +18,7 @@ num_non_manifold = 0
 num_self_intersections = 0
 flag_integer_isovalues = False
 flag_subdivide = False
+flag_all_tests = True
 isovalue_offsetI = 0.5
 isovalue_offsetII = 0.5
 outA_off = "outA.off"
@@ -189,7 +190,20 @@ def check_ivoldual_manifold_on_data\
                      
     print()
 
+    
+def check_ivoldual_manifold_on_testlist \
+        (ivoldual_prog, ivoldual_options, scalar_data, test_list):
+    
+    for testname in test_list:
+        if testname in scalar_data:
+            if (not(flag_subdivide) or (testname in subdivide_test_list)):
+                check_ivoldual_manifold_on_data \
+                    (ivoldual_prog, ivoldual_options,
+                     testname, scalar_data[testname])
+        else:
+            print("Error. Unable to find test: ", testname)
 
+    
 def check_ivoldual_manifold(ivoldual_prog, ivoldual_options, scalar_data, \
                             test_list, report_filename):
 
@@ -197,29 +211,16 @@ def check_ivoldual_manifold(ivoldual_prog, ivoldual_options, scalar_data, \
 
     if (report_filename == ""):
         report_file = sys.stdout
-        for testname in test_list:
-            if testname in scalar_data:
-                if (not(flag_subdivide) or (testname in subdivide_test_list)):
-                    check_ivoldual_manifold_on_data \
-                        (ivoldual_prog, ivoldual_options,
-                         testname, scalar_data[testname])
-            else:
-                print("Error. Unable to find test: ", testname)
-                
+        check_ivoldual_manifold_on_testlist \
+            (ivoldual_prog, ivoldual_options, scalar_data, test_list)
     else:
         print("Creating report file: " + report_filename)
 
         with open(report_filename, 'w') as report_file:
             sys.stdout = report_file
 
-            for testname in test_list:
-                if testname in scalar_data:
-                    if (not(flag_subdivide) or (testname in subdivide_test_list)):
-                        check_ivoldual_manifold_on_data \
-                            (ivoldual_prog, ivoldual_options, \
-                             testname, scalar_data[testname])
-                else:
-                    print("Error. Unable to find test: ", testname)
+            check_ivoldual_manifold_on_testlist \
+                (ivoldual_prog, ivoldual_options, scalar_data, test_list)            
 
             report_summary()
 
@@ -275,6 +276,7 @@ if __name__ == "__main__":
         if (arg0 == '-testnames'):
             test_list = command_line_argument[1].split()
             command_line_argument.pop(0)
+            flag_all_tests = False
         elif (arg0 == '-trimesh_uniform'):
             flag_trimesh_uniform = True
             flag_all_tri = False
