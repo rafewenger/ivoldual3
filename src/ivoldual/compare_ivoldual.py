@@ -291,7 +291,7 @@ def usage_msg():
     print("  [-trimesh_uniform | -no_tri] [-skip_manifold_check]")
     print("  [-sort]")
     print("  [-integer_isovalues]")
-    print("  [-o {report filename}] [-usage]")
+    print("  [-o {report filename}] [-usage] [-list]")
 
     
 # Usage error
@@ -299,7 +299,13 @@ def usage_error():
     usage_msg();
     exit(-1)
 
+# List testnames
+def list_testnames(tlist):
+    print("Test names:")
+    for testname in tlist:
+        print("  ", testname)
 
+        
 # *** Main ***
 
 if __name__ == "__main__":
@@ -336,6 +342,9 @@ if __name__ == "__main__":
             command_line_argument.pop(0)
         elif (arg0 == '-usage'):
             usage_msg()
+            exit(0)
+        elif (arg0 == '-list'):
+            list_testnames(default_test_list)
             exit(0)
         else:
             print('Illegal option: ' + arg0)

@@ -238,7 +238,7 @@ def usage_msg():
     print("OPTIONS:")
     print("  [-testnames \"list of tests\"]")
     print("  [-integer_isovalues]")
-    print("  [-o {report filename}] [-usage]")
+    print("  [-o {report filename}] [-usage] [-list]")
 
     
 # Usage error
