@@ -192,7 +192,8 @@ def compare_ivoldual(ivoldual_progA, ivoldual_progB, testname,\
     compare_func.compareI(["-trimesh"])
     compare_func.compareI(["-subdivide"])
     compare_func.compareI(["-subdivide", "-trimesh"])
-    compare_func.compareI(["-split_hex"])
+    compare_func.compareI(["-subdivide", "-split_hex"])
+    compare_func.compareI(["-subdivide", "-add_outer_layer"])
     compare_func.compareI(["-subsample", "2"])
     if (testname in supersample_test_list):
         compare_func.compareI(["-supersample", "2"])
