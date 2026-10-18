@@ -1,6 +1,6 @@
 /// @file ijkdual_datastruct.h
 /// @brief Data structure definitions for ijkdual.
-/// - Version 0.3.0
+/// - Version 0.3.1
 
 /*
   IJK: Isosurface Jeneration Kode
@@ -34,7 +34,7 @@
 #include "ijkmerge.tpp"
 
 
-#include "ijkdualtable.txx"
+#include "ijkdualtable.tpp"
 
 #include "ijkdual_types.h"
 #include "ijkdual_constants.h"

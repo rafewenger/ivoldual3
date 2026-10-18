@@ -1,6 +1,6 @@
-/// @file ijkdualtable.txx
+/// @file ijkdualtable.tpp
 /// @brief Class containing dual lookup table of isosurface vertices.
-/// - Version 0.3.0
+/// - Version 0.3.1
 
 /*
   IJK: Isosurface Jeneration Kode

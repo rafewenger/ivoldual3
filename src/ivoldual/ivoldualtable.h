@@ -25,7 +25,7 @@
 #define _IVOLDUALTABLE_
 
 #include "ijkcube.tpp"
-#include "ijkdualtableX.txx"
+#include "ijkdualtableX.tpp"
 
 #include "ivoldual_types.h"
 

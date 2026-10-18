@@ -1,6 +1,6 @@
-/// @file ijkdualtableX.txx
+/// @file ijkdualtableX.tpp
 /// @brief Extended dual lookup tables of isosurface and interval volume vertices.
-/// - Version 0.3.0
+/// - Version 0.3.1
 
 /*
   IJK: Isosurface Jeneration Kode
@@ -25,7 +25,7 @@
 #define _IJKDUALTABLE_X_
 
 #include "ijklist.tpp"
-#include "ijkdualtable.txx"
+#include "ijkdualtable.tpp"
 
 #include <vector>
 
