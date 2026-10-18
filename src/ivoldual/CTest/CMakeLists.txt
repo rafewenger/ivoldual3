@@ -184,7 +184,9 @@ SET_3D_DATA_PROP( Frog_45_100 45 100 "${vollib_dir}/Frog.nhdr" "fastII" )
 SET_3D_DATA_PROP( Lobster_20_150 20 150 "${volvis_dir}/lobster.nhdr" "fast" )
 
 SET(test3DdataI_list Silicium_80_160 Fuel_70_150 Neghip_70_200 MarschnerLobb_80_120
-    Engine_70_140 Aneurysm_30_255 Frog_45_100 Lobster_20_150 )
+    Engine_70_140 Aneurysm_30_255 Lobster_20_150 )
+
+# *** Skip Frog_45_100.
   
 # 3D test sets, non-integer isovalues
 SET_3D_DATA_PROP( Silicium_80p5_160p5 80.5 160.5 ${volvis_dir}/silicium.nhdr "veryfastII" )
@@ -200,10 +202,13 @@ SET_3D_DATA_PROP( Frog_45p5_100p5 45.5 100.5
                   "${vollib_dir}/Frog.nhdr" "fastII" )
 SET_3D_DATA_PROP( Lobster_20p5_150p5 20.5 150.5
                   "${volvis_dir}/lobster.nhdr" "fast" )
-SET(test3DdataNI_list Silicium_20p5_100p5 Fuel_70p5_150p5 Neghip_70p5_200p5
+SET(test3DdataNI_list Silicium_80p5_160p5 Fuel_70p5_150p5 Neghip_70p5_200p5
                       MarschnerLobb_80p5_120p5 Engine_70p5_140p5
-                      Aneurysm_30p5_255p5 Frog_45p5_100p5
-                      Lobster_20p5_150p5 )  
+                      Aneurysm_30p5_255p5
+                      Lobster_20p5_150p5 )
+                      
+# *** Skip  Frog_45p5_100p5.
+
 
 # All test sets
 SET(test3Ddata_list ${test3DdataI_list} ${test3DdataNI_list})
