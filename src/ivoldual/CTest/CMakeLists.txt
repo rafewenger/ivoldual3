@@ -216,5 +216,8 @@ SET(testdata_list ${test3Ddata_list})
 
 ADD_COMPARISON_TEST_ON_ALL_DATA("" "")
 ADD_COMPARISON_TEST_ON_ALL_DATA("subsample" "-subsample 2")
+ADD_COMPARISON_TEST_ON_ALL_DATA("subdivide" "-subdivide")
+ADD_COMPARISON_TEST_ON_ALL_DATA("split_hex" "-subdivide -split_hex")
+ADD_COMPARISON_TEST_ON_ALL_DATA("add_outer_layer" "-subdivide -add_outer_layer")
 
 
