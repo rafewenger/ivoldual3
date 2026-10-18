@@ -156,9 +156,11 @@ def check_ivoldual_on_isovalues \
     check_manifold_func.SetArgList(ivoldual_options)
     check_manifold_func.check_manifold()
     check_manifold_func.check_manifoldI(["-trimesh"])
-    check_manifold_func.check_manifoldI(["-subsample", "2"])
-    if (testname in supersample_test_list):
-        check_manifold_func.check_manifoldI(["-supersample", "2"])
+
+# ivoldual program does not allow call to subsample or supersample with -subdivide.    
+#    check_manifold_func.check_manifoldI(["-subsample", "2"])
+#    if (testname in supersample_test_list):
+#        check_manifold_func.check_manifoldI(["-supersample", "2"])
 
         
 # Check manifold condition on ivoldual run on data.
@@ -244,6 +246,12 @@ def usage_error():
     usage_msg();
     exit(-1)
 
+# List testnames
+def list_testnames(tlist):
+    print("Test names:")
+    for testname in tlist:
+        print("  ", testname)
+        
 
 # *** Main ***
 
@@ -274,6 +282,9 @@ if __name__ == "__main__":
             command_line_argument.pop(0)
         elif (arg0 == '-usage'):
             usage_msg()
+            exit(0)
+        elif (arg0 == '-list'):
+            list_testnames(default_test_list)
             exit(0)
         else:
             print('Illegal option: ' + arg0)
