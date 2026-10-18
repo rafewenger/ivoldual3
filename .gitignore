@@ -28,3 +28,7 @@ src/*/*.nrrd
 # Ignore any files labeled garb or temp
 src/*/garb*
 src/*/temp*
+
+# Ignore __pycache__
+*/__pycache__
+*/*/__pycache__
