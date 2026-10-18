@@ -1,6 +1,6 @@
-/// @file ivoldual.cxx
+/// @file ivoldual.cpp
 /// @brief Generate interval volume in arbitrary dimensions using dual contouring.
-/// - Version 0.3.0
+/// - Version 0.3.1
 
 /*
   IJK: Isosurface Jeneration Kode

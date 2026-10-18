@@ -1,6 +1,6 @@
-/// @file ivoldual_reposition.cxx
+/// @file ivoldual_reposition.cpp
 /// @brief Reposition vertices for mesh quality optimization.
-/// - Version 0.3.0
+/// - Version 0.3.1
 
 /*
   IJK: Isosurface Jeneration Kode

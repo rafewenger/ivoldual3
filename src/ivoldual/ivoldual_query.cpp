@@ -1,10 +1,11 @@
-/// \file ivoldual_query.cxx
-/// Query routines for ivoldual.
+/// @file ivoldual_query.cpp
+/// @brief Query routines for ivoldual.
+/// - Version 0.3.1
 
 
 /*
   IJK: Isosurface Jeneration Kode
-  Copyright (C) 2017 Rephael Wenger
+  Copyright (C) 2017-2026 Rephael Wenger
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public License

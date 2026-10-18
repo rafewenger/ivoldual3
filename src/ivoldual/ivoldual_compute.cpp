@@ -1,6 +1,6 @@
-/// @file ivoldual_compute.cxx
+/// @file ivoldual_compute.cpp
 /// @brief Compute routines for ivoldual.
-/// - Version 0.3.0
+/// - Version 0.3.1
 
 
 /*

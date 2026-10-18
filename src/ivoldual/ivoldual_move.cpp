@@ -1,10 +1,10 @@
-/// @file ivoldual_move.cxx
+/// @file ivoldual_move.cpp
 /// @brief Routines for moving/repositioning interval volume vertices.
-/// - Version 0.3.0
+/// - Version 0.3.1
 
 /*
   IJK: Isosurface Jeneration Kode
-  Copyright (C) 2017-2027 Rephael Wenger
+  Copyright (C) 2017-2026 Rephael Wenger
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public License

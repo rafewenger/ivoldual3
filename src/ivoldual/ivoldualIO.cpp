@@ -1,6 +1,6 @@
-/// @file ivoldualIO.cxx
+/// @file ivoldualIO.cpp
 /// @brief IO routines for ivoldual
-/// - Version 0.3.0
+/// - Version 0.3.1
 
 /*
   IJK: Isosurface Jeneration Kode

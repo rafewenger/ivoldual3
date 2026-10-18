@@ -50,12 +50,12 @@ SET(CMAKE_CXX_FLAGS "-std=c++20")
 # *** DISABLED FOR NOW ***
 SET(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
-ADD_EXECUTABLE(ivoldual ivoldual_main.cxx ivoldual.cxx ivoldualIO.cxx
-                        ivoldual_datastruct.cxx ivoldual_triangulate.cxx 
-                        ivoldualtable.cxx 
-                        ivoldual_compute.cxx ivoldual_query.cxx 
-                        ivoldual_move.cxx ivoldual_reposition.cxx
-			ivoldual_divide_hex.cxx
+ADD_EXECUTABLE(ivoldual ivoldual_main.cpp ivoldual.cpp ivoldualIO.cpp
+                        ivoldual_datastruct.cpp ivoldual_triangulate.cpp
+                        ivoldualtable.cpp
+                        ivoldual_compute.cpp ivoldual_query.cpp
+                        ivoldual_move.cpp ivoldual_reposition.cpp
+			ivoldual_divide_hex.cpp
                         ../ijkdual/isodual.cxx
                         ../ijkdual/ijkdual_datastruct.cxx)
 

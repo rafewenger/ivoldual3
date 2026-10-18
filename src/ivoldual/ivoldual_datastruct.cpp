@@ -1,6 +1,6 @@
-/// @file ivoldual_datastruct.cxx
+/// @file ivoldual_datastruct.cpp
 /// @brief ivoldual data structures.
-/// - Version 0.3.0
+/// - Version 0.3.1
 
 /*
   IJK: Isosurface Jeneration Kode

@@ -1,6 +1,6 @@
-/// @file ivoldualtable.cxx
+/// @file ivoldualtable.cpp
 /// @brief ivoldual lookup table.
-/// - Version 0.3.0
+/// - Version 0.3.1
 
 /*
   IJK: Isosurface Jeneration Kode

@@ -1,6 +1,6 @@
-/// @file ivoldual_triangulate.cxx
+/// @file ivoldual_triangulate.cpp
 /// @brief Triangulate (tetrahedralize) interval volume hexahedra.
-/// - Version 0.3.0
+/// - Version 0.3.1
 
 /*
   IJK: Isosurface Jeneration Kode

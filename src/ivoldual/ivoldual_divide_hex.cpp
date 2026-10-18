@@ -1,6 +1,6 @@
-/// @file ivoldual_divide_hex.cxx
+/// @file ivoldual_divide_hex.cpp
 /// @brief Reposition vertices for mesh quality optimization.
-/// - Version 0.3.0
+/// - Version 0.3.1
 
 
 /*
