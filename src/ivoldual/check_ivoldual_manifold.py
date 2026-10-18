@@ -193,13 +193,20 @@ def check_ivoldual_manifold_on_data\
     
 def check_ivoldual_manifold_on_testlist \
         (ivoldual_prog, ivoldual_options, scalar_data, test_list):
-    
+
+    global flag_all_tests
+
     for testname in test_list:
         if testname in scalar_data:
-            if (not(flag_subdivide) or (testname in subdivide_test_list)):
-                check_ivoldual_manifold_on_data \
-                    (ivoldual_prog, ivoldual_options,
-                     testname, scalar_data[testname])
+            if flag_all_tests:
+                if flag_subdivide:
+                    if testname not in subdivide_test_list:
+                        # Skip testname
+                        continue
+
+            check_ivoldual_manifold_on_data \
+                (ivoldual_prog, ivoldual_options, \
+                 testname, scalar_data[testname])
         else:
             print("Error. Unable to find test: ", testname)
 
