@@ -22,8 +22,8 @@
 */
 
 
-#ifndef _IJKDUAL_EXTRACT_TXX_
-#define _IJKDUAL_EXTRACT_TXX_
+#ifndef _IJKDUAL_EXTRACT_TPP_
+#define _IJKDUAL_EXTRACT_TPP_
 
 #include "ijkgrid_macros.h"
 #include "ijkdual_types.h"

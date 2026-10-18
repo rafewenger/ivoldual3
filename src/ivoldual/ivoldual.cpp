@@ -30,7 +30,7 @@
 #include "ijkdual.tpp"
 #include "ijkdual_extract.tpp"
 #include "ijkdual_position.tpp"
-#include "ijkdual_query.txx"
+#include "ijkdual_query.tpp"
 
 #include "ivoldual_ivolpoly.tpp"
 

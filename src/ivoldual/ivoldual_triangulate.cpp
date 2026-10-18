@@ -23,7 +23,7 @@
 
 #include "ijktriangulate.txx"
 
-#include "ijkdual_triangulate.txx"
+#include "ijkdual_triangulate.tpp"
 
 #include "ivoldual_triangulate.h"
 

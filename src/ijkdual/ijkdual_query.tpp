@@ -1,6 +1,6 @@
-/// @file ijkdual_query.h
+/// @file ijkdual_query.tpp
 /// @brief Query routines for ijkdual.
-/// - Version 0.3.0
+/// - Version 0.3.1
 
 /*
   IJK: Isosurface Jeneration Kode

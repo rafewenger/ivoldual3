@@ -1,4 +1,4 @@
-/// @file ijkdual_triangulate.txx
+/// @file ijkdual_triangulate.tpp
 /// @brief Triangulation routines.
 /// - Version 0.3.1
 
@@ -22,8 +22,8 @@
 */
 
 
-#ifndef _IJKDUAL_TRIANGULATE_TXX_
-#define _IJKDUAL_TRIANGULATE_TXX_
+#ifndef _IJKDUAL_TRIANGULATE_TPP_
+#define _IJKDUAL_TRIANGULATE_TPP_
 
 #include "ijkcoord.tpp"
 #include "ijkinterpolate.tpp"

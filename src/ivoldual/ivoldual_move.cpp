@@ -24,7 +24,7 @@
 
 #include "ivoldual_move.h"
 
-#include "ijkdual_query.txx"
+#include "ijkdual_query.tpp"
 
 // *****************************************************************
 // MOVE VERTEX TO CUBE CENTER

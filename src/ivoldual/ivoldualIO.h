@@ -31,7 +31,7 @@
 #include "ijkgrid_nrrd.tpp"
 #include "ijkstring.tpp"
 
-#include "ijkdualIO.txx"
+#include "ijkdualIO.tpp"
 
 #include "ivoldual_types.h"
 #include "ivoldual_datastruct.h"
