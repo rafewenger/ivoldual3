@@ -1,6 +1,6 @@
-/// @file ivoldual_ivolpoly.txx
+/// @file ivoldual_ivolpoly.tpp
 /// @brief Templates for extracting interval volume patches from a polyhedron.
-/// - Version 0.3.0
+/// - Version 0.3.1
 
 /*
   IJK: Isosurface Jeneration Kode

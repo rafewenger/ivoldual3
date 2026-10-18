@@ -23,7 +23,7 @@
 
 #include "ivoldual_datastruct.h"
 #include "ijkgrid_macros.h"
-#include "ivoldual_ivolpoly.txx"
+#include "ivoldual_ivolpoly.tpp"
 #include "ivoldualtable.h"
 
 // **************************************************

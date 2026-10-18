@@ -32,7 +32,7 @@
 #include "ijkdual_position.txx"
 #include "ijkdual_query.txx"
 
-#include "ivoldual_ivolpoly.txx"
+#include "ivoldual_ivolpoly.tpp"
 
 #include "ivoldual.h"
 #include "ivoldual_datastruct.h"
