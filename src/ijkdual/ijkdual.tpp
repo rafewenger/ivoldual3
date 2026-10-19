@@ -38,44 +38,6 @@
 #include "ijkdual_datastruct.h"
 
 
-namespace {
-
-  // *** Local (old) version of split_dual_isovert.
-  // *** Global (new) version requires list_loc_of_adjacent_cube
-  // *** in GRID_CUBE_ISOVERT.
-  /// Split dual isosurface vertices.
-  /// @param isopoly_cube[] isopoly_cube[j*num_polyv+k] is the cube containing
-  ///    the k'th vertex of isosurface polytope j
-  /// @param facet_vertex[] facet_vertex[j*num_polyv+k] is the location
-  ///    of the k'th vertex on isosurface polytope j.
-  /// @param cube_list[] List of cubes containing isosurface vertices.
-  /// @param iso_vlist[] List of isosurface vertices.
-  ///    isosurface patch in iso_vlist_cube[i] containing vertex i.
-  template <typename GRID_TYPE, typename ISODUAL_TABLE, typename SCALAR_TYPE,
-            typename CINDEX_TYPE, typename FACETV_TYPE,
-            typename GRID_CUBE_TYPE, 
-            typename ISOV_TYPE, typename ISOV_INDEX_TYPE,  typename NTYPE>
-  void split_dual_isovert_local
-  (const GRID_TYPE & scalar_grid, const ISODUAL_TABLE & isodual_table,
-   const SCALAR_TYPE isovalue,
-   const std::vector<CINDEX_TYPE> & isopoly_cube, 
-   const std::vector<FACETV_TYPE> & facet_vertex,
-   std::vector<GRID_CUBE_TYPE> & cube_list,
-   std::vector<ISOV_TYPE> & iso_vlist, 
-   std::vector<ISOV_INDEX_TYPE> & isopoly,
-   NTYPE & num_split)
-  {
-    compute_cube_isotable_info
-      (scalar_grid, isodual_table, isovalue, cube_list);
-
-    IJK::split_dual_isovert
-      (isodual_table, isopoly_cube, facet_vertex, cube_list, 
-       iso_vlist, isopoly, num_split);
-
-  }
-  
-}
-
 /// ijkdual template functions
 namespace IJKDUAL {
 
