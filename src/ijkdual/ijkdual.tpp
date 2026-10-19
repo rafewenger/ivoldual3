@@ -196,13 +196,6 @@ namespace IJKDUAL {
         num_non_ambig_ridge_cubes_changed;
     }
     else {
-      /* OBSOLETE?
-      split_dual_isovert_local
-        (scalar_grid, isodual_table, isovalue, 
-         isopoly_cube, facet_vertex, cube_isov_list,
-         iso_vlist, isopoly_vert, num_split);
-      */
-
       split_dual_isovert
         (scalar_grid, isodual_table, isovalue, 
          isopoly_cube, facet_vertex, cube_isov_list,

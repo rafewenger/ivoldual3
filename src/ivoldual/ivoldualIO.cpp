@@ -29,13 +29,6 @@
 #include <sstream>
 #include <string>
 
-/* OBSOLETE
-#include "ijkcommand_line.txx"
-#include "ijkIO.txx"
-#include "ijkmesh.txx"
-#include "ijkstring.txx"
-#include "ijkprint.txx"
-*/
 #include "ijkcommand_line.tpp"
 #include "ijkIO.tpp"
 #include "ijkmesh.tpp"

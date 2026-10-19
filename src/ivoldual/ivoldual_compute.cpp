@@ -59,12 +59,6 @@ void IVOLDUAL::compute_hexahedron_Jacobian_determinant
   const int POSITIVE_ORIENTATION(1);
   IJK::CUBE_FACE_INFO<int,int,int> cube(DIM3);
 
-  /* OBSOLETE
-  IJK::compute_hexahedron_Jacobian_determinant_3D
-    (hex_vert, ihex, POSITIVE_ORIENTATION, vertex_coord, cube, icorner,
-     Jacobian_determinant);
-  */
-
   IJK::compute_Jacobian_determinant_at_hex_vertex_3D
     (hex_vert, ihex, POSITIVE_ORIENTATION, vertex_coord, cube, icorner,
      Jacobian_determinant);

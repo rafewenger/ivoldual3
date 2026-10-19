@@ -24,9 +24,6 @@
 
 #include <iostream>
 
-/* OBSOLETE
-#include "isodual.h"
-*/
 #include "ivoldualIO.h"
 #include "ivoldual.h"
 
@@ -35,9 +32,6 @@
 
 using namespace IJK;
 using namespace IJKDUAL;
-/* OBSOLETE
-using namespace ISODUAL;
-*/
 using namespace IVOLDUAL;
 
 using namespace std;
@@ -120,13 +114,6 @@ int main(int argc, char **argv)
     construct_interval_volume
       (io_info, ivoldual_data, dualiso_time, io_time, dualiso_info);
 
-    /* OBSOLETE.  MOVED TO report_ivol_info.
-    // print out total number of changes for eliminating non-manifold
-    if (io_info.flag_rm_non_manifold) {
-      report_non_manifold_changes(dualiso_info);
-    }
-    */
-    
     if (io_info.flag_report_time) {
 
       time_t end_time;

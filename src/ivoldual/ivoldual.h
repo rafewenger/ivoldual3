@@ -33,9 +33,6 @@
 
 #include <string>
 
-/* OBSOLETE
-#include "ijk.txx"
-*/
 #include "ijk.tpp"
 
 #include "ivoldual_types.h"
