@@ -28,7 +28,7 @@
 
 #include "ijkcoord.tpp"
 #include "ijkinterpolate.tpp"
-#include "ijkisopoly.txx"
+#include "ijkisopoly.tpp"
 #include "ijkscalar_grid.tpp"
 
 

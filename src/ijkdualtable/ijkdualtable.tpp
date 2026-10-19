@@ -2027,7 +2027,7 @@ namespace IJKDUALTABLE {
      *    if cube has more than one ambiguous facet.
      *  - Undefined, if cube has no ambiguous facets.
      *  @pre Cube has at least one ambiguous facet.
-     *  @param[out] orth_dir Direction orthgonal to ambiguous facet.
+     *  @param[out] orth_dir Direction orthogonal to ambiguous facet.
      *  @param[out] side Side of cube. 0 or 1.
      */
     template <typename IT_TYPE2, typename DTYPE2,

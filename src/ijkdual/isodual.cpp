@@ -24,7 +24,7 @@
 
 
 #include "ijkisocoord.tpp"
-#include "ijkisopoly.txx"
+#include "ijkisopoly.tpp"
 #include "ijkmesh.tpp"
 #include "ijktime.tpp"
 

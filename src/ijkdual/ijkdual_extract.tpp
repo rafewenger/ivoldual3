@@ -28,7 +28,7 @@
 #include "ijkgrid_macros.h"
 #include "ijkdual_types.h"
 
-#include "ijkisopoly.txx"
+#include "ijkisopoly.tpp"
 #include "ijkmerge.tpp"
 #include "ijktime.tpp"
 
@@ -39,13 +39,15 @@ namespace IJKDUAL {
   // EXTRACT ROUTINES
   // ***************************************************
 
-  /// Extract isosurface polytopes.
-  /// Returns list representing isosurface polytopes
-  /// @param scalar_grid = scalar grid data
-  /// @param isovalue = isosurface scalar value
-  /// @param iso_poly[] = vector of isosurface polygope vertices
-  ///   iso_simplices[numv_per_poly*ip+k] = 
-  ///     cube containing k'th vertex of polytope ip.
+  /*!
+   *  @brief Extract isosurface polytopes.
+   *  - Returns list representing isosurface polytopes
+   *  @param scalar_grid = scalar grid data
+   *  @param isovalue = isosurface scalar value
+   *  @param iso_poly[] = vector of isosurface polygope vertices
+   *    iso_simplices[numv_per_poly*ip+k] = 
+   *      cube containing k'th vertex of polytope ip.
+   */
   template <typename GTYPE, typename STYPE, typename INFO_TYPE>
   void extract_dual_isopoly
   (const GTYPE & scalar_grid, const STYPE isovalue, 
@@ -100,7 +102,7 @@ namespace IJKDUAL {
     if (scalar_grid.NumCubeVertices() < 1) { return; }
 
     IJK_FOR_EACH_INTERIOR_GRID_EDGE(iend0, edge_dir, scalar_grid, VERTEX_INDEX) {
-      extract_dual_isopoly_around_bipolar_edge_E
+      extract_dual_isopoly_around_bipolar_edge_I
         (scalar_grid, isovalue, iend0, edge_dir, iso_poly, dual_edge);
     }
 
@@ -176,7 +178,7 @@ namespace IJKDUAL {
     if (scalar_grid.NumCubeVertices() < 1) { return; }
 
     IJK_FOR_EACH_INTERIOR_GRID_EDGE(iend0, edge_dir, scalar_grid, VERTEX_INDEX) {
-      extract_dual_isopoly_around_bipolar_edge_E
+      extract_dual_isopoly_around_bipolar_edge_I
         (scalar_grid, isovalue, iend0, edge_dir, iso_poly, facet_vertex,
          dual_edge);
     }

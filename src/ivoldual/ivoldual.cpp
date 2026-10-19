@@ -22,7 +22,7 @@
 */
 
 
-#include "ijkisopoly.txx"
+#include "ijkisopoly.tpp"
 #include "ijkmesh.tpp"
 #include "ijkmesh_datastruct.tpp"
 #include "ijktime.tpp"
@@ -1231,6 +1231,45 @@ void IVOLDUAL::split_dual_ivolvert
   compute_num_splitB(ivoldual_table, cube_list, num_split);
 }
 
+namespace {
+
+  // *** Local version of is_ambiguous_cube_facet_on_grid_boundary.
+  // *** Required because IVOLDUAL_CUBE_TABLE_DOUBLE does not currently
+  // *** support GetAmbiguousFacet() and does not set
+  // *** ISODUAL_TABLE_ENTRY::index_of_some_ambiguous_facet.
+  //
+  // Return true if ambiguous cube facet is on grid boundary.
+  // @pre Cube has one ambiguous facet.
+  // @param[out] orth_dir Direction orthogonal to ambiguous facet.
+  // @param[out] side  Side (0 or 1) of cube containing ambiguous facet.
+  template <typename GRID_TYPE, typename ISODUAL_TABLE,
+            typename CUBE_INDEX_TYPE, typename TABLE_INDEX_TYPE,
+            typename DIR_TYPE, typename SIDE_TYPE>
+  bool is_ambiguous_ivoldual_cube_facet_on_grid_boundary
+  (const GRID_TYPE & grid,
+   const ISODUAL_TABLE & isodual_table,
+   const CUBE_INDEX_TYPE cube_index,
+   const TABLE_INDEX_TYPE table_index,
+   DIR_TYPE & orth_dir,
+   SIDE_TYPE & side)
+  {
+    typedef typename GRID_TYPE::DIMENSION_TYPE DTYPE;
+    typedef typename ISODUAL_TABLE::FACET_BITS_TYPE FACET_BITS_TYPE;
+    typedef typename GRID_TYPE::NUMBER_TYPE NUM_TYPE;
+
+    const DTYPE dimension = isodual_table.Dimension();
+    const NUM_TYPE num_cube_facets = isodual_table.NumPolyFacets();
+
+    const FACET_BITS_TYPE facet_set = 
+      isodual_table.AmbiguousFacetBits(table_index);
+    const NUM_TYPE kf = get_first_one_bit(facet_set, num_cube_facets);
+    orth_dir = IJK::cube_facet_orth_dir(dimension, kf);
+    side = IJK::cube_facet_side(dimension, kf);
+
+    return(grid.IsCubeFacetOnGridBoundary(cube_index, orth_dir, side));
+  }
+
+}
 
 void IVOLDUAL::split_non_manifold_ivolv_pairs_ambig
 (const DUALISO_GRID & grid,
@@ -1255,7 +1294,7 @@ void IVOLDUAL::split_non_manifold_ivolv_pairs_ambig
       int side;
       const VERTEX_INDEX cube_index0 = cube_list[i0].cube_index;
       
-      if (IJK::is_ambiguous_cube_facet_on_grid_boundary
+      if (is_ambiguous_ivoldual_cube_facet_on_grid_boundary
           (grid, ivoldual_table, cube_index0, it0, orth_dir, side)) {
 
         // Change table index of cube i0 opposite table
@@ -1325,7 +1364,7 @@ void IVOLDUAL::split_non_manifold_ivolv_pairs_ambigB
       int side;
       const VERTEX_INDEX cube_index0 = cube_list[i0].cube_index;
       
-      if (IJK::is_ambiguous_cube_facet_on_grid_boundary
+      if (is_ambiguous_ivoldual_cube_facet_on_grid_boundary
           (grid, ivoldual_table, cube_index0, it0, orth_dir, side)) {
 
         // Change table index of cube i0 opposite table
@@ -1395,7 +1434,7 @@ void IVOLDUAL::split_non_manifold_ivolv_pairs_ambigC
       const VERTEX_INDEX cube_index0 = cube_list[i0].cube_index;
 
       const bool flag_on_boundary = 
-        IJK::is_ambiguous_cube_facet_on_grid_boundary
+        is_ambiguous_ivoldual_cube_facet_on_grid_boundary
         (grid, ivoldual_table, cube_index0, it0, orth_dir, side);
         
       if (flag_on_boundary) {
@@ -1472,7 +1511,7 @@ void IVOLDUAL::split_non_manifold_ivolv_pairs_ambigD
       const VERTEX_INDEX cube_index0 = cube_list[i0].cube_index;
 
       const bool flag_on_boundary = 
-        IJK::is_ambiguous_cube_facet_on_grid_boundary
+        is_ambiguous_ivoldual_cube_facet_on_grid_boundary
         (grid, ivoldual_table, cube_index0, it0, orth_dir, side);
         
       if (flag_on_boundary) {

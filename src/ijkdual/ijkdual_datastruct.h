@@ -29,7 +29,7 @@
 
 #include "ijk.tpp"
 #include "ijkcoord.tpp"
-#include "ijkisopoly.txx"
+#include "ijkisopoly.tpp"
 #include "ijkscalar_grid.tpp"
 #include "ijkmerge.tpp"
 
