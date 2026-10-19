@@ -2,13 +2,13 @@
  *  @file ijkisopoly.tpp
  *  @brief ijk templates for extracting an isosurface patch 
  *    from a polytope.
- *  - Version 0.6.1
+ *  - Version 0.6.0
  */
 
 
 /*
   IJK: Isosurface Jeneration Kode
-  Copyright (C) 2009-2026 Rephael Wenger
+  Copyright (C) 2009-2025 Rephael Wenger
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public License
@@ -2708,42 +2708,6 @@ namespace IJK {
     { t.list_loc_of_adjacent_cube };
   };
 
-
-  /*!
-   *  @brief GRID_CUBE_ISOVERT_X and cube_coord.
-   *  - Contains fields cube_coord and list_loc_of_adjacent_cube.
-   */
-  template <const int GRID_DIMENSION, typename CI_TYPE, typename TI_TYPE, 
-            typename NTYPE, typename ISOV_TYPE, typename COORD_TYPE>
-  class GRID_CUBE_ISOVERT_X_AND_CUBE_COORD:public
-  GRID_CUBE_ISOVERT_AND_CUBE_COORD
-  <GRID_DIMENSION, CI_TYPE, TI_TYPE, NTYPE, ISOV_TYPE, COORD_TYPE>
-  {
-    
-  public:
-
-    /*!
-     *  - Location in list of some adjacent cube that shares
-     *    an ambiguous facet with this->cube_index,
-     *    if such a cube exist.
-     */
-    CI_TYPE list_loc_of_adjacent_cube;
-
-    /// @brief True if this->cube_index and adjacent cube
-    ///   share an ambiguous facet.
-    bool is_adjacent_cube_set;
-
-    GRID_CUBE_ISOVERT_X_AND_CUBE_COORD()
-    { is_adjacent_cube_set = false; }
-
-    bool IsAdjacentCubeSet() const
-    { return is_adjacent_cube_set; }
-
-    CI_TYPE ListLocOfAdjacentCube() const
-    { return list_loc_of_adjacent_cube; }
-  };
-
-    
   // ***************************************************************
   //! @name COMPUTE GRID_CUBE_ISOVERT INFORMATION
   // ***************************************************************
