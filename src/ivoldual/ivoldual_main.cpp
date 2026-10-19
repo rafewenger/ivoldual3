@@ -24,7 +24,9 @@
 
 #include <iostream>
 
+/* OBSOLETE
 #include "isodual.h"
+*/
 #include "ivoldualIO.h"
 #include "ivoldual.h"
 
@@ -33,7 +35,9 @@
 
 using namespace IJK;
 using namespace IJKDUAL;
+/* OBSOLETE
 using namespace ISODUAL;
+*/
 using namespace IVOLDUAL;
 
 using namespace std;
