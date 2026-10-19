@@ -22,13 +22,13 @@
 */
 
 
+#include "ijkgrid_macros.h"
+
 #include "ijkisopoly.tpp"
 #include "ijkinterpolate.tpp"
 #include "ijkmesh.tpp"
 #include "ijkmesh_datastruct.tpp"
 #include "ijktime.tpp"
-
-#include "ijkdual_extract.tpp"
 
 #include "ivoldual_ivolpoly.tpp"
 
