@@ -23,14 +23,12 @@
 
 
 #include "ijkisopoly.tpp"
+#include "ijkinterpolate.tpp"
 #include "ijkmesh.tpp"
 #include "ijkmesh_datastruct.tpp"
 #include "ijktime.tpp"
 
-#include "ijkdual.tpp"
 #include "ijkdual_extract.tpp"
-#include "ijkdual_position.tpp"
-#include "ijkdual_query.tpp"
 
 #include "ivoldual_ivolpoly.tpp"
 
