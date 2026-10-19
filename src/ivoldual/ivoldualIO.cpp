@@ -1731,6 +1731,7 @@ void IVOLDUAL::write_dual_quad_tri_mesh
     }
   }
 
+  /* OBSOLETE
   if (output_info.flag_output_iv) {
     cerr << "Warning: Writing quad/tri mesh not implemented"
          << endl
@@ -1738,6 +1739,7 @@ void IVOLDUAL::write_dual_quad_tri_mesh
          << endl;
     cerr << "Skipping output of OpenInventor .iv format." << endl;
   }
+  */
 }
 
 
@@ -1839,6 +1841,7 @@ void IVOLDUAL::write_dual_tri_mesh_color_vertices
     cerr << "Skipping output of .ply format." << endl;
   }
 
+  /* OBSOLETE
   if (output_info.flag_output_iv) {
     cerr << "Warning: Writing tri mesh with colored vertices not"
          << endl
@@ -1846,6 +1849,7 @@ void IVOLDUAL::write_dual_tri_mesh_color_vertices
          << endl;
     cerr << "Skipping output of OpenInventor .iv format." << endl;
   }
+  */
 }
 
 void IVOLDUAL::write_dual_tri_mesh_color_vertices
@@ -1954,6 +1958,7 @@ void IVOLDUAL::write_dual_quad_tri_mesh_color_vertices
     cerr << "Skipping output of .ply format." << endl;
   }
 
+  /* OBSOLETE
   if (output_info.flag_output_iv) {
     cerr << "Warning: Writing quad/tri mesh with colored vertices not"
          << endl
@@ -1961,6 +1966,7 @@ void IVOLDUAL::write_dual_quad_tri_mesh_color_vertices
          << endl;
     cerr << "Skipping output of OpenInventor .iv format." << endl;
   }
+  */
 }
 
 
@@ -2701,6 +2707,48 @@ void IVOLDUAL::IO_INFO::SetOutputFilename
 }
 
 
+/* OBSOLETE
+void IVOLDUAL::IO_INFO::ConstructOutputFilenames(const int i)
+{
+    typedef typename std::vector<std::string>::size_type SIZE_TYPE;
+
+    using std::string;
+
+    string basename, suffix;
+    string ofilename;
+
+    // create output filename
+    if (this->output_basename == "") {
+
+      const string fname =
+        std::filesystem::path(input_filename).filename().string();
+
+      // construct output filename
+      IJK::split_string(fname, '.', basename, suffix);
+      if (suffix == "nrrd" || suffix == "nhdr")
+        { this->output_basename = basename; }
+      else { this->output_basename = string(input_filename); }
+    }
+
+    this->output_basename =
+      this->output_filename_prefix + this->output_basename +
+      this->output_filename_suffix;
+
+    if (flag_label_with_isovalue || isovalue_string.size() > 2) {
+      if (SIZE_TYPE(i+1) < isovalue_string.size()) {
+        this->output_basename +=
+          string(".") + string("ivol=") + isovalue_string[i] +
+          string("_") + isovalue_string[i+1];
+      }
+    }
+
+    this->output_off_filename = this->output_basename + ".off";
+    this->output_ply_filename = this->output_basename + ".ply";
+    this->output_vtk_filename = this->output_basename + ".vtk";
+}
+*/
+
+/* OBSOLETE
 void IVOLDUAL::IO_INFO::ConstructOutputFilenames(const int i)
 {
   string prefix, suffix;
@@ -2733,6 +2781,7 @@ void IVOLDUAL::IO_INFO::ConstructOutputFilenames(const int i)
   output_ply_filename = ofilename + ".ply";
   output_vtk_filename = ofilename + ".vtk";
 }
+*/
 
 
 
@@ -2740,6 +2789,7 @@ void IVOLDUAL::IO_INFO::ConstructOutputFilenames(const int i)
 // class OUTPUT_INFO
 // **************************************************
 
+/* OBSOLETE
 void IVOLDUAL::OUTPUT_INFO::Init()
 {
   dimension = 3;
@@ -2750,14 +2800,16 @@ void IVOLDUAL::OUTPUT_INFO::Init()
   shrink_factor = 1;
   grid_spacing.resize(3,1);
 }
+*/
 
-
+/* OBSOLETE
 void IVOLDUAL::OUTPUT_INFO::SetDimension
 (const int d, const int numv_per_isopoly)
 {
   dimension = d;
   num_vertices_per_isopoly = numv_per_isopoly;
 }
+*/
 
 
 namespace {
@@ -2797,15 +2849,19 @@ void IVOLDUAL::set_output_info
     output_info.num_vertices_per_isopoly = 4;
   }
 
+  /* OBSOLETE
   output_info.grow_factor = 1;
   if (io_info.flag_subsample) 
     { output_info.grow_factor = io_info.subsample_resolution; }
+  */
 
+  /* OBSOLETE
   output_info.shrink_factor = 1;
   if (io_info.flag_supersample) 
     { output_info.shrink_factor = io_info.supersample_resolution; }
   else if (io_info.flag_subdivide) 
     { output_info.shrink_factor = 2; }
+  */
 
   output_info.grid_spacing.clear();
   output_info.grid_spacing.resize(io_info.grid_spacing.size());

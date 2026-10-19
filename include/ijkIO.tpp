@@ -354,12 +354,14 @@ namespace IJK {
     std::string output_ply_filename;
     std::string output_fig_filename;
     std::string output_iv_filename;
+    std::string output_vtk_filename;
     std::string write_isov_filename;
 
     // Flags.
     bool flag_output_off;    ///< Output Geomview .off file.
     bool flag_output_ply;    ///< Output PLY file.
     bool flag_output_fig;    ///< Output FIG file.
+    bool flag_output_vtk;    ///< Output VTK file.
     bool flag_use_stdout;
     bool flag_silent;
     bool flag_no_comments;
@@ -4467,7 +4469,7 @@ namespace IJK {
   // OUTPUT_PARAM_BASE MEMBER FUNCTIONS
   // *****************************************************************
 
-  // Initialize ISO_IO_PARAM_BASE.
+  // Initialize OUTPUT_PARAM_BASE.
   template <typename _COORD_TYPE, typename _OTHER_DATA>
   void OUTPUT_PARAM_BASE<_COORD_TYPE,_OTHER_DATA>::Init()
   {

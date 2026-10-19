@@ -29,6 +29,8 @@
 
 #include "ijk.tpp"
 #include "ijkgrid_nrrd.tpp"
+#include "ijkIO.tpp"
+#include "ijkisoIO.tpp"
 #include "ijkstring.tpp"
 
 #include "ijkdualIO.tpp"
@@ -157,6 +159,67 @@ namespace IVOLDUAL {
   // OUTPUT INFORMATION
   // **************************************************
 
+  /// Interval volume output data.
+  class IVOL_OUTPUT_DATA:public IVOLDUAL_DATA_FLAGS {
+
+  public:
+    /* OBSOLETE
+    bool flag_interval_volume;
+    */
+    int num_vertices_per_isopoly;
+    bool flag_report_all_ivol_poly;
+    bool use_triangle_mesh;
+    bool is_flag_orient_in_set;
+    /* OBSOLETE
+    bool flag_orient_in;
+    bool flag_rm_non_manifold;
+    */
+    std::string report_isov_filename;
+    std::string report_ivol_poly_filename;
+
+    IVOL_OUTPUT_DATA():
+      /* OBSOLETE
+      flag_interval_volume(true),
+      */
+      num_vertices_per_isopoly(8),
+      is_flag_orient_in_set(false)
+      /* OBSOLETE
+      flag_report_all_ivol_poly(false),
+      is_flag_orient_in_set(false),
+      flag_rm_non_manifold(false)
+      */
+    {}
+      
+  };
+    
+  /// Output information.
+  class OUTPUT_INFO:
+    public IJK::ISO_OUTPUT_PARAM_BASE
+  <SCALAR_TYPE,COORD_TYPE,IVOL_OUTPUT_DATA>
+  {
+  public:
+    OUTPUT_INFO() {};
+    ~OUTPUT_INFO() {};
+
+    void SetDimension(const int d, const int numv_per_isopoly)
+    {
+      this->dimension = d;
+      this->num_vertices_per_isopoly = numv_per_isopoly;
+    }
+
+    template <typename IO_INFO_TYPE>
+    void Set(const IO_INFO_TYPE & io_info)
+    {
+      // TO BE CONTINUED...
+    }
+
+    void ConstructOutputFilenames(const int i)
+    { this->IJK::ISO_OUTPUT_PARAM_BASE
+        <SCALAR_TYPE,COORD_TYPE,IVOL_OUTPUT_DATA>
+        ::ConstructOutputFilenames(i, true); }
+  };
+    
+  /* OBSOLETE
   /// Output information.
   class OUTPUT_INFO:public IO_INFO {
 
@@ -179,6 +242,8 @@ namespace IVOLDUAL {
 
     void SetDimension(const int d, const int numv_per_isopoly);
   };
+  */
+ 
 
   // **************************************************
   // TIMING FUNCTIONS/CLASSES
