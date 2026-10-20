@@ -102,6 +102,10 @@ namespace IVOLDUAL {
     /// Return number of selected output formats.
     int NumOutputFormats() const;
 
+    /// @brief Set from IO_INFO
+    void Set(const IO_INFO & io_param)
+    { IO_INFO::operator = (io_param); }
+    
     /* OBSOLETE
     /// Set output format to output_format.
     /// - Note: More than one output format may be set.
@@ -240,14 +244,29 @@ namespace IVOLDUAL {
     {}
       
   };
-    
+
+  /* OBSOLETE
   /// Output information.
   class OUTPUT_INFO:
     public IJK::ISO_OUTPUT_PARAM_BASE<SCALAR_TYPE,COORD_TYPE,
-                                      IVOL_OUTPUT_DATA>
+                                      IVOL_IO_INFO>
+  */
+  class OUTPUT_INFO:public IO_INFO
   {
+
   public:
-    OUTPUT_INFO() {};
+    int num_vertices_per_isopoly;
+    bool flag_report_all_ivol_poly;
+    bool use_triangle_mesh;
+    bool is_flag_orient_in_set;
+    std::string report_isov_filename;
+    std::string report_ivol_poly_filename;
+
+  public:
+    OUTPUT_INFO():
+      num_vertices_per_isopoly(8),
+      is_flag_orient_in_set(false)      
+    {};
     ~OUTPUT_INFO() {};
 
     void SetDimension(const int d, const int numv_per_isopoly)
@@ -256,19 +275,10 @@ namespace IVOLDUAL {
       this->num_vertices_per_isopoly = numv_per_isopoly;
     }
 
-    /* OBSOLETE
-    template <typename IO_INFO_TYPE>
-    void Set(const IO_INFO_TYPE & io_info)
-    {
-      // TO BE CONTINUED...
-    }
-    */
-
     void ConstructOutputFilenames(const int i)
-    { this->IJK::ISO_OUTPUT_PARAM_BASE
-        <SCALAR_TYPE,COORD_TYPE,IVOL_OUTPUT_DATA>
-        ::ConstructOutputFilenames(i, true); }
+    { this->IO_INFO::ConstructOutputFilenames(i, true); }
   };
+
     
   /* OBSOLETE
   /// Output information.

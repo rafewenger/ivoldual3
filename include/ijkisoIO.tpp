@@ -333,6 +333,7 @@ namespace IJK {
     this->output_off_filename = this->output_basename + ".off";
     this->output_ply_filename = this->output_basename + ".ply";
     this->output_fig_filename = this->output_basename + ".fig";
+    this->output_vtk_filename = this->output_basename + ".vtk";
     this->output_iv_filename = this->output_basename + ".iv";
   }
 

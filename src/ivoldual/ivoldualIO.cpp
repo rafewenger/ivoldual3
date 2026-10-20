@@ -2862,6 +2862,13 @@ void IVOLDUAL::set_output_info
 {
   output_info.Set(io_info);
 
+  // *** DEBUG ***
+  using namespace std;
+  cerr << "io_info.flag_report_all_ivol_poly: "
+       << int(io_info.flag_report_all_ivol_poly) << endl;    
+  cerr << "output_info.flag_report_all_ivol_poly: "
+       << int(output_info.flag_report_all_ivol_poly) << endl;
+  
   if (output_info.use_triangle_mesh) {
     output_info.num_vertices_per_isopoly = 4;
   }

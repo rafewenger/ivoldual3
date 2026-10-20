@@ -4484,6 +4484,7 @@ namespace IJK {
     flag_output_off = false;
     flag_output_ply = false;
     flag_output_fig = false;
+    flag_output_vtk = false;
     flag_use_stdout = false;
     flag_silent = false;
     flag_no_comments = false;
