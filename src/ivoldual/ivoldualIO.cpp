@@ -1738,15 +1738,6 @@ void IVOLDUAL::write_dual_quad_tri_mesh
     }
   }
 
-  /* OBSOLETE
-  if (output_info.flag_output_iv) {
-    cerr << "Warning: Writing quad/tri mesh not implemented"
-         << endl
-         << "  for OpenInventor .iv format." 
-         << endl;
-    cerr << "Skipping output of OpenInventor .iv format." << endl;
-  }
-  */
 }
 
 
@@ -1848,16 +1839,8 @@ void IVOLDUAL::write_dual_tri_mesh_color_vertices
     cerr << "Skipping output of .ply format." << endl;
   }
 
-  /* OBSOLETE
-  if (output_info.flag_output_iv) {
-    cerr << "Warning: Writing tri mesh with colored vertices not"
-         << endl
-         << "  implemented for OpenInventor .iv format." 
-         << endl;
-    cerr << "Skipping output of OpenInventor .iv format." << endl;
-  }
-  */
 }
+
 
 void IVOLDUAL::write_dual_tri_mesh_color_vertices
 (const OUTPUT_INFO & output_info,
@@ -1965,15 +1948,6 @@ void IVOLDUAL::write_dual_quad_tri_mesh_color_vertices
     cerr << "Skipping output of .ply format." << endl;
   }
 
-  /* OBSOLETE
-  if (output_info.flag_output_iv) {
-    cerr << "Warning: Writing quad/tri mesh with colored vertices not"
-         << endl
-         << "  implemented for OpenInventor .iv format." 
-         << endl;
-    cerr << "Skipping output of OpenInventor .iv format." << endl;
-  }
-  */
 }
 
 
@@ -2561,48 +2535,6 @@ void IVOLDUAL::help()
 // CLASS IO_INFO
 // **************************************************
 
-/* OBSOLETE
-/// IO information
-void IVOLDUAL::IO_INFO::Init()
-{
-  isovalue.clear();
-  isovalue_string.clear();
-  input_filename .clear();
-  isotable_directory = "";
-  label_with_isovalue = false;
-  flag_output_off = false;
-  flag_output_ply = false;
-  flag_output_iv = false;
-  flag_output_vtk = false;
-  are_output_filenames_set = false;
-  flag_report_time = false;
-  flag_report_info = false;
-  flag_use_stdout = false;
-  flag_nowrite = false;
-  flag_silent = false;
-  flag_no_warn = false;
-  flag_subsample = false;
-  flag_report_all_isov = false;
-  flag_report_all_ivol_poly = false;
-  flag_write_scalar = false;
-  subsample_resolution = 2;
-  flag_supersample = false;
-  supersample_resolution = 2;
-  flag_subdivide = false;
-  flag_rm_diag_ambig = false;
-  flag_add_outer_layer = false;
-  flag_color_alternating = false;  // color simplices in alternating cubes
-  flag_color_vert = false;         // color isosurface boundary vertices
-  region_length = 1;
-
-  is_qei_method_set = false;
-  is_tri4_position_method_set = false;
-  is_file_format_set = false;
-  is_flag_orient_in_set = false;
-}
-*/
-
-
 int IVOLDUAL::IO_INFO::NumOutputFormats() const
 {
   int num_output_formats = 0;
@@ -2614,220 +2546,10 @@ int IVOLDUAL::IO_INFO::NumOutputFormats() const
   return(num_output_formats);
 }
 
-/* OBSOLETE
-void IVOLDUAL::IO_INFO::Set(const IO_INFO & io_info)
-{
-  *this = io_info;
-}
-*/
-
-
-/* OBSOLETE
-void IVOLDUAL::IO_INFO::SetOutputFormat(const OUTPUT_FORMAT output_format)
-{
-  IJK::PROCEDURE_ERROR error("IO_INFO::SetOutputFormat");
-
-  switch(output_format) {
-
-  case OFF:
-    flag_output_off = true;
-    break;
-
-  case PLY:
-    flag_output_ply = true;
-    break;
-
-  default:
-    error.AddMessage
-      ("Programming error. Unable to set output format to ",
-       get_suffix_string(output_format, output_file_type_list, "UNKNOWN"), ".");
-    throw error;
-  }
-}
-*/
-
-
-/* OBSOLETE
-// Set output filename for output format flagged true.
-void IVOLDUAL::IO_INFO::SetOutputFilename(const char * output_filename)
-{
-  IJK::PROCEDURE_ERROR error("IO_INFO::SetOutputFilename");
-
-  int num_output_formats = 0;
-
-  if (flag_output_off) {
-    output_off_filename = output_filename;
-    num_output_formats++;
-    are_output_filenames_set = true;
-  }
-
-  if (flag_output_ply) {
-    output_ply_filename = output_filename;
-    num_output_formats++;
-    are_output_filenames_set = true;
-  }
-
-  if (flag_output_vtk) {
-    output_vtk_filename = output_filename;
-    num_output_formats++;
-    are_output_filenames_set = true;
-  }
-
-  if (flag_output_iv) {
-    output_iv_filename = output_filename;
-    num_output_formats++;
-    are_output_filenames_set = true;
-  }
-
-  if (num_output_formats > 1) {
-    error.AddMessage
-      ("Programming error.  More than one output format is set.");
-    error.AddMessage
-      ("  Cannot set same output filename for more than one output format.");
-    throw error;
-  }
-}
-*/
-
-
-/* OBSOLETE
-// Set output filename for a given output format.
-void IVOLDUAL::IO_INFO::SetOutputFilename
-(const OUTPUT_FORMAT output_format, const char * output_filename)
-{
-  IJK::PROCEDURE_ERROR error("IO_INFO::SetOutputFilename");
-
-  switch(output_format) {
-
-  case OFF:
-    output_off_filename = output_filename;
-    break;
-
-  case PLY:
-    output_ply_filename = output_filename;
-    break;
-
-  case VTK:
-    output_vtk_filename = output_filename;
-    break;
-
-  default:
-    error.AddMessage
-      ("Programming error.  Unknown file type ",
-       get_suffix_string(output_format, output_file_type_list, "UNKNOWN"), 
-       ".");
-    throw error;
-  }
-
-  are_output_filenames_set = true;
-}
-*/
-
-
-/* OBSOLETE
-void IVOLDUAL::IO_INFO::ConstructOutputFilenames(const int i)
-{
-    typedef typename std::vector<std::string>::size_type SIZE_TYPE;
-
-    using std::string;
-
-    string basename, suffix;
-    string ofilename;
-
-    // create output filename
-    if (this->output_basename == "") {
-
-      const string fname =
-        std::filesystem::path(input_filename).filename().string();
-
-      // construct output filename
-      IJK::split_string(fname, '.', basename, suffix);
-      if (suffix == "nrrd" || suffix == "nhdr")
-        { this->output_basename = basename; }
-      else { this->output_basename = string(input_filename); }
-    }
-
-    this->output_basename =
-      this->output_filename_prefix + this->output_basename +
-      this->output_filename_suffix;
-
-    if (flag_label_with_isovalue || isovalue_string.size() > 2) {
-      if (SIZE_TYPE(i+1) < isovalue_string.size()) {
-        this->output_basename +=
-          string(".") + string("ivol=") + isovalue_string[i] +
-          string("_") + isovalue_string[i+1];
-      }
-    }
-
-    this->output_off_filename = this->output_basename + ".off";
-    this->output_ply_filename = this->output_basename + ".ply";
-    this->output_vtk_filename = this->output_basename + ".vtk";
-}
-*/
-
-/* OBSOLETE
-void IVOLDUAL::IO_INFO::ConstructOutputFilenames(const int i)
-{
-  string prefix, suffix;
-  string ofilename;
-
-  // create output filename
-  if (output_filename_prefix == "") {
-    string fname = string(input_filename);
-
-#ifndef _WIN32
-    // remove path from file name
-    split_string(fname, PATH_DELIMITER, prefix, suffix);
-    if (suffix != "") { fname = suffix; }
-#endif
-
-    // construct output filename
-    split_string(fname, '.', prefix, suffix);
-    if (suffix == "nrrd" || suffix == "nhdr") { ofilename = prefix; }
-    else { ofilename = string(input_filename); }
-  }
-  else {
-    ofilename = output_filename_prefix;
-  }
-
-  if (label_with_isovalue || isovalue_string.size() > 2) {
-    ofilename += string(".") + string("isov=") + isovalue_string[i];
-  }
-
-  output_off_filename = ofilename + ".off";
-  output_ply_filename = ofilename + ".ply";
-  output_vtk_filename = ofilename + ".vtk";
-}
-*/
-
-
 
 // **************************************************
 // class OUTPUT_INFO
 // **************************************************
-
-/* OBSOLETE
-void IVOLDUAL::OUTPUT_INFO::Init()
-{
-  dimension = 3;
-  num_vertices_per_isopoly = 8;
-  isovalue[0] = 0;
-  isovalue[1] = 0;
-  grow_factor = 1;
-  shrink_factor = 1;
-  grid_spacing.resize(3,1);
-}
-*/
-
-/* OBSOLETE
-void IVOLDUAL::OUTPUT_INFO::SetDimension
-(const int d, const int numv_per_isopoly)
-{
-  dimension = d;
-  num_vertices_per_isopoly = numv_per_isopoly;
-}
-*/
-
 
 namespace {
 
@@ -2866,20 +2588,6 @@ void IVOLDUAL::set_output_info
     output_info.num_vertices_per_isopoly = 4;
   }
 
-  /* OBSOLETE
-  output_info.grow_factor = 1;
-  if (io_info.flag_subsample) 
-    { output_info.grow_factor = io_info.subsample_resolution; }
-  */
-
-  /* OBSOLETE
-  output_info.shrink_factor = 1;
-  if (io_info.flag_supersample) 
-    { output_info.shrink_factor = io_info.supersample_resolution; }
-  else if (io_info.flag_subdivide) 
-    { output_info.shrink_factor = 2; }
-  */
-
   output_info.grid_spacing.clear();
   output_info.grid_spacing.resize(io_info.grid_spacing.size());
   for (unsigned int j = 0; j < io_info.grid_spacing.size(); j++)
@@ -2894,6 +2602,7 @@ void IVOLDUAL::set_output_info
     output_info.ConstructOutputFilenames(i);
   }
 }
+
 
 void IVOLDUAL::set_color_alternating
 (const DUALISO_GRID & grid, const vector<VERTEX_INDEX> & cube_list, 

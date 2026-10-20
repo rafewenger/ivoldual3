@@ -50,10 +50,6 @@ namespace IVOLDUAL {
   //! Nrrd header.
   typedef IJK::NRRD_DATA<int, AXIS_SIZE_TYPE> NRRD_HEADER; 
 
-  /* OBSOLETE
-  typedef enum { OFF, PLY, VTK } OUTPUT_FORMAT;    //!< Output format.
-  */
-
   /// Output format.
   typedef typename IJK::OUTPUT_DEFINITIONS::OUTPUT_FORMAT OUTPUT_FORMAT;
 
@@ -105,154 +101,13 @@ namespace IVOLDUAL {
     /// @brief Set from IO_INFO
     void Set(const IO_INFO & io_param)
     { *this = io_param; }
-    
-    /* OBSOLETE
-    /// Set output format to output_format.
-    /// - Note: More than one output format may be set.
-    void SetOutputFormat(const OUTPUT_FORMAT output_format);
-
-    // Set output filename for a given output format.
-    void SetOutputFilename
-    (const OUTPUT_FORMAT output_format, const char * output_filename);
-
-    /// Set output filename for a given output format.
-    void SetOutputFilename
-    (const OUTPUT_FORMAT output_format, const std::string & output_filename)
-    { SetOutputFilename(output_format, output_filename.c_str()); }
-    */
-      
   };
   
-  /* OBSOLETE
-  //! IO information
-  class IO_INFO:public IVOLDUAL_DATA_FLAGS {
-
-  protected:
-    void Init();
-
-  public:
-    SCALAR_ARRAY isovalue;        ///< List of isovalues.
-    std::vector<std::string> isovalue_string;
-    COORD_ARRAY grid_spacing;
-    std::string input_filename;
-    std::string output_filename;
-    std::string output_filename_prefix;
-    bool label_with_isovalue;
-    std::string output_off_filename;
-    std::string output_ply_filename;
-    std::string output_vtk_filename;
-    std::string output_iv_filename;
-    bool are_output_filenames_set;
-    std::string isotable_directory;
-    bool flag_output_off;    ///< Output Geomview .off file.
-    bool flag_output_ply;    ///< Output PLY file.
-    bool flag_output_iv;     ///< Output OpenInventor file.
-    bool flag_output_vtk;    ///< Output vtk file.
-    bool flag_report_time;
-    bool flag_report_info;
-    bool flag_use_stdout;
-    bool flag_nowrite;
-    bool flag_silent;
-    bool flag_no_warn;
-    bool flag_subsample;
-    bool flag_report_all_isov;
-    std::string report_isov_filename;
-    bool flag_report_all_ivol_poly;
-    std::string report_ivol_poly_filename;
-    bool flag_write_scalar;
-    std::string write_scalar_filename;
-    int subsample_resolution;
-    bool flag_supersample;
-    int supersample_resolution;
-    bool flag_subdivide;
-    bool flag_rm_diag_ambig;
-    bool flag_add_outer_layer;
-    bool flag_color_alternating;  ///< Color simplices in alternating cubes
-    int region_length;
-
-    /// Color isosurface boundary vertices.
-    bool flag_color_vert;         
-
-    /// List of high resolution arguments,
-    ///   e.g., "-highres {coord list}".
-    std::vector<std::string> high_resolution_option;
-
-    /// Flag for options set.
-    bool is_qei_method_set;
-    bool is_tri4_position_method_set;
-    bool is_file_format_set;
-    bool is_flag_orient_in_set;
-
-    /// Return number of selected output formats.
-    int NumOutputFormats() const;
-
-    /// Copy io_info.
-    void Set(const IO_INFO & io_info);
-
-    /// Set output format to output_format.
-    /// - Note: More than one output format may be set.
-    void SetOutputFormat(const OUTPUT_FORMAT output_format);
-
-    /// Set output filename for output format which is flagged true.
-    /// @pre At most one output format is flagged true.
-    void SetOutputFilename(const char * output_filename);
-
-    /// Set output filename for output format which is flagged true.
-    /// @pre At most one output format is flagged true.
-    void SetOutputFilename(const std::string & output_filename)
-    { SetOutputFilename(output_filename.c_str()); }
-
-    /// Set output filename for a given output format.
-    void SetOutputFilename
-    (const OUTPUT_FORMAT output_format, const char * output_filename);
-
-    /// Set output filename for a given output format.
-    void SetOutputFilename
-    (const OUTPUT_FORMAT output_format, const std::string & output_filename)
-    { SetOutputFilename(output_format, output_filename.c_str()); }
-
-    /// Construct output filenames.
-    /// @param i Construct filenames for isovalue i.
-    void ConstructOutputFilenames(const int i);
-
-
-  public:
-    IO_INFO() { Init(); };
-    ~IO_INFO() { Init(); };
-  };
-  */
-
 
   // **************************************************
   // OUTPUT INFORMATION
   // **************************************************
 
-  /* OBSOLETE
-  /// Interval volume output data.
-  class IVOL_OUTPUT_DATA:public IVOLDUAL_IO_INFO {
-
-  public:
-    int num_vertices_per_isopoly;
-    bool flag_report_all_ivol_poly;
-    bool use_triangle_mesh;
-    bool is_flag_orient_in_set;
-    std::string report_isov_filename;
-    std::string report_ivol_poly_filename;
-
-    IVOL_OUTPUT_DATA():
-      num_vertices_per_isopoly(8),
-      is_flag_orient_in_set(false)
-    {}
-      
-  };
-  */
-
-  /* OBSOLETE
-  /// Output information.
-  class OUTPUT_INFO:
-    public IJK::ISO_OUTPUT_PARAM_BASE<SCALAR_TYPE,COORD_TYPE,
-                                      IVOL_IO_INFO>
-  */
   class OUTPUT_INFO:public IO_INFO
   {
 
@@ -280,32 +135,6 @@ namespace IVOLDUAL {
   };
 
     
-  /* OBSOLETE
-  /// Output information.
-  class OUTPUT_INFO:public IO_INFO {
-
-  protected:
-    void Init();
-
-  public:
-    typedef IVOLDUAL::COLOR_TYPE COLOR_TYPE;
-    
-  public:
-    int dimension;
-    int num_vertices_per_isopoly;
-    SCALAR_TYPE isovalue[2];
-    COORD_ARRAY grid_spacing;
-    int grow_factor;
-    int shrink_factor;
-
-    OUTPUT_INFO() { Init(); };
-    ~OUTPUT_INFO() { Init(); };
-
-    void SetDimension(const int d, const int numv_per_isopoly);
-  };
-  */
- 
-
   // **************************************************
   // TIMING FUNCTIONS/CLASSES
   // **************************************************
