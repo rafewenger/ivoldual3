@@ -4433,6 +4433,7 @@ namespace IJK {
     output_format_suffix[OFF] = ".off";
     output_format_suffix[PLY] = ".ply";
     output_format_suffix[FIG] = ".fig";
+    output_format_suffix[VTK] = ".vtk";
   }
 
 
@@ -4527,6 +4528,10 @@ namespace IJK {
       flag_output_fig = true;
       break;
 
+    case OUTPUT_DEFINITIONS::VTK:
+      flag_output_vtk = true;
+      break;
+      
     default:
       error.AddMessage
         ("Programming error. Unable to set output format to ",
@@ -4564,6 +4569,12 @@ namespace IJK {
       are_output_filenames_set = true;
     }
 
+    if (flag_output_vtk) {
+      output_vtk_filename = output_filename;
+      num_output_formats++;
+      are_output_filenames_set = true;
+    }
+    
     if (num_output_formats > 1) {
       error.AddMessage
         ("Programming error.  More than one output format is set.");
@@ -4581,7 +4592,7 @@ namespace IJK {
   SetOutputFilename
   (const OUTPUT_FORMAT output_format, const char * output_filename)
   {
-    IJK::PROCEDURE_ERROR error("ISO_IO_PARAM_BASE::SetOutputFilename");
+    IJK::PROCEDURE_ERROR error("OUTPUT_PARAM_BASE::SetOutputFilename");
 
     switch(output_format) {
 
@@ -4596,6 +4607,10 @@ namespace IJK {
     case OUTPUT_DEFINITIONS::FIG:
       output_fig_filename = output_filename;
       break;
+
+    case OUTPUT_DEFINITIONS::VTK:
+      output_vtk_filename = output_filename;
+      break;      
 
     default:
       error.AddMessage
