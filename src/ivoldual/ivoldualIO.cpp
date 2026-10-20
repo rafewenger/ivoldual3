@@ -618,6 +618,13 @@ namespace {
 };
 
 
+const OUTPUT_DEFINITIONS::OUTPUT_FORMAT OFF =
+  IJK::OUTPUT_DEFINITIONS::OUTPUT_FORMAT::OFF;
+const OUTPUT_DEFINITIONS::OUTPUT_FORMAT PLY =
+  IJK::OUTPUT_DEFINITIONS::OUTPUT_FORMAT::PLY;
+const OUTPUT_DEFINITIONS::OUTPUT_FORMAT VTK =
+  IJK::OUTPUT_DEFINITIONS::OUTPUT_FORMAT::VTK;
+
 void create_output_file_type_list(OUTPUT_FILE_TYPE_LIST & list)
 {
   list.clear();
@@ -882,7 +889,7 @@ bool process_option
     break;
 
   case LABEL_WITH_ISOVALUE_OPT:
-    io_info.label_with_isovalue = true;
+    io_info.flag_label_with_isovalue = true;
     break;
 
   case NO_WRITE_OPT:
@@ -2554,6 +2561,7 @@ void IVOLDUAL::help()
 // CLASS IO_INFO
 // **************************************************
 
+/* OBSOLETE
 /// IO information
 void IVOLDUAL::IO_INFO::Init()
 {
@@ -2592,6 +2600,7 @@ void IVOLDUAL::IO_INFO::Init()
   is_file_format_set = false;
   is_flag_orient_in_set = false;
 }
+*/
 
 
 int IVOLDUAL::IO_INFO::NumOutputFormats() const
@@ -2600,17 +2609,20 @@ int IVOLDUAL::IO_INFO::NumOutputFormats() const
 
   if (flag_output_off) { num_output_formats++; }
   if (flag_output_ply) { num_output_formats++; }
-  if (flag_output_iv) { num_output_formats++; }
+  if (flag_output_vtk) { num_output_formats++; }
 
   return(num_output_formats);
 }
 
+/* OBSOLETE
 void IVOLDUAL::IO_INFO::Set(const IO_INFO & io_info)
 {
   *this = io_info;
 }
+*/
 
 
+/* OBSOLETE
 void IVOLDUAL::IO_INFO::SetOutputFormat(const OUTPUT_FORMAT output_format)
 {
   IJK::PROCEDURE_ERROR error("IO_INFO::SetOutputFormat");
@@ -2632,8 +2644,10 @@ void IVOLDUAL::IO_INFO::SetOutputFormat(const OUTPUT_FORMAT output_format)
     throw error;
   }
 }
+*/
 
 
+/* OBSOLETE
 // Set output filename for output format flagged true.
 void IVOLDUAL::IO_INFO::SetOutputFilename(const char * output_filename)
 {
@@ -2673,8 +2687,10 @@ void IVOLDUAL::IO_INFO::SetOutputFilename(const char * output_filename)
     throw error;
   }
 }
+*/
 
 
+/* OBSOLETE
 // Set output filename for a given output format.
 void IVOLDUAL::IO_INFO::SetOutputFilename
 (const OUTPUT_FORMAT output_format, const char * output_filename)
@@ -2705,6 +2721,7 @@ void IVOLDUAL::IO_INFO::SetOutputFilename
 
   are_output_filenames_set = true;
 }
+*/
 
 
 /* OBSOLETE
@@ -2868,6 +2885,7 @@ void IVOLDUAL::set_output_info
   for (unsigned int j = 0; j < io_info.grid_spacing.size(); j++)
     { output_info.grid_spacing[j] = io_info.grid_spacing[j]; }
 
+  output_info.isovalue.resize(2);
   output_info.isovalue[0] = io_info.isovalue[i];
   if (i+1 < int(io_info.isovalue.size())) 
     { output_info.isovalue[1] = io_info.isovalue[i+1]; };

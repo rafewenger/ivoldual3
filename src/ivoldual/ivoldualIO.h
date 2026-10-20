@@ -50,13 +50,76 @@ namespace IVOLDUAL {
   //! Nrrd header.
   typedef IJK::NRRD_DATA<int, AXIS_SIZE_TYPE> NRRD_HEADER; 
 
+  /* OBSOLETE
   typedef enum { OFF, PLY, VTK } OUTPUT_FORMAT;    //!< Output format.
+  */
+
+  /// Output format.
+  typedef typename IJK::OUTPUT_DEFINITIONS::OUTPUT_FORMAT OUTPUT_FORMAT;
 
 
   // **************************************************
   // IO INFORMATION
   // **************************************************
 
+  class IVOLDUAL_IO_INFO:public IVOLDUAL_DATA_FLAGS {
+
+  public:
+    
+    /// @brief Subdivide grid to remove ambiguous configurations.
+    bool flag_subdivide;
+    
+    bool flag_rm_diag_ambig;
+    bool flag_add_outer_layer;
+    bool flag_color_vert;
+    bool is_flag_orient_in_set;
+    bool flag_write_scalar;
+    std::string write_scalar_filename;
+    bool flag_report_all_ivol_poly;
+    std::string report_ivol_poly_filename;
+
+    IVOLDUAL_IO_INFO():
+      flag_subdivide(false),
+      flag_rm_diag_ambig(false),
+      flag_add_outer_layer(false),
+      flag_write_scalar(false),
+      flag_color_vert(false),
+      flag_report_all_ivol_poly(false),
+      is_flag_orient_in_set(false)
+    {};
+  };
+  
+  //! IO information
+  class IO_INFO:
+    public IJK::ISO_OUTPUT_PARAM_BASE<SCALAR_TYPE,COORD_TYPE,
+                                      IVOLDUAL_IO_INFO>
+  {
+    
+  public:
+    IO_INFO() { Init(); };
+    ~IO_INFO() { Init(); };
+
+    /// Return number of selected output formats.
+    int NumOutputFormats() const;
+
+    /* OBSOLETE
+    /// Set output format to output_format.
+    /// - Note: More than one output format may be set.
+    void SetOutputFormat(const OUTPUT_FORMAT output_format);
+
+    // Set output filename for a given output format.
+    void SetOutputFilename
+    (const OUTPUT_FORMAT output_format, const char * output_filename);
+
+    /// Set output filename for a given output format.
+    void SetOutputFilename
+    (const OUTPUT_FORMAT output_format, const std::string & output_filename)
+    { SetOutputFilename(output_format, output_filename.c_str()); }
+    */
+      
+  };
+  
+  /* OBSOLETE
   //! IO information
   class IO_INFO:public IVOLDUAL_DATA_FLAGS {
 
@@ -153,6 +216,7 @@ namespace IVOLDUAL {
     IO_INFO() { Init(); };
     ~IO_INFO() { Init(); };
   };
+  */
 
 
   // **************************************************
@@ -160,42 +224,27 @@ namespace IVOLDUAL {
   // **************************************************
 
   /// Interval volume output data.
-  class IVOL_OUTPUT_DATA:public IVOLDUAL_DATA_FLAGS {
+  class IVOL_OUTPUT_DATA:public IVOLDUAL_IO_INFO {
 
   public:
-    /* OBSOLETE
-    bool flag_interval_volume;
-    */
     int num_vertices_per_isopoly;
     bool flag_report_all_ivol_poly;
     bool use_triangle_mesh;
     bool is_flag_orient_in_set;
-    /* OBSOLETE
-    bool flag_orient_in;
-    bool flag_rm_non_manifold;
-    */
     std::string report_isov_filename;
     std::string report_ivol_poly_filename;
 
     IVOL_OUTPUT_DATA():
-      /* OBSOLETE
-      flag_interval_volume(true),
-      */
       num_vertices_per_isopoly(8),
       is_flag_orient_in_set(false)
-      /* OBSOLETE
-      flag_report_all_ivol_poly(false),
-      is_flag_orient_in_set(false),
-      flag_rm_non_manifold(false)
-      */
     {}
       
   };
     
   /// Output information.
   class OUTPUT_INFO:
-    public IJK::ISO_OUTPUT_PARAM_BASE
-  <SCALAR_TYPE,COORD_TYPE,IVOL_OUTPUT_DATA>
+    public IJK::ISO_OUTPUT_PARAM_BASE<SCALAR_TYPE,COORD_TYPE,
+                                      IVOL_OUTPUT_DATA>
   {
   public:
     OUTPUT_INFO() {};
@@ -207,11 +256,13 @@ namespace IVOLDUAL {
       this->num_vertices_per_isopoly = numv_per_isopoly;
     }
 
+    /* OBSOLETE
     template <typename IO_INFO_TYPE>
     void Set(const IO_INFO_TYPE & io_info)
     {
       // TO BE CONTINUED...
     }
+    */
 
     void ConstructOutputFilenames(const int i)
     { this->IJK::ISO_OUTPUT_PARAM_BASE

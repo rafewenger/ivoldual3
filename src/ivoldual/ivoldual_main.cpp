@@ -189,6 +189,11 @@ void construct_interval_volume
     output_info.SetDimension(dimension, num_cube_vertices);
     set_output_info(io_info, i, output_info);
 
+    // *** DEBUG ***
+    using namespace std;
+    cerr << "io_info.flag_output_vtk: " << io_info.flag_output_vtk << endl;
+    cerr << "output_info.flag_output_vtk: " << output_info.flag_output_vtk << endl;
+    
     output_dual_interval_volume
       (output_info, ivoldual_data, interval_volume, dualiso_info, io_time);
 
