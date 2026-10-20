@@ -45,9 +45,6 @@
 using namespace IJK;
 using namespace IVOLDUAL;
 
-// *** DEBUG ***
-#include "ijkprint.tpp"
-
 
 // **************************************************
 // DUAL CONTOURING INTERVAL VOLUME

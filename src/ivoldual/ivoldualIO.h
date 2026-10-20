@@ -103,7 +103,7 @@ namespace IVOLDUAL {
     int NumOutputFormats() const;
 
     /// @brief Set from IO_INFO
-    void SetIOinfo(const IO_INFO & io_param)
+    void Set(const IO_INFO & io_param)
     { *this = io_param; }
     
     /* OBSOLETE
@@ -264,7 +264,8 @@ namespace IVOLDUAL {
   public:
     OUTPUT_INFO():
       num_vertices_per_isopoly(8),
-      is_flag_orient_in_set(false)      
+      use_triangle_mesh(false),
+      is_flag_orient_in_set(false)
     {};
     ~OUTPUT_INFO() {};
 
