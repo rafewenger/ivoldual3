@@ -598,7 +598,7 @@ namespace {
       (OUT_IVOLV_OPT, "to file {output_filename}.");
 
     options.AddOption1Arg
-      (OUT_IVOLP_OPT, "OUT_IVOPV_OPT", EXTENDED_OPTG, 
+      (OUT_IVOLP_OPT, "OUT_IVOP_OPT", EXTENDED_OPTG, 
        "-out_ivolp", "{output_filename}", 
        "Write information about interval volume polytopes");
     options.AddToHelpMessage
@@ -2860,7 +2860,16 @@ void IVOLDUAL::set_output_info
 (const IO_INFO & io_info, 
  const int i, OUTPUT_INFO & output_info)
 {
+  // *** DEBUG ***
+  using namespace std;
+  cerr << "io_info.flag_report_all_ivol_poly: "
+       << int(io_info.flag_report_all_ivol_poly) << endl;    
+  cerr << "Calling output_info.Set(io_info)." << endl;
+
+  /* DEBUG
   output_info.Set(io_info);
+  */
+  output_info.SetIOinfo(io_info);
 
   // *** DEBUG ***
   using namespace std;

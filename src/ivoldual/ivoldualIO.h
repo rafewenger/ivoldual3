@@ -103,8 +103,8 @@ namespace IVOLDUAL {
     int NumOutputFormats() const;
 
     /// @brief Set from IO_INFO
-    void Set(const IO_INFO & io_param)
-    { IO_INFO::operator = (io_param); }
+    void SetIOinfo(const IO_INFO & io_param)
+    { *this = io_param; }
     
     /* OBSOLETE
     /// Set output format to output_format.
@@ -227,6 +227,7 @@ namespace IVOLDUAL {
   // OUTPUT INFORMATION
   // **************************************************
 
+  /* OBSOLETE
   /// Interval volume output data.
   class IVOL_OUTPUT_DATA:public IVOLDUAL_IO_INFO {
 
@@ -244,6 +245,7 @@ namespace IVOLDUAL {
     {}
       
   };
+  */
 
   /* OBSOLETE
   /// Output information.
@@ -256,11 +258,8 @@ namespace IVOLDUAL {
 
   public:
     int num_vertices_per_isopoly;
-    bool flag_report_all_ivol_poly;
     bool use_triangle_mesh;
     bool is_flag_orient_in_set;
-    std::string report_isov_filename;
-    std::string report_ivol_poly_filename;
 
   public:
     OUTPUT_INFO():
