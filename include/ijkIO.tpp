@@ -162,8 +162,9 @@ namespace IJK {
      *  - OFF: Geomview .off file format (2D, 3D, 4D, ...).
      *  - PLY: Stanford Polygon .ply file format (3D).
      *  - FIG: Fig (xfig) .fig file format (2D).
+     *  - VTK: VisualToolkit vtk legacy format.
      */
-    typedef enum { OFF, PLY, FIG, UNKNOWN_OUTPUT_FORMAT }
+    typedef enum { OFF, PLY, FIG, VTK, UNKNOWN_OUTPUT_FORMAT }
       OUTPUT_FORMAT;
 
     typedef std::unordered_map<OUTPUT_FORMAT, const char *>
