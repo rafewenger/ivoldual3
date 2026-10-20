@@ -26,14 +26,10 @@ SET(LIB_DIR_LIST "${CMAKE_CURRENT_BINARY_DIR}/../lib"
 #---------------------------------------------------------
 
 
-# *** DEBUG ***
-# IF (NOT CMAKE_BUILD_TYPE)
-#   SET (CMAKE_BUILD_TYPE Release CACHE STRING 
-#        "Default build type: Release" FORCE)
-# ENDIF (NOT CMAKE_BUILD_TYPE)
-
-SET (CMAKE_BUILD_TYPE DEBUG CACHE STRING 
-                      "Default build type: Debug" FORCE)
+IF (NOT CMAKE_BUILD_TYPE)
+  SET (CMAKE_BUILD_TYPE Release CACHE STRING 
+       "Default build type: Release" FORCE)
+ENDIF (NOT CMAKE_BUILD_TYPE)
 
 
 # Possibly turn on usage of zlib compression (requires linking with libz)
