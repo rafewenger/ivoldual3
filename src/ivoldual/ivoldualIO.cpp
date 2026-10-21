@@ -70,7 +70,7 @@ namespace {
      COLOR_VERT_OPT,
      ORIENT_IN_OPT, ORIENT_OUT_OPT,
      HELP_OPT, HELP_ALL_OPT, USAGE_OPT, ALL_OPTIONS_OPT,
-     OFF_OPT, PLY_OPT, VTK_OPT,
+     OFF_OPT, VTK_OPT,
      OUTPUT_FILENAME_OPT, OUTPUT_FILENAME_PREFIX_OPT, STDOUT_OPT, 
      LABEL_WITH_ISOVALUE_OPT,
      NO_WRITE_OPT, SILENT_OPT, NO_WARN_OPT,
@@ -303,12 +303,6 @@ namespace {
     options.AddOptionNoArg
       (OFF_OPT, "OFF_OPT", REGULAR_OPTG, "-off", 
        "Output in geomview OFF format. (Default.)");
-
-    options.AddOptionNoArg
-      (PLY_OPT, "PLY_OPT", REGULAR_OPTG, "-ply", 
-       "Output in Stanford Polygon File Format (PLY).");
-    options.AddToHelpMessage
-      (PLY_OPT, "(Allowed only with 3D scalar data.)");
 
     options.AddOptionNoArg
       (VTK_OPT, "VTK_OPT", REGULAR_OPTG, "-vtk", "Output in VTK format.");
@@ -840,11 +834,6 @@ bool process_option
 
   case OFF_OPT:
     io_info.flag_output_off = true;
-    io_info.is_file_format_set = true;
-    break;
-
-  case PLY_OPT:
-    io_info.flag_output_ply = true;
     io_info.is_file_format_set = true;
     break;
 
