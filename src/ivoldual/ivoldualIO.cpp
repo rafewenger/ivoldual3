@@ -1013,13 +1013,7 @@ void process_io_info(IO_INFO_TYPE & io_info)
   }
   else {
     if (io_info.IsOutputFilenameSet()) {
-      if (io_info.NumOutputFormats() > 1) {
-        cerr << "Usage error. Cannot set output filename when more than one"
-             << endl
-             << "  output format is selected." << endl;
-        exit(64);
-      }
-
+      // Set output filename for selected format.
       io_info.SetOutputFilename(io_info.output_filename);
     }
   }
@@ -2077,22 +2071,6 @@ void IVOLDUAL::help()
   cout << endl;
   print_help_options(REGULAR_OPTG);
   exit(20);
-}
-
-
-// **************************************************
-// CLASS IO_INFO
-// **************************************************
-
-int IVOLDUAL::IO_INFO::NumOutputFormats() const
-{
-  int num_output_formats = 0;
-
-  if (flag_output_off) { num_output_formats++; }
-  if (flag_output_ply) { num_output_formats++; }
-  if (flag_output_vtk) { num_output_formats++; }
-
-  return(num_output_formats);
 }
 
 

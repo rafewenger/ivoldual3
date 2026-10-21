@@ -92,11 +92,9 @@ namespace IVOLDUAL {
   {
     
   public:
-    IO_INFO() { Init(); };
-    ~IO_INFO() { Init(); };
-
-    /// Return number of selected output formats.
-    int NumOutputFormats() const;
+    
+    IO_INFO() { };
+    ~IO_INFO() { };
 
     /// @brief Set from IO_INFO
     void Set(const IO_INFO & io_param)
