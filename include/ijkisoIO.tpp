@@ -329,7 +329,7 @@ namespace IJK {
       }
     }
     else {
-      if (flag_label_with_isovalue || (SIZE_TYPE(i) < isovalue_string.size())) {
+      if (flag_label_with_isovalue || (isovalue_string.size() > 1)) {
         string s = isovalue_string[i];
         std::replace(s.begin(), s.end(), '.', 'p');
         this->output_basename += string("-") + string("isov_") + s;
