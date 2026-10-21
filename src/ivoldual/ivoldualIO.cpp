@@ -87,9 +87,6 @@ namespace {
     REGULAR_OPTG, EXTENDED_OPTG, QDUAL_OPTG, TESTING_OPTG
   } OPTION_GROUP;
 
-  typedef IJK::SUFFIX_TYPE_LIST<OUTPUT_FORMAT> OUTPUT_FILE_TYPE_LIST;
-  OUTPUT_FILE_TYPE_LIST output_file_type_list;
-
   IJK::COMMAND_LINE_OPTIONS<OPTION_TYPE,OPTION_GROUP> options;
 };
 
@@ -618,22 +615,6 @@ namespace {
 };
 
 
-const OUTPUT_DEFINITIONS::OUTPUT_FORMAT OFF =
-  IJK::OUTPUT_DEFINITIONS::OUTPUT_FORMAT::OFF;
-const OUTPUT_DEFINITIONS::OUTPUT_FORMAT PLY =
-  IJK::OUTPUT_DEFINITIONS::OUTPUT_FORMAT::PLY;
-const OUTPUT_DEFINITIONS::OUTPUT_FORMAT VTK =
-  IJK::OUTPUT_DEFINITIONS::OUTPUT_FORMAT::VTK;
-
-void create_output_file_type_list(OUTPUT_FILE_TYPE_LIST & list)
-{
-  list.clear();
-  list.push_back(make_pair(OFF, ".off"));
-  list.push_back(make_pair(PLY, ".ply"));
-  list.push_back(make_pair(VTK, ".vtk"));
-}
-
-
 // Return true if option OPTA is processed (i.e., matches some case in
 //   switch statement.)
 template <typename IO_INFO_TYPE>
@@ -1070,7 +1051,6 @@ void IVOLDUAL::parse_command_line(int argc, char **argv, IO_INFO & io_info)
   IJK::ERROR error;
 
   set_command_line_options();
-  create_output_file_type_list(output_file_type_list);
 
   // Set defaults.
   io_info.quad_tri_method = MAX_MIN_ANGLE;
@@ -1284,7 +1264,7 @@ void IVOLDUAL::write_dual_mesh
 
   switch (output_format) {
 
-  case OFF:
+  case OUTPUT_DEFINITIONS::OFF:
     if (!flag_use_stdout) {
       ofilename = output_info.output_off_filename;
       output_file.open(ofilename.c_str(), ios::out);
@@ -1309,7 +1289,7 @@ void IVOLDUAL::write_dual_mesh
     };
     break;
 
-  case PLY:
+  case OUTPUT_DEFINITIONS::PLY:
     if (dimension == 3) {
       if (!flag_use_stdout) {
         ofilename = output_info.output_ply_filename;
@@ -1328,7 +1308,7 @@ void IVOLDUAL::write_dual_mesh
         ("Illegal output mesh dimension. PLY format is only for dimension 3.");
     break;
 
-  case VTK:
+  case OUTPUT_DEFINITIONS::VTK:
     if (dimension == 3) {
       if (!flag_use_stdout) {
         ofilename = output_info.output_vtk_filename;
@@ -1370,7 +1350,7 @@ void IVOLDUAL::write_dual_mesh
 
   if (output_info.flag_output_off) {
     if (output_info.output_off_filename != "") {
-      write_dual_mesh(output_info, OFF, vertex_coord, plist);
+      write_dual_mesh(output_info, OUTPUT_DEFINITIONS::OFF, vertex_coord, plist);
     }
     else {
       error.AddMessage("Programming error. Geomview OFF file name not set.");
@@ -1380,7 +1360,7 @@ void IVOLDUAL::write_dual_mesh
 
   if (output_info.flag_output_ply) {
     if (output_info.output_ply_filename != "") {
-      write_dual_mesh(output_info, PLY, vertex_coord, plist);
+      write_dual_mesh(output_info, OUTPUT_DEFINITIONS::PLY, vertex_coord, plist);
     }
     else {
       error.AddMessage("Programming error. PLY file name not set.");
@@ -1391,14 +1371,14 @@ void IVOLDUAL::write_dual_mesh
   if (output_info.flag_output_vtk) {
     if (output_info.output_vtk_filename != "") {
       if (output_info.is_flag_orient_in_set || output_info.flag_orient_in) {
-        write_dual_mesh(output_info, VTK, vertex_coord, plist);
+        write_dual_mesh(output_info, OUTPUT_DEFINITIONS::VTK, vertex_coord, plist);
       }
       else {
         // output_info.flag_orient_in = false.
         // Reverse hexahedra orientation.
         std::vector<VERTEX_INDEX> plist2(plist);
         reverse_orientations_cube_list(plist2, num_vert_per_cube_facet);
-        write_dual_mesh(output_info, VTK, vertex_coord, plist2);
+        write_dual_mesh(output_info, OUTPUT_DEFINITIONS::VTK, vertex_coord, plist2);
       }
     }
     else {
@@ -1439,7 +1419,7 @@ void IVOLDUAL::write_dual_mesh_color
 
   switch (output_format) {
 
-  case OFF:
+  case OUTPUT_DEFINITIONS::OFF:
     if (!flag_use_stdout) {
       ofilename = output_info.output_off_filename;
       output_file.open(ofilename.c_str(), ios::out);
@@ -1472,7 +1452,7 @@ void IVOLDUAL::write_dual_mesh_color
   if (output_info.flag_output_off) {
     if (output_info.output_off_filename != "") {
       write_dual_mesh_color
-        (output_info, OFF, vertex_coord, plist, front_color, back_color);
+        (output_info, OUTPUT_DEFINITIONS::OFF, vertex_coord, plist, front_color, back_color);
     }
     else {
       error.AddMessage("Programming error. Geomview OFF file name not set.");
@@ -1483,7 +1463,7 @@ void IVOLDUAL::write_dual_mesh_color
   if (output_info.flag_output_ply) {
     if (output_info.output_ply_filename != "") {
       write_dual_mesh_color
-        (output_info, PLY, vertex_coord, plist, front_color, back_color);
+        (output_info, OUTPUT_DEFINITIONS::PLY, vertex_coord, plist, front_color, back_color);
     }
     else {
       error.AddMessage("Programming error. PLY file name not set.");
@@ -1530,7 +1510,7 @@ void IVOLDUAL::write_dual_tri_mesh
 
   switch (output_format) {
 
-  case OFF:
+  case OUTPUT_DEFINITIONS::OFF:
     if (!flag_use_stdout) {
       ofilename = output_info.output_off_filename;
       output_file.open(ofilename.c_str(), ios::out);
@@ -1543,7 +1523,7 @@ void IVOLDUAL::write_dual_tri_mesh
     };
     break;
 
-  case VTK:
+  case OUTPUT_DEFINITIONS::VTK:
     if (dimension == 3) {
       if (!flag_use_stdout) {
         ofilename = output_info.output_vtk_filename;
@@ -1587,7 +1567,7 @@ void IVOLDUAL::write_dual_tri_mesh
 
   if (output_info.flag_output_off) {
     if (output_info.output_off_filename != "") {
-      write_dual_tri_mesh(output_info, OFF, vertex_coord, tri_vert);
+      write_dual_tri_mesh(output_info, OUTPUT_DEFINITIONS::OFF, vertex_coord, tri_vert);
     }
     else {
       error.AddMessage("Programming error. Geomview OFF file name not set.");
@@ -1597,7 +1577,7 @@ void IVOLDUAL::write_dual_tri_mesh
 
   if (output_info.flag_output_vtk) {
     if (output_info.output_vtk_filename != "") {
-      write_dual_tri_mesh(output_info, VTK, vertex_coord, tri_vert);
+      write_dual_tri_mesh(output_info, OUTPUT_DEFINITIONS::VTK, vertex_coord, tri_vert);
     }
     else {
       error.AddMessage("Programming error. VTK file name not set.");
@@ -1607,7 +1587,7 @@ void IVOLDUAL::write_dual_tri_mesh
 
   if (output_info.flag_output_ply) {
     if (output_info.output_ply_filename != "") {
-      write_dual_tri_mesh(output_info, PLY, vertex_coord, tri_vert);
+      write_dual_tri_mesh(output_info, OUTPUT_DEFINITIONS::PLY, vertex_coord, tri_vert);
     }
     else {
       error.AddMessage("Programming error. PLY file name not set.");
@@ -1663,7 +1643,7 @@ void IVOLDUAL::write_dual_quad_tri_mesh
 
   switch (output_format) {
 
-    case OFF:
+    case OUTPUT_DEFINITIONS::OFF:
       if (!flag_use_stdout) {
         ofilename = output_info.output_off_filename;
         output_file.open(ofilename.c_str(), ios::out);
@@ -1676,7 +1656,7 @@ void IVOLDUAL::write_dual_quad_tri_mesh
       };
       break;
 
-    case PLY:
+    case OUTPUT_DEFINITIONS::PLY:
       if (dimension == 3) {
         if (!flag_use_stdout) {
           ofilename = output_info.output_ply_filename;
@@ -1717,7 +1697,7 @@ void IVOLDUAL::write_dual_quad_tri_mesh
   if (output_info.flag_output_off) {
     if (output_info.output_off_filename != "") {
       write_dual_quad_tri_mesh
-        (output_info, OFF, vertex_coord, quad_vert, tri_vert);
+        (output_info, OUTPUT_DEFINITIONS::OFF, vertex_coord, quad_vert, tri_vert);
     }
     else {
       error.AddMessage("Programming error. Geomview OFF file name not set.");
@@ -1728,7 +1708,7 @@ void IVOLDUAL::write_dual_quad_tri_mesh
   if (output_info.flag_output_ply) {
     if (output_info.output_ply_filename != "") {
       write_dual_quad_tri_mesh
-        (output_info, PLY, vertex_coord, quad_vert, tri_vert);
+        (output_info, OUTPUT_DEFINITIONS::PLY, vertex_coord, quad_vert, tri_vert);
     }
     else {
       error.AddMessage("Programming error. PLY file name not set.");
@@ -1781,7 +1761,7 @@ void IVOLDUAL::write_dual_tri_mesh_color_vertices
 
   switch (output_format) {
 
-    case OFF:
+    case OUTPUT_DEFINITIONS::OFF:
       if (!flag_use_stdout) {
         ofilename = output_info.output_off_filename;
         output_file.open(ofilename.c_str(), ios::out);
@@ -1821,7 +1801,7 @@ void IVOLDUAL::write_dual_tri_mesh_color_vertices
   if (output_info.flag_output_off) {
     if (output_info.output_off_filename != "") {
       write_dual_tri_mesh_color_vertices
-        (output_info, OFF, vertex_coord, tri_vert, front_color, back_color);
+        (output_info, OUTPUT_DEFINITIONS::OFF, vertex_coord, tri_vert, front_color, back_color);
     }
     else {
       error.AddMessage("Programming error. Geomview OFF file name not set.");
@@ -1889,7 +1869,7 @@ void IVOLDUAL::write_dual_quad_tri_mesh_color_vertices
 
   switch (output_format) {
 
-    case OFF:
+    case OUTPUT_DEFINITIONS::OFF:
       if (!flag_use_stdout) {
         ofilename = output_info.output_off_filename;
         output_file.open(ofilename.c_str(), ios::out);
@@ -1929,7 +1909,7 @@ void IVOLDUAL::write_dual_quad_tri_mesh_color_vertices
   if (output_info.flag_output_off) {
     if (output_info.output_off_filename != "") {
       write_dual_quad_tri_mesh_color_vertices
-        (output_info, OFF, vertex_coord, quad_vert, tri_vert,
+        (output_info, OUTPUT_DEFINITIONS::OFF, vertex_coord, quad_vert, tri_vert,
          front_color, back_color);
     }
     else {
