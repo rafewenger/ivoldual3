@@ -1030,11 +1030,10 @@ void process_io_info(IO_INFO_TYPE & io_info)
   }
 
   if (!io_info.is_file_format_set) {
-    if (io_info.output_filename != "") {
-      OUTPUT_FORMAT output_format =
-        get_suffix_type
-        (io_info.output_filename, output_file_type_list, OFF);
-
+    if (io_info.IsOutputFilenameSet()) {
+      const IO_INFO::OUTPUT_FORMAT output_format =
+        io_info.GetFileType
+          (io_info.output_filename, OUTPUT_DEFINITIONS::OFF);
       io_info.SetOutputFormat(output_format);
       io_info.SetOutputFilename(output_format, io_info.output_filename);
     }
@@ -1043,13 +1042,12 @@ void process_io_info(IO_INFO_TYPE & io_info)
     }
   }
   else {
-    if (io_info.output_filename != "") {
+    if (io_info.IsOutputFilenameSet()) {
       if (io_info.NumOutputFormats() > 1) {
-        cerr << "Error. Cannot set output filename when more than one"
+        cerr << "Usage error. Cannot set output filename when more than one"
              << endl
              << "  output format is selected." << endl;
-        exit(545);
-
+        exit(64);
       }
 
       io_info.SetOutputFilename(io_info.output_filename);
