@@ -1013,6 +1013,13 @@ void process_io_info(IO_INFO_TYPE & io_info)
   }
   else {
     if (io_info.IsOutputFilenameSet()) {
+      if (io_info.NumOutputFormats() > 1) {
+        cerr << "Usage error. Cannot set output filename when more than one"
+             << endl
+             << "  output format is selected." << endl;
+        exit(64);
+      }
+
       // Set output filename for selected format.
       io_info.SetOutputFilename(io_info.output_filename);
     }

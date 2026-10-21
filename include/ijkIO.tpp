@@ -4503,6 +4503,7 @@ namespace IJK {
     if (flag_output_off) { num_output_formats++; }
     if (flag_output_ply) { num_output_formats++; }
     if (flag_output_fig) { num_output_formats++; }
+    if (flag_output_vtk) { num_output_formats++; }
 
     return(num_output_formats);
   }
