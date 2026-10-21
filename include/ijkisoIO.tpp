@@ -2,10 +2,10 @@
  *  @file ijkisoIO.tpp
  *  @brief Templates for isosurface IO routines.
  *  - Class IO_PARAM.
- *  - Output formats: Geomview .off, OpenInventor .iv (3D), Fig .fig (2D)
- *    Stanford .ply, and Visualization Toolkit, .vtk.
+ *  - Output formats: Geomview .off, Fig .fig (2D), Stanford .ply,
+ *      and Visualization Toolkit, .vtk.
  *  - Requires compilation with c++17 or later version.
- *  - Version 0.6.0
+ *  - Version 0.6.1
  */
 
 
