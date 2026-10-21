@@ -93,7 +93,10 @@ namespace IVOLDUAL {
     
   public:
     
-    IO_INFO() { };
+    IO_INFO()
+    {
+      this->num_vertices_per_isopoly = 8;
+    };
     ~IO_INFO() { };
 
     /// @brief Set from IO_INFO
@@ -110,16 +113,17 @@ namespace IVOLDUAL {
   {
 
   public:
-    int num_vertices_per_isopoly;
     bool use_triangle_mesh;
     bool is_flag_orient_in_set;
 
   public:
     OUTPUT_INFO():
-      num_vertices_per_isopoly(8),
       use_triangle_mesh(false),
       is_flag_orient_in_set(false)
-    {};
+    {
+      this->num_vertices_per_isopoly = 8;
+    };
+    
     ~OUTPUT_INFO() {};
 
     void SetDimension(const int d, const int numv_per_isopoly)
