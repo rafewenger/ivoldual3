@@ -414,21 +414,22 @@ namespace IJK {
 
     /// @brief Set output filename for output format that is flagged true.
     /// @pre At most one output format is flagged true.
-    void SetOutputFilename(const char * output_filename);
+    void SetOutputFilenameForOutputFormat(const char * output_filename);
 
     /// @brief Set output filename for output format that is flagged true.
     /// @pre At most one output format is flagged true.
-    void SetOutputFilename(const std::string & output_filename)
-    { SetOutputFilename(output_filename.c_str()); }
+    void SetOutputFilenameForOutputFormat(const std::string & output_filename)
+    { SetOutputFilenameForOutputFormat(output_filename.c_str()); }
 
     /// Set output filename for a given output format.
-    void SetOutputFilename
+    void SetOutputFilenameForOutputFormat
     (const OUTPUT_FORMAT output_format, const char * output_filename);
 
     /// Set output filename for a given output format.
-    void SetOutputFilename
+    void SetOutputFilenameForOutputFormat
     (const OUTPUT_FORMAT output_format, const std::string & output_filename)
-    { SetOutputFilename(output_format, output_filename.c_str()); }
+    { SetOutputFilenameForOutputFormat
+        (output_format, output_filename.c_str()); }
 
 
   public:
@@ -4545,10 +4546,10 @@ namespace IJK {
   // Set output filename for output format flagged true.
   template <typename _COORD_TYPE, typename _OTHER_DATA>
   void OUTPUT_PARAM_BASE<_COORD_TYPE,_OTHER_DATA>::
-  SetOutputFilename(const char * output_filename)
+  SetOutputFilenameForOutputFormat(const char * output_filename)
   {
     IJK::PROCEDURE_ERROR
-      error("OUTPUT_PARAM_BASE::SetOutputFilename");
+      error("OUTPUT_PARAM_BASE::SetOutputFilenameForOutputFormat");
 
     int num_output_formats = 0;
 
@@ -4575,8 +4576,15 @@ namespace IJK {
       num_output_formats++;
       are_output_filenames_set = true;
     }
-    
-    if (num_output_formats > 1) {
+
+    if (num_output_formats < 1) {
+      error.AddMessage
+        ("Programming error.  No output format is set.");
+      error.AddMessage
+        ("  Cannot set output filename if no output format is selected.");
+      throw error;      
+    }
+    else if (num_output_formats > 1) {
       error.AddMessage
         ("Programming error.  More than one output format is set.");
       error.AddMessage
@@ -4590,10 +4598,11 @@ namespace IJK {
   // Set output filename for a given output format.
   template <typename _COORD_TYPE, typename _OTHER_DATA>
   void OUTPUT_PARAM_BASE<_COORD_TYPE,_OTHER_DATA>::
-  SetOutputFilename
+  SetOutputFilenameForOutputFormat
   (const OUTPUT_FORMAT output_format, const char * output_filename)
   {
-    IJK::PROCEDURE_ERROR error("OUTPUT_PARAM_BASE::SetOutputFilename");
+    IJK::PROCEDURE_ERROR error
+      ("OUTPUT_PARAM_BASE::SetOutputFilenameForOutputFormat");
 
     switch(output_format) {
 
