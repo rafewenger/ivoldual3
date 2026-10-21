@@ -301,28 +301,6 @@ namespace IVOLDUAL {
      const std::vector<VERTEX_INDEX> & slist,
      IO_TIME & io_time);
 
-  /// Write dual mesh and color facets with output format output_format.
-  void write_dual_mesh_color
-  (const OUTPUT_INFO & output_info, const OUTPUT_FORMAT output_format,
-   const std::vector<COORD_TYPE> & vertex_coord, 
-   const std::vector<VERTEX_INDEX> & plist,
-   const COLOR_TYPE * front_color, const COLOR_TYPE * back_color);
-
-  /// Write dual mesh and color facets.
-  void write_dual_mesh_color
-    (const OUTPUT_INFO & output_info,
-     const std::vector<COORD_TYPE> & vertex_coord, 
-     const std::vector<VERTEX_INDEX> & slist,
-     const COLOR_TYPE * front_color, const COLOR_TYPE * back_color);
-
-  /// Write dual mesh, color facets, and record output time.
-  void write_dual_mesh_color
-    (const OUTPUT_INFO & output_info,
-     const std::vector<COORD_TYPE> & vertex_coord, 
-     const std::vector<VERTEX_INDEX> & slist, 
-     const COLOR_TYPE * front_color, const COLOR_TYPE * back_color,
-     IO_TIME & io_time);
-
   /// Write dual isosurface triangular mesh
   /// @param output_info Output information.
   /// @param output_format Output format.
