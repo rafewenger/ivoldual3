@@ -87,21 +87,14 @@ namespace IVOLDUAL {
   
   //! IO information
   class IO_INFO:
-    public IJK::ISO_OUTPUT_PARAM_BASE<SCALAR_TYPE,COORD_TYPE,
-                                      IVOLDUAL_IO_INFO>
+    public IJK::ISO_IO_PARAM_BASE<SCALAR_TYPE,COORD_TYPE,
+                                  IVOLDUAL_IO_INFO>
   {
     
   public:
     
-    IO_INFO()
-    {
-      this->num_vertices_per_isopoly = 8;
-    };
+    IO_INFO() {};
     ~IO_INFO() { };
-
-    /// @brief Set from IO_INFO
-    void Set(const IO_INFO & io_param)
-    { *this = io_param; }
   };
   
 
@@ -109,7 +102,9 @@ namespace IVOLDUAL {
   // OUTPUT INFORMATION
   // **************************************************
 
-  class OUTPUT_INFO:public IO_INFO
+  class OUTPUT_INFO:
+   public IJK::ISO_OUTPUT_PARAM_BASE<SCALAR_TYPE,COORD_TYPE,
+                                     IVOLDUAL_IO_INFO>
   {
 
   public:
@@ -133,7 +128,9 @@ namespace IVOLDUAL {
     }
 
     void ConstructOutputFilenames(const int i)
-    { this->IO_INFO::ConstructOutputFilenames(i, true); }
+    { IJK::ISO_OUTPUT_PARAM_BASE<SCALAR_TYPE,COORD_TYPE,
+                                 IVOLDUAL_IO_INFO>::
+        ConstructOutputFilenames(i, true); }
   };
 
     
