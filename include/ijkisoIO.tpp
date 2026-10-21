@@ -11,7 +11,7 @@
 
 /*
   IJK: Isosurface Jeneration Kode
-  Copyright (C) 2023-2025 Rephael Wenger
+  Copyright (C) 2023-2026 Rephael Wenger
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public License
@@ -31,6 +31,7 @@
 #ifndef _IJKIO_PARAM_
 #define _IJKIO_PARAM_
 
+#include <algorithm>
 #include <filesystem>
 #include <iostream>
 #include <string>
@@ -318,15 +319,20 @@ namespace IJK {
     if (flag_interval_volume) {
       if (flag_label_with_isovalue || isovalue_string.size() > 2) {
         if (SIZE_TYPE(i+1) < isovalue_string.size()) {
+          string s0 = isovalue_string[i];
+          string s1 = isovalue_string[i+1];
+          std::replace(s0.begin(), s0.end(), '.', 'p');
+          std::replace(s1.begin(), s1.end(), '.', 'p');
           this->output_basename +=
-            string(".") + string("ivol=") + isovalue_string[i] +
-            string("_") + isovalue_string[i+1];
+            string("-") + string("ivolv_") + s0 + string("_") + s1;
         }
       }
     }
     else {
-      if (flag_label_with_isovalue || isovalue_string.size() > 1) {
-        this->output_basename += string(".") + string("isov=") + isovalue_string[i];
+      if (flag_label_with_isovalue || (SIZE_TYPE(i) < isovalue_string.size())) {
+        string s = isovalue_string[i];
+        std::replace(s.begin(), s.end(), '.', 'p');
+        this->output_basename += string("-") + string("isov_") + s;
       }
     }
 
