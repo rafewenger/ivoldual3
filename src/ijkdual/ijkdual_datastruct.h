@@ -104,17 +104,6 @@ namespace IJKDUAL {
 
 
   // **************************************************
-  // GRID CUBE ISOVERT
-  // **************************************************
-
-  /* OBSOLETE/DEPRECATED
-  typedef IJK::GRID_CUBE_ISOVERT
-  <ISO_VERTEX_INDEX, TABLE_INDEX, FACET_VERTEX_INDEX,
-   ISO_VERTEX_INDEX> GRID_CUBE_ISOVERT;
-  */
-
-
-  // **************************************************
   // GRID EDGE
   // **************************************************
 
@@ -122,22 +111,6 @@ namespace IJKDUAL {
 
   /// Array of grid edges.
   typedef std::vector<GRID_EDGE_TYPE> GRID_EDGE_ARRAY;
-
-
-  // **************************************************
-  // GRID CUBE DATA
-  // **************************************************
-
-  /* OBSOLETE/DEPRECATED
-  typedef IJK::GRID_CUBE_ISOVERT<ISO_VERTEX_INDEX, TABLE_INDEX, 
-                                 FACET_VERTEX_INDEX, ISO_VERTEX_INDEX>
-  GRID_CUBE_DATA;
-
-  typedef IJK::GRID_CUBE_ISOVERT_AND_CUBE_COORD
-  <3, ISO_VERTEX_INDEX, TABLE_INDEX, FACET_VERTEX_INDEX, ISO_VERTEX_INDEX,
-   GRID_COORD_TYPE>
-  GRID_CUBE_DATA_PLUS;
-  */
 
 
   // ***************************************************************
