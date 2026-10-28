@@ -50,7 +50,7 @@ namespace IVOLDUAL {
   ///   of eight cubes containing the grid vertex surrounded by the pseudobox.
   bool is_upper_right_grid_vertex_in_isosurface_pseudobox
   (const IVOL_VERTEX_ADJACENCY_LIST & vertex_adjacency_list,
-   const std::vector<GRID_CUBE_DATA> & cube_list,
+   const std::vector<ACTIVE_GRID_CUBE> & cube_list,
    const DUAL_IVOLVERT_ARRAY & ivolv_list,
    const VERTEX_INDEX cube0_list_index,
    VERTEX_INDEX cube_list_index[8]);
@@ -59,13 +59,13 @@ namespace IVOLDUAL {
   ///   vertex w in cube cube_ivolv.
   bool is_vertex_sep_vertex
   (const VERTEX_INDEX iv,
-   const GRID_CUBE_DATA & cube_ivolv,
+   const ACTIVE_GRID_CUBE & cube_ivolv,
    const DUAL_IVOLVERT_ARRAY & ivolv_list);
 
 
   /// Return true if cube contains doubly connected interval volume vertex.
   bool does_cube_contain_doubly_connected_ivol_vertex
-  (const GRID_CUBE_DATA & cube_ivolv,
+  (const ACTIVE_GRID_CUBE & cube_ivolv,
    const DUAL_IVOLVERT_ARRAY & ivolv_list);
 
 
@@ -82,7 +82,7 @@ namespace IVOLDUAL {
   ///     and the seven other cubes adjacent to cube0_list_index.
   bool get_seven_adjacent_cubes
   (const IVOL_VERTEX_ADJACENCY_LIST & vertex_adjacency_list,
-   const std::vector<GRID_CUBE_DATA> & cube_list,
+   const std::vector<ACTIVE_GRID_CUBE> & cube_list,
    const DUAL_IVOLVERT_ARRAY & ivolv_list,
    const int cube0_list_index,
    int cube_list_index[8]);
@@ -92,7 +92,7 @@ namespace IVOLDUAL {
   ///  if it shares an interval volume edge with cube0_list_index.
   bool get_adjacent_cube_in_oriented_direction
   (const IVOL_VERTEX_ADJACENCY_LIST & vertex_adjacency_list,
-   const std::vector<GRID_CUBE_DATA> & cube_list,
+   const std::vector<ACTIVE_GRID_CUBE> & cube_list,
    const DUAL_IVOLVERT_ARRAY & ivolv_list,
    const int cubeA_list_index,
    const int direction,

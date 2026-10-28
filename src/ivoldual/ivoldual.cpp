@@ -151,7 +151,7 @@ void IVOLDUAL::dual_contouring_interval_volume
  MERGE_DATA & merge_data, 
  IVOLDUAL_INFO & dualiso_info)
 {
-  std::vector<GRID_CUBE_DATA> cube_ivolv_list;
+  std::vector<ACTIVE_GRID_CUBE> cube_ivolv_list;
 
   dual_contouring_interval_volume
     (scalar_grid, isovalue0, isovalue1, ivoldual_table, param, ivolpoly_vert,
@@ -169,7 +169,7 @@ void IVOLDUAL::dual_contouring_interval_volume
  const IVOLDUAL_CUBE_TABLE & ivoldual_table,
  const IVOLDUAL_DATA_FLAGS & param,
  std::vector<ISO_VERTEX_INDEX> & ivolpoly_vert,
- std::vector<GRID_CUBE_DATA> & cube_ivolv_list,
+ std::vector<ACTIVE_GRID_CUBE> & cube_ivolv_list,
  DUAL_IVOLVERT_ARRAY & ivolv_list,
  IVOLDUAL_POLY_INFO_ARRAY & ivolpoly_info,
  COORD_ARRAY & vertex_coord,
@@ -430,7 +430,7 @@ namespace {
 void IVOLDUAL::set_cube_ivoltable_info
 (const IVOLDUAL_ENCODED_GRID & encoded_grid,
  const IVOLDUAL_CUBE_TABLE & ivoldual_table,
- std::vector<GRID_CUBE_DATA> & cube_ivolv_list)
+ std::vector<ACTIVE_GRID_CUBE> & cube_ivolv_list)
 {
   const int dimension = encoded_grid.Dimension();
   const int num_vertex_types = ivoldual_table.NumVertexTypes();
@@ -455,7 +455,7 @@ void IVOLDUAL::set_ivol_vertex_info
 (const DUALISO_GRID & grid,
  const IVOLDUAL_CUBE_TABLE & ivoldual_table,
  const std::vector<ISO_VERTEX_INDEX> & poly_vert,
- const std::vector<GRID_CUBE_DATA> & cube_list,
+ const std::vector<ACTIVE_GRID_CUBE> & cube_list,
  const VERTEX_INDEX index_to_cube_list[],
  const IVOL_VERTEX_ADJACENCY_LIST & vertex_adjacency_list,
  DUAL_IVOLVERT_ARRAY & ivolv_list)
@@ -597,7 +597,7 @@ void IVOLDUAL::determine_ivol_vertices_in_isosurface_boxes
 
 void IVOLDUAL::determine_ivol_vertices_in_isosurface_pseudoboxes
 (const IVOL_VERTEX_ADJACENCY_LIST & vertex_adjacency_list,
- const std::vector<GRID_CUBE_DATA> & cube_list,
+ const std::vector<ACTIVE_GRID_CUBE> & cube_list,
  DUAL_IVOLVERT_ARRAY & ivolv_list)
 {
   const int NUM_CUBE_VERTICES(8);
@@ -619,7 +619,7 @@ void IVOLDUAL::determine_ivol_vertices_in_isosurface_pseudoboxes
 
 
 void IVOLDUAL::set_in_pseudobox
-(const GRID_CUBE_DATA & cube_ivolv,
+(const ACTIVE_GRID_CUBE & cube_ivolv,
  DUAL_IVOLVERT_ARRAY & ivolv_list)
 {
   for (int i = 0; i < cube_ivolv.num_isov; i++) {
@@ -665,7 +665,7 @@ void IVOLDUAL::determine_ivol_vertices_adjacent_to_upper_and_lower_isosurfaces
 
 void IVOLDUAL::determine_thin_regions
 (const DUALISO_GRID & grid,
- const std::vector<GRID_CUBE_DATA> & cube_list,
+ const std::vector<ACTIVE_GRID_CUBE> & cube_list,
  const VERTEX_INDEX index_to_cube_list[],
  const IVOL_VERTEX_ADJACENCY_LIST & vertex_adjacency_list,
  DUAL_IVOLVERT_ARRAY & ivolv_list)
@@ -910,7 +910,7 @@ namespace {
 
   void set_dual_ivolv_vertices
   (const IVOLDUAL_CUBE_TABLE & ivoldual_table,
-   const std::vector<GRID_CUBE_DATA> & cube_list,
+   const std::vector<ACTIVE_GRID_CUBE> & cube_list,
    const std::vector<VERTEX_INDEX> & ivolpoly_cube, 
    const std::vector<POLY_VERTEX_INDEX> & poly_vertex,
    const IVOLDUAL_POLY_INFO_ARRAY & ivolpoly_info,
@@ -964,7 +964,7 @@ namespace {
   //   to avoid pair ambiguity.
   bool is_cube_ambig_split_candidate
   (const IVOLDUAL_CUBE_TABLE & ivoldual_table,
-   const GRID_CUBE_DATA & cube_data)
+   const ACTIVE_GRID_CUBE & cube_data)
   {
     const TABLE_INDEX table_index = cube_data.table_index;
     const int numv_in_lower_lifted = 
@@ -1009,7 +1009,7 @@ namespace {
   //   or vice versa.
   bool is_cube_ambig_split_candidateB
   (const IVOLDUAL_CUBE_TABLE & ivoldual_table,
-   const GRID_CUBE_DATA & cube_data)
+   const ACTIVE_GRID_CUBE & cube_data)
   {
     const TABLE_INDEX table_index = cube_data.table_index;
     const int numv_in_lower_lifted = 
@@ -1054,7 +1054,7 @@ namespace {
   //   (Does not necessarily need to do both.)
   bool is_cube_ambig_split_candidateC
   (const IVOLDUAL_CUBE_TABLE & ivoldual_table,
-   const GRID_CUBE_DATA & cube_data)
+   const ACTIVE_GRID_CUBE & cube_data)
   {
     const TABLE_INDEX table_index = cube_data.table_index;
     const int numv_in_lower_lifted = 
@@ -1146,8 +1146,8 @@ namespace {
   // Version which checks split pairs.
   bool is_cube_pair_ambig_split_candidate
   (const IVOLDUAL_CUBE_TABLE & ivoldual_table,
-   const GRID_CUBE_DATA & cube_dataA,
-   const GRID_CUBE_DATA & cube_dataB)
+   const ACTIVE_GRID_CUBE & cube_dataA,
+   const ACTIVE_GRID_CUBE & cube_dataB)
   {
     const TABLE_INDEX table_indexA = cube_dataA.table_index;
     const TABLE_INDEX table_indexB = cube_dataB.table_index;
@@ -1179,8 +1179,8 @@ namespace {
   // - Version which allows more splits.
   bool is_cube_pair_ambig_split_candidateD
   (const IVOLDUAL_CUBE_TABLE & ivoldual_table,
-   const GRID_CUBE_DATA & cube_dataA,
-   const GRID_CUBE_DATA & cube_dataB)
+   const ACTIVE_GRID_CUBE & cube_dataA,
+   const ACTIVE_GRID_CUBE & cube_dataB)
   {
     const TABLE_INDEX table_indexA = cube_dataA.table_index;
     const TABLE_INDEX table_indexB = cube_dataB.table_index;
@@ -1212,7 +1212,7 @@ void IVOLDUAL::split_dual_ivolvert
  const std::vector<VERTEX_INDEX> & ivolpoly_cube, 
  const std::vector<POLY_VERTEX_INDEX> & poly_vertex,
  const IVOLDUAL_POLY_INFO_ARRAY & ivolpoly_info,
- std::vector<GRID_CUBE_DATA> & cube_list,
+ std::vector<ACTIVE_GRID_CUBE> & cube_list,
  DUAL_IVOLVERT_ARRAY & ivolv_list,
  std::vector<ISO_VERTEX_INDEX> & ivolpoly_vert,
  int & num_split)
@@ -1270,7 +1270,7 @@ void IVOLDUAL::split_non_manifold_ivolv_pairs_ambig
 (const DUALISO_GRID & grid,
  const IVOLDUAL_CUBE_TABLE & ivoldual_table,
  const VERTEX_INDEX index_to_cube_list[],
- std::vector<GRID_CUBE_DATA> & cube_list,
+ std::vector<ACTIVE_GRID_CUBE> & cube_list,
  int & num_split)
 {
   typedef typename DUALISO_GRID::NUMBER_TYPE NUM_TYPE;
@@ -1322,7 +1322,7 @@ void IVOLDUAL::split_non_manifold_ivolv_pairs_ambig
 void IVOLDUAL::split_non_manifold_ivolv_pairs_ambig
 (const DUALISO_GRID & grid,
  const IVOLDUAL_CUBE_TABLE & ivoldual_table,
- std::vector<GRID_CUBE_DATA> & cube_list,
+ std::vector<ACTIVE_GRID_CUBE> & cube_list,
  int & num_split)
 {
   IJK::ARRAY<VERTEX_INDEX> index_to_cube_list(grid.NumVertices());
@@ -1340,7 +1340,7 @@ void IVOLDUAL::split_non_manifold_ivolv_pairs_ambigB
 (const DUALISO_GRID & grid,
  const IVOLDUAL_CUBE_TABLE & ivoldual_table,
  const VERTEX_INDEX index_to_cube_list[],
- std::vector<GRID_CUBE_DATA> & cube_list,
+ std::vector<ACTIVE_GRID_CUBE> & cube_list,
  int & num_split)
 {
   typedef typename DUALISO_GRID::NUMBER_TYPE NUM_TYPE;
@@ -1393,7 +1393,7 @@ void IVOLDUAL::split_non_manifold_ivolv_pairs_ambigB
 void IVOLDUAL::split_non_manifold_ivolv_pairs_ambigB
 (const DUALISO_GRID & grid,
  const IVOLDUAL_CUBE_TABLE & ivoldual_table,
- std::vector<GRID_CUBE_DATA> & cube_list,
+ std::vector<ACTIVE_GRID_CUBE> & cube_list,
  int & num_split)
 {
   IJK::ARRAY<VERTEX_INDEX> index_to_cube_list(grid.NumVertices());
@@ -1410,7 +1410,7 @@ void IVOLDUAL::split_non_manifold_ivolv_pairs_ambigC
 (const DUALISO_GRID & grid,
  const IVOLDUAL_CUBE_TABLE & ivoldual_table,
  const VERTEX_INDEX index_to_cube_list[],
- std::vector<GRID_CUBE_DATA> & cube_list,
+ std::vector<ACTIVE_GRID_CUBE> & cube_list,
  int & num_split)
 {
   typedef typename DUALISO_GRID::NUMBER_TYPE NUM_TYPE;
@@ -1469,7 +1469,7 @@ void IVOLDUAL::split_non_manifold_ivolv_pairs_ambigC
 void IVOLDUAL::split_non_manifold_ivolv_pairs_ambigC
 (const DUALISO_GRID & grid,
  const IVOLDUAL_CUBE_TABLE & ivoldual_table,
- std::vector<GRID_CUBE_DATA> & cube_list,
+ std::vector<ACTIVE_GRID_CUBE> & cube_list,
  int & num_split)
 {
   IJK::ARRAY<VERTEX_INDEX> index_to_cube_list(grid.NumVertices());
@@ -1487,7 +1487,7 @@ void IVOLDUAL::split_non_manifold_ivolv_pairs_ambigD
 (const DUALISO_GRID & grid,
  const IVOLDUAL_CUBE_TABLE & ivoldual_table,
  const VERTEX_INDEX index_to_cube_list[],
- std::vector<GRID_CUBE_DATA> & cube_list,
+ std::vector<ACTIVE_GRID_CUBE> & cube_list,
  int & num_split)
 {
   typedef typename DUALISO_GRID::NUMBER_TYPE NUM_TYPE;
@@ -1546,7 +1546,7 @@ void IVOLDUAL::split_non_manifold_ivolv_pairs_ambigD
 void IVOLDUAL::split_non_manifold_ivolv_pairs_ambigD
 (const DUALISO_GRID & grid,
  const IVOLDUAL_CUBE_TABLE & ivoldual_table,
- std::vector<GRID_CUBE_DATA> & cube_list,
+ std::vector<ACTIVE_GRID_CUBE> & cube_list,
  int & num_split)
 {
   IJK::ARRAY<VERTEX_INDEX> index_to_cube_list(grid.NumVertices());

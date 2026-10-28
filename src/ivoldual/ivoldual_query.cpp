@@ -74,7 +74,7 @@ bool IVOLDUAL::is_ivolv_lower_left_vertex_of_isosurface_box
 //   by an isosurface pseudobox.
 bool IVOLDUAL::is_upper_right_grid_vertex_in_isosurface_pseudobox
 (const IVOL_VERTEX_ADJACENCY_LIST & vertex_adjacency_list,
- const std::vector<GRID_CUBE_DATA> & cube_list,
+ const std::vector<ACTIVE_GRID_CUBE> & cube_list,
  const DUAL_IVOLVERT_ARRAY & ivolv_list,
  const VERTEX_INDEX cube0_list_index,
  VERTEX_INDEX cube_list_index[8])
@@ -138,7 +138,7 @@ bool IVOLDUAL::is_upper_right_grid_vertex_in_isosurface_pseudobox
 ///   vertex w in cube cube_ivolv.
 bool IVOLDUAL::is_vertex_sep_vertex
 (const VERTEX_INDEX iv,
- const GRID_CUBE_DATA & cube_ivolv,
+ const ACTIVE_GRID_CUBE & cube_ivolv,
  const DUAL_IVOLVERT_ARRAY & ivolv_list)
 {
   for (int i = 0; i < cube_ivolv.num_isov; i++) {
@@ -154,7 +154,7 @@ bool IVOLDUAL::is_vertex_sep_vertex
 
 // Return true if cube contains doubly connected interval volume vertex.
 bool IVOLDUAL::does_cube_contain_doubly_connected_ivol_vertex
-(const GRID_CUBE_DATA & cube_ivolv,
+(const ACTIVE_GRID_CUBE & cube_ivolv,
  const DUAL_IVOLVERT_ARRAY & ivolv_list)
 {
   for (int i = 0; i < cube_ivolv.num_isov; i++) {
@@ -179,7 +179,7 @@ bool IVOLDUAL::does_cube_contain_doubly_connected_ivol_vertex
 //     and the seven other cubes adjacent to cube0_list_index.
 bool IVOLDUAL::get_seven_adjacent_cubes
 (const IVOL_VERTEX_ADJACENCY_LIST & vertex_adjacency_list,
- const std::vector<GRID_CUBE_DATA> & cube_list,
+ const std::vector<ACTIVE_GRID_CUBE> & cube_list,
  const DUAL_IVOLVERT_ARRAY & ivolv_list,
  const int cube0_list_index,
  VERTEX_INDEX cube_list_index[8])
@@ -219,7 +219,7 @@ bool IVOLDUAL::get_seven_adjacent_cubes
 ///  if it shares an interval volume edge with cube0_list_index.
 bool IVOLDUAL::get_adjacent_cube_in_oriented_direction
 (const IVOL_VERTEX_ADJACENCY_LIST & vertex_adjacency_list,
- const std::vector<GRID_CUBE_DATA> & cube_list,
+ const std::vector<ACTIVE_GRID_CUBE> & cube_list,
  const DUAL_IVOLVERT_ARRAY & ivolv_list,
  const int cubeA_list_index,
  const int direction,

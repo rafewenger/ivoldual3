@@ -120,7 +120,7 @@ namespace IVOLDUAL {
    const IVOLDUAL_CUBE_TABLE & ivoldual_table,
    const IVOLDUAL_DATA_FLAGS & param,
    std::vector<ISO_VERTEX_INDEX> & ivolpoly_vert,
-   std::vector<GRID_CUBE_DATA> & cube_ivolv_list,
+   std::vector<ACTIVE_GRID_CUBE> & cube_ivolv_list,
    DUAL_IVOLVERT_ARRAY & ivolv_list,
    IVOLDUAL_POLY_INFO_ARRAY & ivolpoly_info,
    COORD_ARRAY & vertex_coord,
@@ -171,7 +171,7 @@ namespace IVOLDUAL {
   void set_cube_ivoltable_info
   (const IVOLDUAL_ENCODED_GRID & encoded_grid,
    const IVOLDUAL_CUBE_TABLE & ivoldual_table,
-   std::vector<GRID_CUBE_DATA> & cube_ivolv_list);
+   std::vector<ACTIVE_GRID_CUBE> & cube_ivolv_list);
 
 
   // **************************************************
@@ -182,7 +182,7 @@ namespace IVOLDUAL {
   (const DUALISO_GRID & grid,
    const IVOLDUAL_CUBE_TABLE & ivoldual_table,
    const std::vector<ISO_VERTEX_INDEX> & poly_vert,
-   const std::vector<GRID_CUBE_DATA> & cube_list,
+   const std::vector<ACTIVE_GRID_CUBE> & cube_list,
    const VERTEX_INDEX index_to_cube_list[],
    const IVOL_VERTEX_ADJACENCY_LIST & vertex_adjacency_list,
    DUAL_IVOLVERT_ARRAY & ivolv_list);
@@ -198,7 +198,7 @@ namespace IVOLDUAL {
 
   void determine_ivol_vertices_in_isosurface_pseudoboxes
   (const IVOL_VERTEX_ADJACENCY_LIST & vertex_adjacency_list,
-   const std::vector<GRID_CUBE_DATA> & cube_list,
+   const std::vector<ACTIVE_GRID_CUBE> & cube_list,
    DUAL_IVOLVERT_ARRAY & ivolv_list);
 
   void determine_ivol_vertices_adjacent_to_upper_and_lower_isosurfaces
@@ -207,14 +207,14 @@ namespace IVOLDUAL {
 
   void determine_thin_regions
   (const DUALISO_GRID & grid,
-   const std::vector<GRID_CUBE_DATA> & cube_list,
+   const std::vector<ACTIVE_GRID_CUBE> & cube_list,
    const VERTEX_INDEX index_to_cube_list[],
    const IVOL_VERTEX_ADJACENCY_LIST & vertex_adjacency_list,
    DUAL_IVOLVERT_ARRAY & ivolv_list);
 
   /// Set flag in_pseudobox to true for all ivol vertices in cube cube_ivolv.
   void set_in_pseudobox
-  (const GRID_CUBE_DATA & cube_ivolv,
+  (const ACTIVE_GRID_CUBE & cube_ivolv,
    DUAL_IVOLVERT_ARRAY & ivolv_list);
 
 
@@ -275,7 +275,7 @@ namespace IVOLDUAL {
    const std::vector<VERTEX_INDEX> & ivolpoly_cube, 
    const std::vector<POLY_VERTEX_INDEX> & poly_vertex,
    const IVOLDUAL_POLY_INFO_ARRAY & ivolpoly_info,
-   std::vector<GRID_CUBE_DATA> & cube_list,
+   std::vector<ACTIVE_GRID_CUBE> & cube_list,
    DUAL_IVOLVERT_ARRAY & ivolv_list,
    std::vector<ISO_VERTEX_INDEX> & isopoly,
    int & num_split);
@@ -302,7 +302,7 @@ namespace IVOLDUAL {
   (const DUALISO_GRID & grid,
    const IVOLDUAL_CUBE_TABLE & ivoldual_table,
    const VERTEX_INDEX index_to_cube_list[],
-   std::vector<GRID_CUBE_DATA> & cube_list,
+   std::vector<ACTIVE_GRID_CUBE> & cube_list,
    int & num_split);
 
   /// Split interval volume vertex pairs which create non-manifold edges.
@@ -310,7 +310,7 @@ namespace IVOLDUAL {
   void split_non_manifold_ivolv_pairs_ambig
   (const DUALISO_GRID & grid,
    const IVOLDUAL_CUBE_TABLE & ivoldual_table,
-   std::vector<GRID_CUBE_DATA> & cube_list,
+   std::vector<ACTIVE_GRID_CUBE> & cube_list,
    int & num_split);
 
   /// Split interval volume vertex pairs which create non-manifold edges.
@@ -322,7 +322,7 @@ namespace IVOLDUAL {
   (const DUALISO_GRID & grid,
    const IVOLDUAL_CUBE_TABLE & ivoldual_table,
    const VERTEX_INDEX index_to_cube_list[],
-   std::vector<GRID_CUBE_DATA> & cube_list,
+   std::vector<ACTIVE_GRID_CUBE> & cube_list,
    int & num_split);
 
   /// Split interval volume vertex pairs which create non-manifold edges.
@@ -331,7 +331,7 @@ namespace IVOLDUAL {
   void split_non_manifold_ivolv_pairs_ambigB
   (const DUALISO_GRID & grid,
    const IVOLDUAL_CUBE_TABLE & ivoldual_table,
-   std::vector<GRID_CUBE_DATA> & cube_list,
+   std::vector<ACTIVE_GRID_CUBE> & cube_list,
    int & num_split);
 
   /// Split interval volume vertex pairs which create non-manifold edges.
@@ -343,7 +343,7 @@ namespace IVOLDUAL {
   (const DUALISO_GRID & grid,
    const IVOLDUAL_CUBE_TABLE & ivoldual_table,
    const VERTEX_INDEX index_to_cube_list[],
-   std::vector<GRID_CUBE_DATA> & cube_list,
+   std::vector<ACTIVE_GRID_CUBE> & cube_list,
    int & num_split);
 
   /// Split interval volume vertex pairs which create non-manifold edges.
@@ -352,7 +352,7 @@ namespace IVOLDUAL {
   void split_non_manifold_ivolv_pairs_ambigC
   (const DUALISO_GRID & grid,
    const IVOLDUAL_CUBE_TABLE & ivoldual_table,
-   std::vector<GRID_CUBE_DATA> & cube_list,
+   std::vector<ACTIVE_GRID_CUBE> & cube_list,
    int & num_split);
 
 
@@ -367,7 +367,7 @@ namespace IVOLDUAL {
   (const DUALISO_GRID & grid,
    const IVOLDUAL_CUBE_TABLE & ivoldual_table,
    const VERTEX_INDEX index_to_cube_list[],
-   std::vector<GRID_CUBE_DATA> & cube_list,
+   std::vector<ACTIVE_GRID_CUBE> & cube_list,
    int & num_split);
 
   /// Split interval volume vertex pairs which create non-manifold edges.
@@ -376,7 +376,7 @@ namespace IVOLDUAL {
   void split_non_manifold_ivolv_pairs_ambigD
   (const DUALISO_GRID & grid,
    const IVOLDUAL_CUBE_TABLE & ivoldual_table,
-   std::vector<GRID_CUBE_DATA> & cube_list,
+   std::vector<ACTIVE_GRID_CUBE> & cube_list,
    int & num_split);
 
   // **************************************************

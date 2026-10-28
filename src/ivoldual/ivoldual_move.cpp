@@ -32,7 +32,7 @@
 
 // Move interval volume vertex to cube center.
 void IVOLDUAL::move_ivol_vertex_to_cube_center
-(const std::vector<GRID_CUBE_DATA> & cube_list,
+(const std::vector<ACTIVE_GRID_CUBE> & cube_list,
  const DUAL_IVOLVERT_ARRAY & ivolv_list,
  const IVOL_VERTEX_INDEX ivolv, 
  COORD_ARRAY & vertex_coord)
@@ -80,7 +80,7 @@ void IVOLDUAL::move_point_away_from_cube_facet_3D
 // Move interval volume vertex so it is at least distance 
 //   from grid cube facet jfacet.
 void IVOLDUAL::move_ivol_vertex_away_from_cube_facet
-(const std::vector<GRID_CUBE_DATA> & cube_list,
+(const std::vector<ACTIVE_GRID_CUBE> & cube_list,
  const DUAL_IVOLVERT_ARRAY & ivolv_list,
  const IVOL_VERTEX_INDEX ivolv, const int jfacet, const COORD_TYPE distance, 
  COORD_ARRAY & vertex_coord, bool & flag_moved)
@@ -121,7 +121,7 @@ void IVOLDUAL::move_point_away_from_all_cube_facets_3D
 // Move interval volume vertex so it is at least distance 
 //   from all grid cube facets.
 void IVOLDUAL::move_ivol_vertex_away_from_all_cube_facets
-(const std::vector<GRID_CUBE_DATA> & cube_list,
+(const std::vector<ACTIVE_GRID_CUBE> & cube_list,
  const DUAL_IVOLVERT_ARRAY & ivolv_list,
  const IVOL_VERTEX_INDEX ivolv, const COORD_TYPE distance, 
  COORD_ARRAY & vertex_coord, bool & flag_moved)
@@ -169,7 +169,7 @@ void IVOLDUAL::move_point_away_from_grid_interior_3D
 // @pre Vertex in in grid boundary cube.
 void IVOLDUAL::move_ivol_vertex_away_from_grid_interior
 (const DUALISO_GRID & grid, 
- const std::vector<GRID_CUBE_DATA> & cube_list,
+ const std::vector<ACTIVE_GRID_CUBE> & cube_list,
  const DUAL_IVOLVERT_ARRAY & ivolv_list,
  const IVOL_VERTEX_INDEX ivolv, const COORD_TYPE distance, 
  COORD_ARRAY & vertex_coord, bool & flag_moved)
@@ -191,7 +191,7 @@ void IVOLDUAL::move_ivol_vertex_away_from_grid_interior
 // Move isosurface vertices in thin regions away from grid cube facets.
 void IVOLDUAL::expand_thin_regions
 (const DUALISO_GRID & grid,
- const std::vector<GRID_CUBE_DATA> & cube_list,
+ const std::vector<ACTIVE_GRID_CUBE> & cube_list,
  const DUAL_IVOLVERT_ARRAY & ivolv_list,
  const COORD_TYPE separation_distance,
  COORD_ARRAY & vertex_coord,

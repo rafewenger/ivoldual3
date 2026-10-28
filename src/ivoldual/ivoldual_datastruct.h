@@ -192,7 +192,7 @@ namespace IVOLDUAL {
 
   typedef IJK::ACTIVE_GRID_CUBE_WITH_COORD_T
   <3, ISO_VERTEX_INDEX, TABLE_INDEX, FACET_VERTEX_INDEX, ISO_VERTEX_INDEX,
-   GRID_COORD_TYPE> GRID_CUBE_DATA;
+   GRID_COORD_TYPE> ACTIVE_GRID_CUBE;
 
 
   // **************************************************
