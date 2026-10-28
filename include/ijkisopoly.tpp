@@ -2,13 +2,13 @@
  *  @file ijkisopoly.tpp
  *  @brief ijk templates for extracting an isosurface patch 
  *    from a polytope.
- *  - Version 0.6.0
+ *  - Version 0.6.1
  */
 
 
 /*
   IJK: Isosurface Jeneration Kode
-  Copyright (C) 2009-2025 Rephael Wenger
+  Copyright (C) 2009-2026 Rephael Wenger
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public License
@@ -35,8 +35,6 @@
 #include "ijkbits.tpp"
 #include "ijkcube.tpp"
 
-// *** DEBUG ***
-#include <iostream>
 
 namespace IJK {
 
@@ -290,20 +288,10 @@ namespace IJK {
           if (facet_intersection_table.IsSomeFacetOrthogonalTo
               (boundary_bits, ambig_facet_orth_dir)) {
 
-            // *** DEBUG ***
-            /*
-            using namespace std;
-            scalar_grid.PrintIndexAndCoord
-              (cerr, "Changing table index for cube ", cube_index, "");
-            cerr << " from " << table_index << " to " << table_index2 << endl;
-            cerr << "  vertex_ridge_bits: " << vertex_ridge_bits << endl;
-            */
-            
             cube_list[i].table_index = table_index2;
             cube_list[i].num_isov =
               isodual_table.NumIsoVertices(table_index2);
             num_ambig_changed++;
-
             
           }
         }
@@ -2526,14 +2514,15 @@ namespace IJK {
 
 
   // ***************************************************************
-  // INFORMATION ABOUT ISOSURFACE VERTICES IN A GRID CUBE 
-  //    (DUAL CONTOURING)
+  // ACTIVE GRID CUBE
   // ***************************************************************
 
-  /// @brief Information about dual contouring isosurface vertices in a grid cube.
+  /// @brief Active grid cube information.
+  /// - Active grid cube configuration type, number of isosurface
+  ///   vertices, etc.
   template <typename CI_TYPE, typename TI_TYPE, 
             typename NTYPE, typename _ISOV_TYPE>
-  class GRID_CUBE_ISOVERT {
+  class ACTIVE_GRID_CUBE_T {
 
   public:
     typedef CI_TYPE CUBE_INDEX_TYPE;
@@ -2584,10 +2573,10 @@ namespace IJK {
    *  @param cube_listA[] Array of cube indices.
    *  @param cube_listB[] Array of cubes with member function SetCubeIndex().
    */
-  template <typename CTYPE, typename GRID_CUBE_TYPE>
+  template <typename CTYPE, typename _ACTIVE_GRID_CUBE>
   void set_grid_cube_indices
   (const std::vector<CTYPE> & cube_listA,
-   std::vector<GRID_CUBE_TYPE> & cube_listB)
+   std::vector<_ACTIVE_GRID_CUBE> & cube_listB)
   {
     typedef typename std::vector<CTYPE>::size_type SIZE_TYPE;
 
@@ -2599,11 +2588,11 @@ namespace IJK {
   };
 
 
-  /// GRID_CUBE_ISOVERT and cube_coord.
+  /// ACTIVE_GRID_CUBE_T with cube coordinates.
   template <const int GRID_DIMENSION, typename CI_TYPE, typename TI_TYPE, 
             typename NTYPE, typename ISOV_TYPE, typename COORD_TYPE>
-  class GRID_CUBE_ISOVERT_AND_CUBE_COORD:public
-  GRID_CUBE_ISOVERT<CI_TYPE,TI_TYPE,NTYPE,ISOV_TYPE> {
+  class ACTIVE_GRID_CUBE_WITH_COORD_T:public
+  ACTIVE_GRID_CUBE_T<CI_TYPE,TI_TYPE,NTYPE,ISOV_TYPE> {
 
   public:
     typedef COORD_TYPE CUBE_COORD_TYPE;
@@ -2628,18 +2617,18 @@ namespace IJK {
     { return(cube_coord[d]); }
 
     /// Return index of facet shared by this->cube and adjacent_cube.
-    template <typename GRID_CUBE_TYPE>
+    template <typename _ACTIVE_GRID_CUBE>
     CI_TYPE GetSharedFacetIndex
-    (const GRID_CUBE_TYPE & adjacent_cube) const;
+    (const _ACTIVE_GRID_CUBE & adjacent_cube) const;
   };
 
 
   template <const int GRID_DIMENSION, typename CI_TYPE, typename TI_TYPE, 
             typename NTYPE, typename ISOV_TYPE, typename COORD_TYPE>
-  template <typename GRID_CUBE_TYPE>
-  CI_TYPE GRID_CUBE_ISOVERT_AND_CUBE_COORD
+  template <typename _ACTIVE_GRID_CUBE>
+  CI_TYPE ACTIVE_GRID_CUBE_WITH_COORD_T
   <GRID_DIMENSION, CI_TYPE, TI_TYPE, NTYPE, ISOV_TYPE, COORD_TYPE>::
-  GetSharedFacetIndex(const GRID_CUBE_TYPE & adjacent_cube) const
+  GetSharedFacetIndex(const _ACTIVE_GRID_CUBE & adjacent_cube) const
   {
     for (NTYPE d = 0; d < GRID_DIMENSION; d++) {
       if (this->CubeCoord(d)+1 == adjacent_cube.CubeCoord(d)) {
@@ -2654,7 +2643,7 @@ namespace IJK {
     // Throw error message.
 
     IJK::PROCEDURE_ERROR error
-      ("GRID_CUBE_ISOVERT_AND_CUBE_COORD::GetSharedFacetIndex");
+      ("ACTIVE_GRID_CUBE_WITH_COORD_T::GetSharedFacetIndex");
     for (NTYPE d = 0; d < GRID_DIMENSION; d++) {
       if (this->CubeCoord(d) < adjacent_cube.CubeCoord(d)) {
         error.AddMessage("Programming error.  Cubes are not adjacent.");
@@ -2672,8 +2661,7 @@ namespace IJK {
 
 
   /*!
-   *  @brief Extended information about dual contouring isosurface vertices
-   *    in a grid cube.
+   *  @brief Extended information in active grid cube.
    *  - Contains index of some adjacent cube that shares
    *    an ambiguous active facet with this->cube_index,
    *    if such a cube exist.
@@ -2682,8 +2670,8 @@ namespace IJK {
    */
   template <typename CI_TYPE, typename TI_TYPE, 
             typename NTYPE, typename FTYPE>
-  class GRID_CUBE_ISOVERT_X:
-    public GRID_CUBE_ISOVERT<CI_TYPE, TI_TYPE, NTYPE, FTYPE> {
+  class ACTIVE_GRID_CUBE_X_T:
+    public ACTIVE_GRID_CUBE_T<CI_TYPE, TI_TYPE, NTYPE, FTYPE> {
 
   public:
 
@@ -2698,7 +2686,7 @@ namespace IJK {
     ///   share an ambiguous facet.
     bool is_adjacent_cube_set;
 
-    GRID_CUBE_ISOVERT_X()
+    ACTIVE_GRID_CUBE_X_T()
     { is_adjacent_cube_set = false; }
   };
 
@@ -2708,6 +2696,7 @@ namespace IJK {
     { t.list_loc_of_adjacent_cube };
   };
 
+  
   // ***************************************************************
   //! @name COMPUTE GRID_CUBE_ISOVERT INFORMATION
   // ***************************************************************

@@ -21,8 +21,8 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _IJKDUAL_DATASTRUCT_
-#define _IJKDUAL_DATASTRUCT_
+#ifndef _IJKDUAL_DATASTRUCT_H_
+#define _IJKDUAL_DATASTRUCT_H_
 
 #include <string>
 #include <vector>
@@ -107,9 +107,11 @@ namespace IJKDUAL {
   // GRID CUBE ISOVERT
   // **************************************************
 
+  /* OBSOLETE/DEPRECATED
   typedef IJK::GRID_CUBE_ISOVERT
   <ISO_VERTEX_INDEX, TABLE_INDEX, FACET_VERTEX_INDEX,
    ISO_VERTEX_INDEX> GRID_CUBE_ISOVERT;
+  */
 
 
   // **************************************************
@@ -126,6 +128,7 @@ namespace IJKDUAL {
   // GRID CUBE DATA
   // **************************************************
 
+  /* OBSOLETE/DEPRECATED
   typedef IJK::GRID_CUBE_ISOVERT<ISO_VERTEX_INDEX, TABLE_INDEX, 
                                  FACET_VERTEX_INDEX, ISO_VERTEX_INDEX>
   GRID_CUBE_DATA;
@@ -134,11 +137,21 @@ namespace IJKDUAL {
   <3, ISO_VERTEX_INDEX, TABLE_INDEX, FACET_VERTEX_INDEX, ISO_VERTEX_INDEX,
    GRID_COORD_TYPE>
   GRID_CUBE_DATA_PLUS;
+  */
 
 
-  // **************************************************
+  // ***************************************************************
+  // ACTIVE GRID CUBE
+  // ***************************************************************  
+
+  typedef IJK::ACTIVE_GRID_CUBE_X_T<ISO_VERTEX_INDEX, TABLE_INDEX, 
+                                    FACET_VERTEX_INDEX, ISO_VERTEX_INDEX>
+  GRID_CUBE_DATA;
+  
+
+  // ***************************************************************
   // DUAL CONTOURING ISOSURFACE CLASS
-  // **************************************************
+  // ***************************************************************
 
   //! Dual contouring isosurface.
   //! Representation of isosurface returned by Dual Contouring algorithm.
