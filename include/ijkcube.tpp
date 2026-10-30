@@ -353,6 +353,11 @@ namespace IJK {
     bool IsFacetIncidentOnVertex(const VTYPE kf, const VTYPE iv) const;
 
 
+    // Block copy constructors.
+    CUBE_FACE_INFO(const CUBE_FACE_INFO &) = delete;
+    CUBE_FACE_INFO & operator=(const CUBE_FACE_INFO &) = delete;
+
+    
     // Print routines (mainly for debugging.)
 
     /*!
