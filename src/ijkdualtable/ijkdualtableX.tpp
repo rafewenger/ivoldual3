@@ -1,13 +1,13 @@
 /*!
  *  \file ijkdualtableX.tpp
  *  @brief Extended dual lookup tables of isosurface and interval volume vertices.
- *  - Version 0.6.0
+ *  - Version 0.6.1
  */
 
 
 /*
   IJK: Isosurface Jeneration Kode
-  Copyright (C) 2017-2025 Rephael Wenger
+  Copyright (C) 2017-2026 Rephael Wenger
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public License
@@ -55,9 +55,9 @@ namespace IJKDUALTABLE {
     typedef typename VINFO_TYPE::CUBE_EDGE_TYPE CUBE_EDGE_TYPE;
     typedef typename VINFO_TYPE::DIR_BITS_TYPE DIR_BITS_TYPE;
 
-    const NTYPE NUM_FACETS(table.Cube().NumFacets());
-    const NTYPE NUM_EDGES(table.Cube().NumEdges());
-    const NTYPE NUM_VERTICES(table.Cube().NumVertices());
+    const NTYPE NUM_FACETS(table.CubeInfo().NumFacets());
+    const NTYPE NUM_EDGES(table.CubeInfo().NumEdges());
+    const NTYPE NUM_VERTICES(table.CubeInfo().NumVertices());
     NTYPE ivolv[2], iend[2];
     DIR_BITS_TYPE connect_dir[2];
     std::vector<DIR_BITS_TYPE> bit_mask(NUM_FACETS);
@@ -81,11 +81,11 @@ namespace IJKDUALTABLE {
         if (table.EdgeHasDualIVolPoly(it, ie)) {
           ivolv[0] = table.LowerIncident(it, ie);
           ivolv[1] = table.UpperIncident(it, ie);
-          iend[0] = table.Cube().EdgeEndpoint(ie, 0);
-          iend[1] = table.Cube().EdgeEndpoint(ie, 1);
+          iend[0] = table.CubeInfo().EdgeEndpoint(ie, 0);
+          iend[1] = table.CubeInfo().EdgeEndpoint(ie, 1);
           connect_dir[0] = vinfo.VertexInfo(it, ivolv[0]).connect_dir;
           connect_dir[1] = vinfo.VertexInfo(it, ivolv[1]).connect_dir;
-          DTYPE edge_dir = table.Cube().EdgeDir(ie);
+          DTYPE edge_dir = table.CubeInfo().EdgeDir(ie);
 
           for (DTYPE d = 1; d < table.Dimension(); d++) {
             const DTYPE dir2 = (edge_dir+d)%table.Dimension();
@@ -149,7 +149,7 @@ namespace IJKDUALTABLE {
     typedef typename VINFO_TYPE::CUBE_EDGE_TYPE CUBE_EDGE_TYPE;
     typedef typename VINFO_TYPE::DIR_BITS_TYPE DIR_BITS_TYPE;
 
-    const NTYPE NUM_CUBE_FACETS(table.Cube().NumFacets());
+    const NTYPE NUM_CUBE_FACETS(table.CubeInfo().NumFacets());
     CUBE_VERTEX_TYPE iend[2];
     IVOLV_TYPE ivolv;
     NTYPE jfacet;
@@ -172,9 +172,9 @@ namespace IJKDUALTABLE {
 
       for (CUBE_EDGE_TYPE ie = 0; ie < table.NumPolyEdges(); ie++) {
 
-        iend[0] = table.Cube().EdgeEndpoint(ie, 0);
-        iend[1] = table.Cube().EdgeEndpoint(ie, 1);
-        const DTYPE edge_dir = table.Cube().EdgeDir(ie);
+        iend[0] = table.CubeInfo().EdgeEndpoint(ie, 0);
+        iend[1] = table.CubeInfo().EdgeEndpoint(ie, 1);
+        const DTYPE edge_dir = table.CubeInfo().EdgeDir(ie);
 
         if (table.DoesLowerIsosurfaceIntersectEdge(it, ie, ivolv)) {
 
@@ -428,7 +428,7 @@ namespace IJKDUALTABLE {
 
         if (dimension > DIM2 &&
             separates_cube_edge
-            (dimension, iso_connect_dir, table.Cube(), separation_edge)) {
+            (dimension, iso_connect_dir, table.CubeInfo(), separation_edge)) {
           vinfo.VertexInfoNC(it, j).separation_edge = separation_edge;
         }
         else {
