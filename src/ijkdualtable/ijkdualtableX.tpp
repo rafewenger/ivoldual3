@@ -1,5 +1,5 @@
 /*!
- *  \file ijkdualtableX.tpp
+ *  @file ijkdualtableX.tpp
  *  @brief Extended dual lookup tables of isosurface and interval volume vertices.
  *  - Version 0.6.1
  */

@@ -787,8 +787,8 @@ namespace IJKDUALTABLE {
 
     NTYPE iend[2];
 
-    iend[0] = table.Cube().EdgeEndpoint(ie, 0);
-    iend[1] = table.Cube().EdgeEndpoint(ie, 1);
+    iend[0] = table.CubeInfo().EdgeEndpoint(ie, 0);
+    iend[1] = table.CubeInfo().EdgeEndpoint(ie, 1);
 
     if (table.IsBelowIntervalVolume(it, iend[0])) {
       if (table.IsBelowIntervalVolume(it, iend[1])) { return(false); }
@@ -3822,8 +3822,8 @@ namespace IJKDUALTABLE {
   void IVOLDUAL_CUBE_TABLE<NUM_VERTEX_TYPES, DTYPE,NTYPE,TI_TYPE,ENTRY_TYPE>::
   Create(const DTYPE2 dimension, const bool flag_separate_neg)
   {
-    if (this->cube.Dimension() != dimension)
-      { this->cube.SetDimension(dimension); }
+    if (this->cube_info.Dimension() != dimension)
+      { this->cube_info.SetDimension(dimension); }    
     this->SetToCube(this->CubeInfo());
 
     TI_TYPE n = calculate_num_entries<TI_TYPE>
