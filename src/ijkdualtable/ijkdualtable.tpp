@@ -1859,6 +1859,13 @@ namespace IJKDUALTABLE {
     { return cube_info; }
 
     
+    // Set functions
+
+    /// Redefine SetDimension to set cube dimension.
+    template <typename DTYPE2>
+    void SetDimension(const DTYPE2 d);
+
+    
     // Create isodual table functions.
 
     template <typename DTYPE2>
@@ -2076,6 +2083,13 @@ namespace IJKDUALTABLE {
     NTYPE ComputeNumIncidentBipolarEdges
     (const TI_TYPE2 it, const VTYPE iv) const;
 
+
+    // Set functions
+
+    /// Redefine SetDimension to set cube dimension.
+    template <typename DTYPE2>
+    void SetDimension(const DTYPE2 d);
+    
     template <typename DTYPE2>
     void Create(const DTYPE2 dimension);
     template <typename DTYPE2>
@@ -3328,6 +3342,18 @@ namespace IJKDUALTABLE {
   // ISODUAL CUBE TABLE MEMBER FUNCTIONS
   // **************************************************
 
+  // Redefine SetDimension to set cube dimension.
+  template <typename DTYPE, typename NTYPE, typename TI_TYPE,
+            typename ENTRY_TYPE>
+  template <typename DTYPE2>
+  void ISODUAL_CUBE_TABLE<DTYPE,NTYPE,TI_TYPE,ENTRY_TYPE>::
+  SetDimension(const DTYPE2 d)
+  {
+    cube_info.SetDimension(d);
+    ISODUAL_TABLE_BASE<DTYPE,NTYPE,TI_TYPE,ENTRY_TYPE>::SetDimension(d);
+  }
+
+  
   // Create table.
   template <typename DTYPE, typename NTYPE, typename TI_TYPE,
             typename ENTRY_TYPE>
@@ -3336,8 +3362,7 @@ namespace IJKDUALTABLE {
   Create(const DTYPE2 dimension, const bool flag_separate_neg,
          const bool flag_separate_opposite)
   {
-    if (cube_info.Dimension() != dimension)
-      { cube_info.SetDimension(dimension); }
+    SetDimension(dimension);
     this->SetToCube(CubeInfo());
 
     TI_TYPE n = calculate_num_entries<TI_TYPE>(this->NumPolyVertices(), 2);
@@ -3409,6 +3434,17 @@ namespace IJKDUALTABLE {
   // ISODUAL CUBE TABLE AMBIG MEMBER FUNCTIONS
   // **************************************************
 
+  // Redefine SetDimension to set cube dimension.
+  template <typename DTYPE, typename NTYPE, typename TI_TYPE,
+            typename ENTRY_TYPE>
+  template <typename DTYPE2>
+  void ISODUAL_CUBE_TABLE_AMBIG<DTYPE,NTYPE,TI_TYPE,ENTRY_TYPE>::
+  SetDimension(const DTYPE2 d)
+  {
+    cube_info.SetDimension(d);
+    ISODUAL_TABLE_AMBIG_BASE<DTYPE,NTYPE,TI_TYPE,ENTRY_TYPE>::SetDimension(d);
+  }
+  
   // Create table.
   template <typename DTYPE, typename NTYPE, typename TI_TYPE,
             typename ENTRY_TYPE>
@@ -3417,8 +3453,7 @@ namespace IJKDUALTABLE {
   Create(const DTYPE2 dimension, const bool flag_separate_neg,
          const bool flag_separate_opposite)
   {
-    if (this->cube_info.Dimension() != dimension)
-      { this->cube_info.SetDimension(dimension); }
+    SetDimension(dimension);
     this->SetToCube(this->CubeInfo());
 
     TI_TYPE n = calculate_num_entries<TI_TYPE>(this->NumPolyVertices(), 2);
@@ -3822,8 +3857,7 @@ namespace IJKDUALTABLE {
   void IVOLDUAL_CUBE_TABLE<NUM_VERTEX_TYPES, DTYPE,NTYPE,TI_TYPE,ENTRY_TYPE>::
   Create(const DTYPE2 dimension, const bool flag_separate_neg)
   {
-    if (this->cube_info.Dimension() != dimension)
-      { this->cube_info.SetDimension(dimension); }    
+    this->SetDimension(dimension);
     this->SetToCube(this->CubeInfo());
 
     TI_TYPE n = calculate_num_entries<TI_TYPE>
@@ -3956,8 +3990,7 @@ namespace IJKDUALTABLE {
   <NUM_VERTEX_TYPES, DTYPE,NTYPE,TI_TYPE,ENTRY_TYPE>::
   Create(const DTYPE2 dimension, const bool flag_separate_neg)
   {
-    if (this->cube_info.Dimension() != dimension)
-      { this->cube_info.SetDimension(dimension); }
+    this->SetDimension(dimension);
     this->SetToCube(this->CubeInfo());
     
     TI_TYPE n = calculate_num_entries<TI_TYPE>
