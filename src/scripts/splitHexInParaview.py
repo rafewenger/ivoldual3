@@ -29,19 +29,19 @@ print("\n\nUsing input file: ", filepath)
 # read in .off file
 with open(filepath) as f:
     header = next(f)
-    numPts,numCells,nul = [int(x) for x in next(f).split()] # read first line
-    array = []
-    line_number = 0
-    for line in f: # read rest of lines
-        if line_number<numPts:
-            array.append([float(x) for x in line.split()])  #read in points
-        else:
-            array.append([int(x) for x in line.split()])  # read in connectivity
-        line_number = line_number + 1
+    records = []
+    for line in f:
+        line = line.strip()
+        if not line or line[0] == '#':
+            continue
+        records.append(line.split())
+
+numPts,numCells,nul = [int(x) for x in records.pop(0)]
 
 # extract vertex coordinates and cell connectivity from input file
-ptsArray = array[0:numPts]
-cellsArray = array[numPts+1:numPts+1+numCells]  # '+1' is hard-coded, which represent blank lines in input file
+ptsArray = [[float(x) for x in record] for record in records[:numPts]]
+cellsArray = [[int(x) for x in record]
+              for record in records[numPts:numPts+numCells]]
 
 # convert the connectivity to 8 points cube format if it is read in as 4 points square format
 if cellsArray[0][0] == 4:
