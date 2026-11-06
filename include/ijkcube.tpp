@@ -1,13 +1,13 @@
 /*!
  *  @file ijkcube.tpp
  *  @brief ijk templates defining cube (hypercube) classes and functions.
- *  - Version 0.6.0
+ *  - Version 0.6.1
  */
 
 
 /*
   IJK: Isosurface Jeneration Kode
-  Copyright (C) 2011-2025 Rephael Wenger
+  Copyright (C) 2011-2026 Rephael Wenger
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public License
@@ -180,7 +180,7 @@ namespace IJK {
 
     /*!
      *  @brief Return side (0 or 1) of cube containing vertex.
-     *  - Side is orthogonal to directio orth_dir.
+     *  - Side is orthogonal to direction orth_dir.
      */
     int SideContainingVertex
     (const NTYPE iv, const DTYPE orth_dir) const
@@ -190,7 +190,20 @@ namespace IJK {
       if (mask2 == 0) { return 0; }
       else { return 1; }
     }
-    
+
+
+    /*!
+     *  @brief Return projection of vertex on lower facet.
+     *  - Return vertex that is projection of iv on lower facet.
+     *  @param orth_dir Direction orthogonal to lower and upper facets.
+     */
+    NTYPE ProjectVertexOnLowerFacet(const NTYPE iv, const DTYPE orth_dir) const
+    {
+      if (SideContainingVertex(iv, orth_dir) == 0)
+        { return iv; }
+      else
+        { return VertexNeighbor(iv, orth_dir); }
+    }
     
     /// @brief Return direction orthogonal to facet.
     int FacetOrthDir(const int ifacet) const
@@ -352,7 +365,31 @@ namespace IJK {
     /// Return true if facet is incident on vertex.
     bool IsFacetIncidentOnVertex(const VTYPE kf, const VTYPE iv) const;
 
+    /*!
+     *  @brief Return true if edge is on lower facet with direction orth_dir.
+     */
+    bool IsEdgeOnLowerFacet(const VTYPE ie, const DTYPE orth_dir) const
+    {
+      if (EdgeDir(ie) == orth_dir) { return false; }
+      const VTYPE iendpoint0 = EdgeEndpoint(ie, 0);
+      if (this->SideContainingVertex(iendpoint0, orth_dir) == 0)
+        { return true; }
+      return false;
+    }
 
+    /*!
+     *  @brief Return true if edge is on upper facet with direction orth_dir.
+     */
+    bool IsEdgeOnUpperFacet(const VTYPE ie, const DTYPE orth_dir) const
+    {
+      if (EdgeDir(ie) == orth_dir) { return false; }
+      const VTYPE iendpoint0 = EdgeEndpoint(ie, 0);
+      if (this->SideContainingVertex(iendpoint0, orth_dir) == 1)
+        { return true; }
+      return false;
+    }
+
+    
     // Block copy constructors.
     CUBE_FACE_INFO(const CUBE_FACE_INFO &) = delete;
     CUBE_FACE_INFO & operator=(const CUBE_FACE_INFO &) = delete;
@@ -395,7 +432,7 @@ namespace IJK {
               typename STYPE0, typename STYPE1>
     void PrintEdgeEndpoints
     (OSTREAM_TYPE & out, const STYPE0 & s0, 
-     const ITYPE2 ipoly, const STYPE1 & s1) const;
+     const ITYPE2 iedge, const STYPE1 & s1) const;
 
   };
 
