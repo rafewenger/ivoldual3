@@ -223,7 +223,7 @@ namespace IJK {
     template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
               typename NTYPE2>
     void SetSize       ///< Set dimensions and axis size.
-    (const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
+    (const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
 
 
     /// Uniformly subsample \a scalar_grid2. Resizes current grid.
@@ -382,7 +382,7 @@ namespace IJK {
     template <typename DTYPE2, typename ATYPE2, 
               typename VTYPE2, typename NTYPE2>
     void SetSize       ///< Set dimensions and axis size.
-    (const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
+    (const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
 
     // copy min & max values
     void Copy(const STYPE * scalar_min, const STYPE * scalar_max);
@@ -712,7 +712,7 @@ namespace IJK {
 
     if (dimension < 1) { return;  };
 
-    MINMAX_GRID< GRID<DTYPE,ATYPE,GRID_SIZE_TYPE,GRID_SIZE_TYPE>,STYPE>
+    MINMAX_GRID< GRID_T<DTYPE,ATYPE,GRID_SIZE_TYPE,GRID_SIZE_TYPE>,STYPE>
       minmax_grid(dimension-1, axis_size);
 
     compute_increment(dimension, axis_size, axis_increment.Ptr());
@@ -824,7 +824,7 @@ namespace IJK {
 
     if (dimension < 1) { return;  };
 
-    MINMAX_GRID< GRID<DTYPE,ATYPE,GRID_SIZE_TYPE,GRID_SIZE_TYPE>,STYPE>
+    MINMAX_GRID< GRID_T<DTYPE,ATYPE,GRID_SIZE_TYPE,GRID_SIZE_TYPE>,STYPE>
       minmax_grid(dimension-1, axis_size);
 
     compute_increment(dimension, axis_size, axis_increment.Ptr());
@@ -1363,7 +1363,7 @@ namespace IJK {
   template <typename BASE_CLASS>
   template <typename DTYPE2, typename ATYPE2, typename VTYPE2, typename NTYPE2>
   void SCALAR_GRID_ALLOC<BASE_CLASS>::SetSize
-  (const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2)
+  (const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2)
   {
     this->SetSize(grid2.Dimension(), grid2.AxisSize());
   }
@@ -1770,7 +1770,7 @@ namespace IJK {
   template <typename GRID_CLASS, typename STYPE>
   template <typename DTYPE2, typename ATYPE2, typename VTYPE2, typename NTYPE2>
   void MINMAX_BASE<GRID_CLASS,STYPE>::SetSize
-  (const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2)
+  (const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2)
   {
     this->SetSize(grid2.Dimension(), grid2.AxisSize());
   }
