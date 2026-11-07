@@ -48,12 +48,12 @@ namespace IJK {
   typedef long GRID_SIZE_TYPE;
 
   // *****************************************************************
-  // TEMPLATE CLASS GRID
+  // TEMPLATE CLASS GRID_T
   // *****************************************************************
 
   /// Base grid class.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE> 
-  class GRID {
+  class GRID_T {
 
   protected:
     DTYPE dimension;     ///< grid dimension
@@ -73,16 +73,16 @@ namespace IJK {
 
   public:
     // Constructors, destructors, assignment.
-    GRID(const DTYPE dimension, const ATYPE * axis_size);
-    GRID();
-    ~GRID();
-    GRID(const GRID & grid);
+    GRID_T(const DTYPE dimension, const ATYPE * axis_size);
+    GRID_T();
+    ~GRID_T();
+    GRID_T(const GRID_T & grid);
 
     // Copy function.
     template <typename GTYPE2>
-    const GRID & Copy(const GTYPE2 & right);
+    const GRID_T & Copy(const GTYPE2 & right);
     template <typename GTYPE2>
-    const GRID & operator = (const GTYPE2 & right)
+    const GRID_T & operator = (const GTYPE2 & right)
     { return(Copy(right)); }
 
     // set functions
@@ -92,7 +92,7 @@ namespace IJK {
     template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
               typename NTYPE2>
     void SetSize       /// Set dimensions and axis size.
-    (const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
+    (const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
 
     // get functions
     inline DTYPE Dimension() const         /// Dimension.
@@ -166,7 +166,7 @@ namespace IJK {
     bool CompareSize(const DTYPE2 dimension, const ATYPE2 * axis_size) const;
     template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
               typename NTYPE2>
-    bool CompareSize(const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid) const;
+    bool CompareSize(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid) const;
 
     /// Return true if grid contains specified point.
     template <typename CTYPE>
@@ -242,7 +242,7 @@ namespace IJK {
     template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
               typename NTYPE2>
     bool CheckDimension
-    (const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid,
+    (const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid,
      const char * grid_label1, const char * grid_label2,
      IJK::ERROR & error) const;
 
@@ -253,13 +253,13 @@ namespace IJK {
     /// Return true if grid *this has same dimension and axis_size[] as grid. 
     template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
               typename NTYPE2>
-    bool Check(const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid,
+    bool Check(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid,
                IJK::ERROR & error) const;
 
     /// Return true if current grid size (grid1) matches grid2 size.
     template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
               typename NTYPE2>
-    bool Check(const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2,
+    bool Check(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2,
                const char * grid_label1, const char * grid_label2,
                IJK::ERROR & error) const;
 
@@ -308,7 +308,7 @@ namespace IJK {
   // **************************************************
 
   /*!
-   *  @brief Inherits class GRID and adds other indexes and operators 
+   *  @brief Inherits class GRID_T and adds other indexes and operators
    *    for fast accessing of grid vertices.
    *  @tparam CUBEV_BITSET_SIZE Size of bitset storing
    *    cube vertex locations.
@@ -321,7 +321,7 @@ namespace IJK {
    */
   template <const int CUBEV_BITSET_SIZE,
             typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE> 
-  class GRID_PLUS:public GRID<DTYPE,ATYPE,VTYPE,NTYPE> {
+  class GRID_PLUS:public GRID_T<DTYPE,ATYPE,VTYPE,NTYPE> {
 
     /// @nosubgrouping
 
@@ -399,7 +399,7 @@ namespace IJK {
     GRID_PLUS();
     template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
               typename NTYPE2>
-    GRID_PLUS(const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
+    GRID_PLUS(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
     GRID_PLUS(const GRID_PLUS
               <CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE> & grid2);
 
@@ -412,7 +412,7 @@ namespace IJK {
     template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
               typename NTYPE2>
     void SetSize       /// Set dimensions and axis size.
-    (const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
+    (const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
 
     // get functions
     inline NTYPE NumCubeVertices() const       /// Return number of cube vertices.
@@ -610,20 +610,20 @@ namespace IJK {
     /// Return true if grid *this has same dimension and axis_size[] as grid. 
     template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
               typename NTYPE2>
-    bool Check(const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid,
+    bool Check(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid,
                IJK::ERROR & error) const
     {
-      return GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2>::Check(grid, error);
+      return GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2>::Check(grid, error);
     }
 
     /// Return true if current grid size (grid1) matches grid2 size.
     template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
               typename NTYPE2>
-    bool Check(const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2,
+    bool Check(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2,
                const char * grid_label1, const char * grid_label2,
                IJK::ERROR & error) const
     {
-      return GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2>::
+      return GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2>::
 	Check(grid2, grid_label1, grid_label2, error);
     }
 
@@ -708,7 +708,7 @@ namespace IJK {
     GRID_NEIGHBORS();
     template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
               typename NTYPE2>
-    GRID_NEIGHBORS(const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
+    GRID_NEIGHBORS(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
     GRID_NEIGHBORS
     (const GRID_NEIGHBORS
      <CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE, NTYPE> & grid2);
@@ -726,7 +726,7 @@ namespace IJK {
     template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
               typename NTYPE2>
     void SetSize       
-    (const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
+    (const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
 
     // get functions
 
@@ -852,7 +852,7 @@ namespace IJK {
     GRID_SPACING(const DTYPE2 dimension, const ATYPE2 * axis_size);
     template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
               typename NTYPE2>
-    GRID_SPACING(const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
+    GRID_SPACING(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
     GRID_SPACING(const GRID_SPACING<SP_TYPE, GRID_TYPE> & grid2);
     ~GRID_SPACING();                     ///< Destructor.
 
@@ -893,7 +893,7 @@ namespace IJK {
     template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
               typename NTYPE2>
     void SetSize       /// Set dimensions and axis size.
-    (const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
+    (const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
 
     /// Get spacing.
     template <typename DTYPE2>
@@ -956,7 +956,7 @@ namespace IJK {
     GEOM_GRID(const DTYPE2 dimension, const ATYPE2 * axis_size);
     template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
               typename NTYPE2>
-    GEOM_GRID(const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
+    GEOM_GRID(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
     GEOM_GRID(const GEOM_GRID<CTYPE, GRID_TYPE> & grid2);
     ~GEOM_GRID();                     ///< Destructor.
 
@@ -1003,7 +1003,7 @@ namespace IJK {
     template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
               typename NTYPE2>
     void SetSize
-    (const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
+    (const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
 
     /// Get origin.
     template <typename DTYPE2>
@@ -1017,7 +1017,7 @@ namespace IJK {
 
 
   // *****************************************************************
-  // FUNCTIONS WITH CLASS GRID ARGUMENT.
+  // FUNCTIONS WITH CLASS GRID_T ARGUMENT.
   // *****************************************************************
 
   // *** SHOULD BE MODIFIED TO MEMBER FUNCTIONS.
@@ -1030,7 +1030,7 @@ namespace IJK {
    */
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE, typename ITYPE>
   void compute_increment
-  (const GRID<DTYPE,ATYPE,VTYPE,NTYPE> & grid, ITYPE * increment)
+  (const GRID_T<DTYPE,ATYPE,VTYPE,NTYPE> & grid, ITYPE * increment)
   {
     compute_increment(grid.Dimension(), grid.AxisSize(), increment);
   }
@@ -1044,7 +1044,7 @@ namespace IJK {
    */
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE, typename ITYPE>
   void compute_cube_vertex_increment
-  (const GRID<DTYPE,ATYPE,VTYPE,NTYPE> & grid, ITYPE * cube_vertex_increment)
+  (const GRID_T<DTYPE,ATYPE,VTYPE,NTYPE> & grid, ITYPE * cube_vertex_increment)
   {
     const DTYPE dimension = grid.Dimension();
     VTYPE axis_increment[dimension];
@@ -1057,7 +1057,7 @@ namespace IJK {
   /// Subsample vertices in subgrid.
   template <typename DTYPE, typename ATYPE, typename PTYPE, typename VTYPE, typename NTYPE>
   void subsample_subgrid_vertices
-  (const GRID<DTYPE,ATYPE,VTYPE,NTYPE> & grid,
+  (const GRID_T<DTYPE,ATYPE,VTYPE,NTYPE> & grid,
    const VTYPE subgrid_origin, const ATYPE * subgrid_axis_size, 
    const PTYPE subsample_period, VTYPE * vlist)
   {
@@ -1072,7 +1072,7 @@ namespace IJK {
   template <typename DTYPE, typename DTYPE2,
             typename ATYPE, typename VTYPE, typename NTYPE>
   void compute_num_vertices_in_grid_facet
-  (const GRID<DTYPE,ATYPE,VTYPE,NTYPE> & grid, const DTYPE2 orth_dir,
+  (const GRID_T<DTYPE,ATYPE,VTYPE,NTYPE> & grid, const DTYPE2 orth_dir,
    NTYPE & num_vertices)
   {
     compute_num_vertices_in_grid_facet
@@ -1083,7 +1083,7 @@ namespace IJK {
   /// Get vertices in grid facet 0.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   void get_vertices_in_grid_facet0
-  (const GRID<DTYPE,ATYPE,VTYPE,NTYPE> & grid, VTYPE * vlist)
+  (const GRID_T<DTYPE,ATYPE,VTYPE,NTYPE> & grid, VTYPE * vlist)
   {
     get_vertices_in_grid_facet0
       (grid.Dimension(), grid.AxisSize(), vlist);
@@ -1091,12 +1091,12 @@ namespace IJK {
 
   
   // *****************************************************************
-  // TEMPLATE CLASS GRID MEMBER FUNCTIONS
+  // TEMPLATE CLASS GRID_T MEMBER FUNCTIONS
   // *****************************************************************
 
   /// Constructor.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE> 
-  GRID<DTYPE,ATYPE,VTYPE,NTYPE>::GRID
+  GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::GRID_T
   (const DTYPE dimension, const ATYPE * axis_size)
   {
     Init(dimension, axis_size);
@@ -1105,7 +1105,7 @@ namespace IJK {
 
   /// Default constructor.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE> 
-  GRID<DTYPE,ATYPE,VTYPE,NTYPE>::GRID()
+  GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::GRID_T()
   {
     Init(0, NULL);
   }
@@ -1113,7 +1113,7 @@ namespace IJK {
 
   /// Destructor.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE> 
-  GRID<DTYPE,ATYPE,VTYPE,NTYPE>::~GRID()
+  GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::~GRID_T()
   {
     FreeAll();
   }
@@ -1123,7 +1123,7 @@ namespace IJK {
   /// @param dimension  Dimension of grid.
   /// @param axis_size  Array: <em>axis_size[d]</em> = Number of vertices along axis \a d.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE> 
-  void GRID<DTYPE,ATYPE,VTYPE,NTYPE>::Init
+  void GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::Init
   (const DTYPE dimension, const ATYPE * axis_size)
   {
     this->axis_size = NULL;
@@ -1135,7 +1135,7 @@ namespace IJK {
 
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE> 
   template <typename DTYPE2, typename ATYPE2>
-  void GRID<DTYPE,ATYPE,VTYPE,NTYPE>::SetSize
+  void GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::SetSize
   (const DTYPE2 dimension, const ATYPE2 * axis_size)
   {
     FreeAll();
@@ -1169,16 +1169,16 @@ namespace IJK {
   /// @param grid2  Grid.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE> 
   template <typename DTYPE2, typename ATYPE2, typename VTYPE2, typename NTYPE2>
-  void GRID<DTYPE,ATYPE,VTYPE,NTYPE>::SetSize
-  (const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2)
+  void GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::SetSize
+  (const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2)
   {
     SetSize(grid2.Dimension(), grid2.AxisSize());
   }
 
 
-  /// Free all allocated memory in typename GRID.
+  /// Free all allocated memory in typename GRID_T.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE> 
-  void GRID<DTYPE,ATYPE,VTYPE,NTYPE>::FreeAll()
+  void GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::FreeAll()
   {
     if (axis_size != NULL) { delete [] axis_size; };
     axis_size = NULL;
@@ -1189,8 +1189,8 @@ namespace IJK {
 
   /// Copy constructor.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE> 
-  GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
-  GRID(const GRID<DTYPE,ATYPE,VTYPE,NTYPE> & grid)
+  GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
+  GRID_T(const GRID_T<DTYPE,ATYPE,VTYPE,NTYPE> & grid)
   {
     Init(grid.Dimension(), grid.AxisSize());
   }
@@ -1199,8 +1199,8 @@ namespace IJK {
   /// Copy.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE> 
   template <typename GTYPE2>
-  const GRID<DTYPE,ATYPE,VTYPE,NTYPE> & 
-  GRID<DTYPE,ATYPE,VTYPE,NTYPE>::Copy(const GTYPE2 & right)
+  const GRID_T<DTYPE,ATYPE,VTYPE,NTYPE> &
+  GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::Copy(const GTYPE2 & right)
   {
     if (&right != this) {         // avoid self-assignment
       SetSize(right.Dimension(), right.AxisSize());
@@ -1211,7 +1211,7 @@ namespace IJK {
 
   /// Compute and return number of grid cubes.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
-  NTYPE GRID<DTYPE,ATYPE,VTYPE,NTYPE>::ComputeNumCubes() const
+  NTYPE GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::ComputeNumCubes() const
   {
     NTYPE num_grid_cubes;
     compute_num_grid_cubes(Dimension(), AxisSize(), num_grid_cubes);
@@ -1221,7 +1221,7 @@ namespace IJK {
 
   /// Compute and return number of grid edges
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
-  NTYPE GRID<DTYPE,ATYPE,VTYPE,NTYPE>::ComputeNumEdges() const
+  NTYPE GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::ComputeNumEdges() const
   {
     NTYPE num_grid_edges;
     compute_num_grid_edges(Dimension(), AxisSize(), num_grid_edges);
@@ -1231,7 +1231,7 @@ namespace IJK {
 
   /// Compute and return number of vertices in grid interior.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
-  NTYPE GRID<DTYPE,ATYPE,VTYPE,NTYPE>::ComputeNumInteriorVertices() const
+  NTYPE GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::ComputeNumInteriorVertices() const
   {
     NTYPE num_interior_vertices;
     compute_num_interior_grid_vertices
@@ -1242,7 +1242,7 @@ namespace IJK {
 
   /// Compute and return number of cubes in grid interior.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
-  NTYPE GRID<DTYPE,ATYPE,VTYPE,NTYPE>::ComputeNumInteriorCubes() const
+  NTYPE GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::ComputeNumInteriorCubes() const
   {
     NTYPE num_interior_cubes;
     compute_num_interior_grid_cubes
@@ -1253,7 +1253,7 @@ namespace IJK {
 
   /// Compute and return number of cubes in grid boundary.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
-  NTYPE GRID<DTYPE,ATYPE,VTYPE,NTYPE>::ComputeNumBoundaryCubes() const
+  NTYPE GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::ComputeNumBoundaryCubes() const
   {
     NTYPE num_boundary_cubes;
     compute_num_boundary_grid_cubes
@@ -1265,7 +1265,7 @@ namespace IJK {
   /// Compute and return number of vertices in facet.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename DTYPE2>
-  NTYPE GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  NTYPE GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   ComputeNumVerticesInFacet(const DTYPE2 orth_dir) const
   {
     NTYPE num_vertices_in_facet;
@@ -1278,7 +1278,7 @@ namespace IJK {
   /// Compute and return number of vertices in facet.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename DTYPE2, typename WTYPE>
-  NTYPE GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  NTYPE GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   ComputeNumVerticesInFacet
   (const DTYPE2 orth_dir, const WTYPE boundary_width) const
   {
@@ -1293,7 +1293,7 @@ namespace IJK {
   /// Compute and return number of facets in grid facet.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename DTYPE2>
-  NTYPE GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  NTYPE GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   ComputeNumFacetsInGridFacet(const DTYPE2 orth_dir) const
   {
     NTYPE num_facets;
@@ -1306,7 +1306,7 @@ namespace IJK {
   /// Compute and return number of cubes in facet.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename DTYPE2>
-  NTYPE GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  NTYPE GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   ComputeNumCubesInFacet(const DTYPE2 orth_dir) const
   {
     NTYPE num_cubes_in_facet;
@@ -1320,7 +1320,7 @@ namespace IJK {
   /// @param coord  Array: <em>coord[d]</em> = d'th coordinate of vertex.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename CTYPE>
-  VTYPE GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  VTYPE GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   ComputeVertexIndex(const CTYPE * coord) const
   {
     return(compute_vertex_index<VTYPE>(coord, Dimension(), AxisSize()));
@@ -1331,7 +1331,7 @@ namespace IJK {
   /// @param coord  Array: <em>coord[d]</em> = d'th coordinate of vertex.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename CTYPE>
-  VTYPE GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  VTYPE GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   ComputeVertexIndex(const std::vector<CTYPE> coord) const
   {
     return(compute_vertex_index<VTYPE>(&(coord[0]), Dimension(), AxisSize()));
@@ -1347,7 +1347,7 @@ namespace IJK {
    */
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename CTYPE>
-  void GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  void GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   ComputeCoord(const VTYPE iv, CTYPE * coord) const
   {
     compute_coord(iv, Dimension(), AxisSize(), coord);
@@ -1364,7 +1364,7 @@ namespace IJK {
    */
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename CTYPE>
-  void GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  void GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   ComputeCubeCenterCoord(const VTYPE iv, CTYPE * coord) const
   {
     ComputeCoord(iv, coord);
@@ -1381,7 +1381,7 @@ namespace IJK {
    */
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename CTYPE>  
-  void GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  void GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   ComputeEdgeMidpoint(const VTYPE iend0, const int edge_direction,
                       CTYPE * midpoint_coord) const
   {
@@ -1405,7 +1405,7 @@ namespace IJK {
    */
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename BTYPE>
-  void GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  void GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   ComputeBoundaryBits(const VTYPE iv, BTYPE & boundary_bits) const
   {
     compute_boundary_bits(iv, Dimension(), AxisSize(), boundary_bits);
@@ -1413,7 +1413,7 @@ namespace IJK {
 
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename PTYPE, typename ATYPE2>
-  void GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  void GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   ComputeSubsampledAxisSizes
   (const PTYPE subsample_period, ATYPE2 subsampled_axis_size[]) const
   {
@@ -1435,7 +1435,7 @@ namespace IJK {
    */
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename BTYPE>
-  void GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  void GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   ComputeBoundaryCubeBits(const VTYPE icube, BTYPE & boundary_bits) const
   {
     compute_boundary_cube_bits(icube, Dimension(), AxisSize(), boundary_bits);
@@ -1446,7 +1446,7 @@ namespace IJK {
   /// @pre Cube is contained in grid.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename CTYPE, typename DIST_TYPE>
-  void GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  void GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   ComputeCubeDistanceToGridBoundary
   (const CTYPE * cube_coord, DIST_TYPE & distance) const
   {
@@ -1470,7 +1470,7 @@ namespace IJK {
   /// @param axis_size  Array: <em>axis_size[d]</em> = Number of vertices along axis \a d.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename DTYPE2, typename ATYPE2>
-  bool GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  bool GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   CompareSize(const DTYPE2 dimension, const ATYPE2 * axis_size) const
   {
     if (dimension != this->Dimension()) { return(false); };
@@ -1485,8 +1485,8 @@ namespace IJK {
   /// @param grid2  Grid.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename DTYPE2, typename ATYPE2, typename VTYPE2, typename NTYPE2>
-  bool GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
-  CompareSize(const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2) const
+  bool GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
+  CompareSize(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2) const
   {
     return(this->CompareSize(grid2.Dimension(), grid2.AxisSize()));
   }
@@ -1495,7 +1495,7 @@ namespace IJK {
   /// Return true if grid contains specified point.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename CTYPE>
-  bool GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  bool GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   ContainsPoint(const CTYPE * coord) const
   {
     const DTYPE dimension = this->Dimension();
@@ -1512,7 +1512,7 @@ namespace IJK {
   /// Return true if grid contains specified point.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename CTYPE>
-  bool GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  bool GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   ContainsPoint(const std::vector<CTYPE> & coord) const
   {
     return(this->ContainsPoint(&(coord[0])));
@@ -1522,7 +1522,7 @@ namespace IJK {
   /// Return true if cube contains specified point.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename CTYPE, typename VTYPE2>
-  bool GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  bool GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   CubeContainsPoint(const VTYPE2 icube, const CTYPE * coord) const
   {
     const DTYPE dimension = this->Dimension();
@@ -1542,7 +1542,7 @@ namespace IJK {
   /// Return true if cube contains specified point.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename CTYPE, typename VTYPE2>
-  bool GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  bool GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   CubeContainsPoint
   (const VTYPE2 icube, const std::vector<CTYPE> & coord) const
   {
@@ -1553,7 +1553,7 @@ namespace IJK {
   /// Return true if grid contains specified region.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename BOX_TYPE>
-  bool GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  bool GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   ContainsRegion(const BOX_TYPE & region) const
   {
     DTYPE dimension = this->Dimension();
@@ -1573,7 +1573,7 @@ namespace IJK {
   // Return true if cube facet is on grid boundary.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename CTYPE, typename DTYPE2>
-  bool GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  bool GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   IsCubeFacetOnGridBoundary
   (const CTYPE cube_index, const DTYPE2 facet_orth_dir, 
    const bool facet_side) const
@@ -1586,7 +1586,7 @@ namespace IJK {
   // Print vertex coordinates (mainly for debugging).
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename OSTREAM_TYPE, typename VTYPE0>
-  void GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  void GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   PrintCoord(OSTREAM_TYPE & out, const VTYPE0 iv) const
   {
     const DTYPE dimension = this->Dimension();
@@ -1606,7 +1606,7 @@ namespace IJK {
   // Print vertex coordinates (mainly for debugging).
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename OSTREAM_TYPE, typename VTYPE0>
-  void GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  void GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   PrintCoord(OSTREAM_TYPE & out, const char * prefix,
              const VTYPE0 iv, const char * suffix) const
   {
@@ -1619,7 +1619,7 @@ namespace IJK {
   // Print vertex index and coordinates (mainly for debugging).
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename OSTREAM_TYPE, typename VTYPE0>
-  void GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  void GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   PrintIndexAndCoord(OSTREAM_TYPE & out, const VTYPE0 iv) const
   {
     out << iv << " ";
@@ -1630,7 +1630,7 @@ namespace IJK {
   // Print vertex index and coordinates (mainly for debugging).
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename OSTREAM_TYPE, typename VTYPE0>
-  void GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  void GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   PrintIndexAndCoord(OSTREAM_TYPE & out, const char * prefix,
                      const VTYPE0 iv, const char * suffix) const
   {
@@ -1643,7 +1643,7 @@ namespace IJK {
   // Print two vertex indices and coordinates (mainly for debugging).
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename OSTREAM_TYPE, typename VTYPE0, typename VTYPE1>
-  void GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  void GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   PrintIndexAndCoord(OSTREAM_TYPE & out, const char * text0,
                      const VTYPE0 iv0, const char * text1, 
                      const VTYPE1 iv1, const char * text2) const
@@ -1660,7 +1660,7 @@ namespace IJK {
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename OSTREAM_TYPE, 
             typename VTYPE0, typename VTYPE1, typename VTYPE2>
-  void GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  void GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   PrintIndexAndCoord(OSTREAM_TYPE & out, const char * text0,
                      const VTYPE0 iv0, const char * text1, 
                      const VTYPE1 iv1, const char * text2,
@@ -1677,8 +1677,8 @@ namespace IJK {
 
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename DTYPE2, typename ATYPE2, typename VTYPE2, typename NTYPE2>
-  bool GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
-  CheckDimension(const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2,
+  bool GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
+  CheckDimension(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2,
                  const char * grid_label1, const char * grid_label2,
                  IJK::ERROR & error) const
   {
@@ -1700,7 +1700,7 @@ namespace IJK {
   /// @param axis_size  Array: <em>axis_size[d]</em> = Number of vertices along axis \a d.
   /// @param[out] error Error message if grid dimension or axis_size do not match.
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE> 
-  bool GRID<DTYPE,ATYPE,VTYPE,NTYPE>::Check
+  bool GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::Check
   (const DTYPE dimension, const ATYPE * axis_size, IJK::ERROR & error) const
   {
     if (dimension != this->dimension) {
@@ -1734,8 +1734,8 @@ namespace IJK {
 
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename DTYPE2, typename ATYPE2, typename VTYPE2, typename NTYPE2>
-  bool GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
-  Check(const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2,
+  bool GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
+  Check(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2,
         IJK::ERROR & error) const
   {
     return(Check(grid2.Dimension(), grid2.AxisSize(), error));
@@ -1743,8 +1743,8 @@ namespace IJK {
 
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename DTYPE2, typename ATYPE2, typename VTYPE2, typename NTYPE2>
-  bool GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
-  Check(const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2,
+  bool GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
+  Check(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2,
         const char * grid_label1, const char * grid_label2,
         IJK::ERROR & error) const
   {
@@ -1767,7 +1767,7 @@ namespace IJK {
 
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename CTYPE>
-  bool GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  bool GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   CheckCoord(const CTYPE * coord, IJK::ERROR & error) const
   {
     for (DTYPE d = 0; d < Dimension(); d++) {
@@ -1800,7 +1800,7 @@ namespace IJK {
 
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename CTYPE>
-  bool GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  bool GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   CheckCoord(const std::vector<CTYPE> & coord, IJK::ERROR & error) const
   {
     return(this->CheckCoord(&(coord[0]), error));
@@ -1808,7 +1808,7 @@ namespace IJK {
 
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename CTYPE>
-  bool GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  bool GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   CheckCubeCoord(const CTYPE * coord, IJK::ERROR & error) const
   {
     for (DTYPE d = 0; d < Dimension(); d++) {
@@ -1841,7 +1841,7 @@ namespace IJK {
 
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename CTYPE>
-  bool GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  bool GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   CheckCubeCoord(const std::vector<CTYPE> & coord, IJK::ERROR & error) const
   {
     return(this->CheckCubeCoord(&(coord[0]), error));
@@ -1849,7 +1849,7 @@ namespace IJK {
 
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename ITYPE>
-  bool GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  bool GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   CheckVertexIndex(const ITYPE vertex_index, IJK::ERROR & error) const
   {
     if (vertex_index < 0) {
@@ -1872,7 +1872,7 @@ namespace IJK {
 
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename ITYPE>
-  bool GRID<DTYPE,ATYPE,VTYPE,NTYPE>::
+  bool GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::
   CheckCubeIndex(const ITYPE cube_index, IJK::ERROR & error) const
   {
     if (cube_index < 0) {
@@ -1922,7 +1922,7 @@ namespace IJK {
 
   template <typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE>
   template <typename VTYPE2, typename ATYPE2>
-  bool GRID<DTYPE,ATYPE,VTYPE,NTYPE>::CheckContainsRegion
+  bool GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::CheckContainsRegion
   (const VTYPE2 region_v0, const ATYPE2 * region_axis_size,
    IJK::ERROR & error) const
   {
@@ -1969,7 +1969,7 @@ namespace IJK {
             typename VTYPE, typename NTYPE> 
   GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::GRID_PLUS
   (const DTYPE dimension, const ATYPE * axis_size):
-    GRID<DTYPE,ATYPE,VTYPE,NTYPE> (dimension,axis_size)
+    GRID_T<DTYPE,ATYPE,VTYPE,NTYPE> (dimension,axis_size)
   {
     InitLocal();
   }
@@ -1987,8 +1987,8 @@ namespace IJK {
             typename VTYPE, typename NTYPE> 
   template <typename DTYPE2, typename ATYPE2, typename VTYPE2, typename NTYPE2>
   GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::
-  GRID_PLUS(const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2):
-    GRID<DTYPE, ATYPE, VTYPE, NTYPE>(grid2)
+  GRID_PLUS(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2):
+    GRID_T<DTYPE, ATYPE, VTYPE, NTYPE>(grid2)
   {
     InitLocal();
   }
@@ -1999,7 +1999,7 @@ namespace IJK {
   GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::
   GRID_PLUS(const GRID_PLUS
             <CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE> & grid2):
-    GRID<DTYPE,ATYPE,VTYPE,NTYPE>(grid2)
+    GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>(grid2)
   {
     InitLocal();
   }
@@ -2170,7 +2170,7 @@ namespace IJK {
 
     FreeLocal();
 
-    GRID<DTYPE,ATYPE,VTYPE,NTYPE>::SetSize(dimension, axis_size);
+    GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>::SetSize(dimension, axis_size);
     Create();
   }
 
@@ -2178,7 +2178,7 @@ namespace IJK {
             typename VTYPE, typename NTYPE> 
   template <typename DTYPE2, typename ATYPE2, typename VTYPE2, typename NTYPE2>
   void GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::SetSize
-  (const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2)
+  (const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2)
   {
     SetSize(grid2.Dimension(), grid2.AxisSize());
   }
@@ -2442,7 +2442,7 @@ namespace IJK {
             typename VTYPE, typename DIFFTYPE, typename NTYPE> 
   template <typename DTYPE2, typename ATYPE2, typename VTYPE2, typename NTYPE2>
   GRID_NEIGHBORS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
-  GRID_NEIGHBORS(const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2):
+  GRID_NEIGHBORS(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2):
     GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE> (grid2)
   {
     InitLocal();
@@ -2597,7 +2597,7 @@ namespace IJK {
   template <typename DTYPE2, typename ATYPE2,
             typename VTYPE2, typename NTYPE2>
   void GRID_NEIGHBORS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
-  SetSize(const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2)
+  SetSize(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2)
   {
     SetSize(grid2.Dimension(), grid2.AxisSize());
   }
@@ -2629,7 +2629,7 @@ namespace IJK {
   template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
             typename NTYPE2>
   GRID_SPACING<SP_TYPE, GRID_TYPE>::
-  GRID_SPACING(const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2):
+  GRID_SPACING(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2):
     GRID_TYPE(grid2)
   {
     InitLocal();
@@ -2768,7 +2768,7 @@ namespace IJK {
   template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
             typename NTYPE2>
   void GRID_SPACING<SP_TYPE, GRID_TYPE>::SetSize
-  (const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2)
+  (const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2)
   {
     SetSize(grid2.Dimension(), grid2.AxisSize());
   }
@@ -2847,7 +2847,7 @@ namespace IJK {
   template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
             typename NTYPE2>
   GEOM_GRID<CTYPE, GRID_TYPE>::
-  GEOM_GRID(const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2):
+  GEOM_GRID(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2):
     GRID_SPACING<CTYPE,GRID_TYPE>(grid2)
   {
     InitLocal();
@@ -2966,7 +2966,7 @@ namespace IJK {
   template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
             typename NTYPE2>
   void GEOM_GRID<CTYPE, GRID_TYPE>::SetSize
-  (const GRID<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2)
+  (const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2)
   {
     SetSize(grid2.Dimension(), grid2.AxisSize());
   }
