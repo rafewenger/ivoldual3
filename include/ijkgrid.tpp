@@ -81,9 +81,8 @@ namespace IJK {
     // Copy function.
     template <typename GTYPE2>
     const GRID_T & Copy(const GTYPE2 & right);
-    template <typename GTYPE2>
-    const GRID_T & operator = (const GTYPE2 & right)
-    { return(Copy(right)); }
+    const GRID_T & operator = (const GRID_T & right)
+    { return Copy(right); }    
 
     // set functions
     template <typename DTYPE2, typename ATYPE2>
@@ -859,9 +858,8 @@ namespace IJK {
     // Copy function.
     template <typename GTYPE2>
     const GRID_SPACING & Copy(const GTYPE2 & right);
-    template <typename GTYPE2>
-    const GRID_SPACING & operator = (const GTYPE2 & right)
-    { return(Copy(right)); }
+    const GRID_SPACING & operator = (const GRID_SPACING & right)
+    { return Copy(right); }
 
     template <typename DTYPE2, typename SP_TYPE2>    ///< Set spacing[d] to \a c.
     void SetSpacing(const DTYPE2 d, const SP_TYPE2 c)
@@ -963,9 +961,8 @@ namespace IJK {
     // Copy function.
     template <typename GTYPE2>
     const GEOM_GRID & Copy(const GTYPE2 & right);
-    template <typename GTYPE2>
-    const GEOM_GRID & operator = (const GTYPE2 & right)
-    { return(Copy(right)); }
+    const GEOM_GRID & operator = (const GEOM_GRID & right)
+    { return Copy(right); }
 
     template <typename DTYPE2, typename CTYPE2>    ///< Set origin[d] to \a c.
     void SetOrigin(const DTYPE2 d, const CTYPE2 c)
