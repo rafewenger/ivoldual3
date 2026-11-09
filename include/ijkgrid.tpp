@@ -303,7 +303,7 @@ namespace IJK {
 
 
   // **************************************************
-  // TEMPLATE CLASS GRID_PLUS
+  // TEMPLATE CLASS GRID_PLUS_T
   // **************************************************
 
   /*!
@@ -320,7 +320,7 @@ namespace IJK {
    */
   template <const int CUBEV_BITSET_SIZE,
             typename DTYPE, typename ATYPE, typename VTYPE, typename NTYPE> 
-  class GRID_PLUS:public GRID_T<DTYPE,ATYPE,VTYPE,NTYPE> {
+  class GRID_PLUS_T:public GRID_T<DTYPE,ATYPE,VTYPE,NTYPE> {
 
     /// @nosubgrouping
 
@@ -386,7 +386,7 @@ namespace IJK {
     void ZeroLocal();
     void InitLocal();
     void FreeLocal();
-    void Create();            ///< Allocate and set data in GRID_PLUS.
+    void Create();            ///< Allocate and set data in GRID_PLUS_T.
 
     // Not defined.
     template <typename GRID2>
@@ -394,15 +394,15 @@ namespace IJK {
 
   public:
     /// Constructors.
-    GRID_PLUS(const DTYPE dimension, const ATYPE * axis_size);
-    GRID_PLUS();
+    GRID_PLUS_T(const DTYPE dimension, const ATYPE * axis_size);
+    GRID_PLUS_T();
     template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
               typename NTYPE2>
-    GRID_PLUS(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
-    GRID_PLUS(const GRID_PLUS
+    GRID_PLUS_T(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
+    GRID_PLUS_T(const GRID_PLUS_T
               <CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE> & grid2);
 
-    ~GRID_PLUS();                       ///< Destructor
+    ~GRID_PLUS_T();                       ///< Destructor
 
     // set functions
     template <typename DTYPE2, typename ATYPE2>
@@ -633,11 +633,11 @@ namespace IJK {
 
   
   // **************************************************
-  // TEMPLATE CLASS GRID_NEIGHBORS
+  // TEMPLATE CLASS GRID_NEIGHBORS_T
   // **************************************************
 
   /*!
-   *  @brief Inherits class GRID_PLUS and adds other indexes and operators
+   *  @brief Inherits class GRID_PLUS_T and adds other indexes and operators
    *    for fast accessing neighbors of grid vertices.
    *  @tparam CUBEV_BITSET_SIZE Size of bitset storing
    *    cube vertex locations.
@@ -651,8 +651,8 @@ namespace IJK {
    */
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename DIFFTYPE, typename NTYPE> 
-  class GRID_NEIGHBORS:
-    public GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE> {
+  class GRID_NEIGHBORS_T:
+    public GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE> {
 
   protected:
 
@@ -695,7 +695,7 @@ namespace IJK {
     void ZeroLocal();
     void InitLocal();
     void FreeLocal();
-    void CreateLocal();       ///< Allocate and set data in GRID_NEIGHBORS.
+    void CreateLocal();       ///< Allocate and set data in GRID_NEIGHBORS_T.
 
     // Not defined.
     template <typename GRID2>
@@ -703,16 +703,16 @@ namespace IJK {
 
   public:
     /// Constructors.
-    GRID_NEIGHBORS(const DTYPE dimension, const ATYPE * axis_size);
-    GRID_NEIGHBORS();
+    GRID_NEIGHBORS_T(const DTYPE dimension, const ATYPE * axis_size);
+    GRID_NEIGHBORS_T();
     template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
               typename NTYPE2>
-    GRID_NEIGHBORS(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
-    GRID_NEIGHBORS
-    (const GRID_NEIGHBORS
+    GRID_NEIGHBORS_T(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
+    GRID_NEIGHBORS_T
+    (const GRID_NEIGHBORS_T
      <CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE, NTYPE> & grid2);
 
-    ~GRID_NEIGHBORS();        ///< Desctructor.
+    ~GRID_NEIGHBORS_T();        ///< Desctructor.
 
     // set functions
 
@@ -824,7 +824,7 @@ namespace IJK {
 
 
   // **************************************************
-  // TEMPLATE CLASS GRID_SPACING
+  // TEMPLATE CLASS GRID_SPACING_T
   // **************************************************
 
   /*!
@@ -832,12 +832,12 @@ namespace IJK {
    *  @tparam SP_TYPE Spacing type. (Should be float/double.)
    */
   template <typename SP_TYPE, typename GRID_TYPE>
-  class GRID_SPACING:public GRID_TYPE
+  class GRID_SPACING_T:public GRID_TYPE
   {
   protected:
     SP_TYPE * spacing;   ///< spacing[i] = grid spacing along axis i.
 
-    void InitLocal();                    ///< Initialize GRID_SPACING.
+    void InitLocal();                    ///< Initialize GRID_SPACING_T.
     void CreateLocal();                  ///< Create local data structure.
     void FreeLocal();                    ///< Free memory.
 
@@ -846,19 +846,19 @@ namespace IJK {
 
 
   public:
-    GRID_SPACING();                      ///< Constructor.
+    GRID_SPACING_T();                      ///< Constructor.
     template <typename DTYPE2, typename ATYPE2>
-    GRID_SPACING(const DTYPE2 dimension, const ATYPE2 * axis_size);
+    GRID_SPACING_T(const DTYPE2 dimension, const ATYPE2 * axis_size);
     template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
               typename NTYPE2>
-    GRID_SPACING(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
-    GRID_SPACING(const GRID_SPACING<SP_TYPE, GRID_TYPE> & grid2);
-    ~GRID_SPACING();                     ///< Destructor.
+    GRID_SPACING_T(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
+    GRID_SPACING_T(const GRID_SPACING_T<SP_TYPE, GRID_TYPE> & grid2);
+    ~GRID_SPACING_T();                     ///< Destructor.
 
     // Copy function.
     template <typename GTYPE2>
-    const GRID_SPACING & Copy(const GTYPE2 & right);
-    const GRID_SPACING & operator = (const GRID_SPACING & right)
+    const GRID_SPACING_T & Copy(const GTYPE2 & right);
+    const GRID_SPACING_T & operator = (const GRID_SPACING_T & right)
     { return Copy(right); }
 
     template <typename DTYPE2, typename SP_TYPE2>    ///< Set spacing[d] to \a c.
@@ -883,7 +883,7 @@ namespace IJK {
 
     /// Set spacing[d] to grid2.Spacing(d).
     template <typename SP_TYPE2, typename GRID_TYPE2>
-    void SetSpacing(const GRID_SPACING<SP_TYPE2, GRID_TYPE2> & grid2);
+    void SetSpacing(const GRID_SPACING_T<SP_TYPE2, GRID_TYPE2> & grid2);
 
     template <typename DTYPE2, typename ATYPE2>
     void SetSize       /// Set dimensions and axis size.
@@ -925,43 +925,43 @@ namespace IJK {
 
 
   // **************************************************
-  // TEMPLATE CLASS GEOM_GRID
+  // TEMPLATE CLASS GEOM_GRID_T
   // **************************************************
 
   /*!
    *  @brief Template to add origin and grid spacing to grid.
-   *  - GEOM_GRID has both origin and grid spacing.
+   *  - GEOM_GRID_T has both origin and grid spacing.
    *  @tparam GRID_TYPE Type of grid base.
-   *  - Note: GEOM_GRID is defined to always be a subclass
-   *    of GRID_SPACING.
-   *  - GRID_TYPE should not be a class or subclass of GRID_SPACING.
+   *  - Note: GEOM_GRID_T is defined to always be a subclass
+   *    of GRID_SPACING_T.
+   *  - GRID_TYPE should not be a class or subclass of GRID_SPACING_T.
    */
   template <typename CTYPE, typename GRID_TYPE>
-  class GEOM_GRID:public GRID_SPACING<CTYPE,GRID_TYPE>
+  class GEOM_GRID_T:public GRID_SPACING_T<CTYPE,GRID_TYPE>
   {
   protected:
 
     /// Coordinates of grid origin.
     CTYPE * origin;      
 
-    void InitLocal();                    ///< Initialize GEOM_GRID.
+    void InitLocal();                    ///< Initialize GEOM_GRID_T.
     void CreateLocal();                  ///< Create local data structure.
     void FreeLocal();                    ///< Free memory.
 
   public:
-    GEOM_GRID();                         ///< Constructor.
+    GEOM_GRID_T();                         ///< Constructor.
     template <typename DTYPE2, typename ATYPE2>
-    GEOM_GRID(const DTYPE2 dimension, const ATYPE2 * axis_size);
+    GEOM_GRID_T(const DTYPE2 dimension, const ATYPE2 * axis_size);
     template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
               typename NTYPE2>
-    GEOM_GRID(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
-    GEOM_GRID(const GEOM_GRID<CTYPE, GRID_TYPE> & grid2);
-    ~GEOM_GRID();                     ///< Destructor.
+    GEOM_GRID_T(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2);
+    GEOM_GRID_T(const GEOM_GRID_T<CTYPE, GRID_TYPE> & grid2);
+    ~GEOM_GRID_T();                     ///< Destructor.
 
     // Copy function.
     template <typename GTYPE2>
-    const GEOM_GRID & Copy(const GTYPE2 & right);
-    const GEOM_GRID & operator = (const GEOM_GRID & right)
+    const GEOM_GRID_T & Copy(const GTYPE2 & right);
+    const GEOM_GRID_T & operator = (const GEOM_GRID_T & right)
     { return Copy(right); }
 
     template <typename DTYPE2, typename CTYPE2>    ///< Set origin[d] to \a c.
@@ -982,7 +982,7 @@ namespace IJK {
 
     /// Set origin[d] to grid2.Origin(d).
     template <typename CTYPE2, typename GRID_TYPE2>
-    void SetOrigin(const GEOM_GRID<CTYPE2, GRID_TYPE2> & grid2);
+    void SetOrigin(const GEOM_GRID_T<CTYPE2, GRID_TYPE2> & grid2);
 
     /// Set dimensions and axis size.
     template <typename DTYPE2, typename ATYPE2>
@@ -1958,13 +1958,13 @@ namespace IJK {
 
 
   // *****************************************************************
-  // TEMPLATE CLASS GRID_PLUS MEMBER FUNCTIONS
+  // TEMPLATE CLASS GRID_PLUS_T MEMBER FUNCTIONS
   // *****************************************************************
 
   /// Constructor.
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename NTYPE> 
-  GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::GRID_PLUS
+  GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::GRID_PLUS_T
   (const DTYPE dimension, const ATYPE * axis_size):
     GRID_T<DTYPE,ATYPE,VTYPE,NTYPE> (dimension,axis_size)
   {
@@ -1974,17 +1974,17 @@ namespace IJK {
   /// Default constructor.
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename NTYPE> 
-  GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::GRID_PLUS()
+  GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::GRID_PLUS_T()
   {
     InitLocal();
   }
 
-  /// Constructor from another GRID_PLUS grid.
+  /// Constructor from another GRID_PLUS_T grid.
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename NTYPE> 
   template <typename DTYPE2, typename ATYPE2, typename VTYPE2, typename NTYPE2>
-  GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::
-  GRID_PLUS(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2):
+  GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::
+  GRID_PLUS_T(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2):
     GRID_T<DTYPE, ATYPE, VTYPE, NTYPE>(grid2)
   {
     InitLocal();
@@ -1993,8 +1993,8 @@ namespace IJK {
   /// Constructor from another grid with same type.
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename NTYPE> 
-  GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::
-  GRID_PLUS(const GRID_PLUS
+  GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::
+  GRID_PLUS_T(const GRID_PLUS_T
             <CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE> & grid2):
     GRID_T<DTYPE,ATYPE,VTYPE,NTYPE>(grid2)
   {
@@ -2005,7 +2005,7 @@ namespace IJK {
   /// Set all local variables to 0.
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename NTYPE> 
-  void GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::ZeroLocal()
+  void GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::ZeroLocal()
   {
     this->axis_increment = NULL;
     this->cube_vertex_increment = NULL;
@@ -2021,11 +2021,11 @@ namespace IJK {
   }
 
   
-  /// \brief Initialize data structures in GRID_PLUS.
+  /// \brief Initialize data structures in GRID_PLUS_T.
   /// @pre \a dimension and \a axis_size are already set.
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename NTYPE> 
-  void GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::InitLocal()
+  void GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::InitLocal()
   {
     ZeroLocal();
     if (this->Dimension() > 0) { Create(); };
@@ -2034,21 +2034,21 @@ namespace IJK {
   /// Destructor.
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename NTYPE> 
-  GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::~GRID_PLUS()
+  GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::~GRID_PLUS_T()
   {
     FreeLocal();
   }
 
 
-  /// @brief Allocate arrays and compute data in GRID_PLUS.
+  /// @brief Allocate arrays and compute data in GRID_PLUS_T.
   /// @pre \a dimension and \a axis_size[] are already set.
   /// @pre All other arrays are set to NULL.
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename NTYPE> 
-  void GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::Create()
+  void GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::Create()
   {
     const DTYPE dimension = this->Dimension();
-    IJK::PROCEDURE_ERROR error("GRID_PLUS::Create");
+    IJK::PROCEDURE_ERROR error("GRID_PLUS_T::Create");
 
     if (!check_dimension(dimension, error)) { throw error; };
     if (!IJK::check_is_NULL(axis_increment, "axis_increment", error))
@@ -2143,10 +2143,10 @@ namespace IJK {
   }
 
 
-  /// Free memory in the derived typename GRID_PLUS.
+  /// Free memory in the derived typename GRID_PLUS_T.
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename NTYPE> 
-  void GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::FreeLocal()
+  void GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::FreeLocal()
   {
     if (axis_increment != NULL) { delete [] axis_increment; }
     if (cube_vertex_increment != NULL) 
@@ -2160,10 +2160,10 @@ namespace IJK {
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename NTYPE> 
   template <typename DTYPE2, typename ATYPE2>
-  void GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::SetSize
+  void GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::SetSize
   (const DTYPE2 dimension, const ATYPE2 * axis_size)
   {
-    IJK::PROCEDURE_ERROR error("GRID_PLUS::SetSize");
+    IJK::PROCEDURE_ERROR error("GRID_PLUS_T::SetSize");
 
     FreeLocal();
 
@@ -2174,7 +2174,7 @@ namespace IJK {
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename NTYPE> 
   template <typename DTYPE2, typename ATYPE2, typename VTYPE2, typename NTYPE2>
-  void GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::SetSize
+  void GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::SetSize
   (const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2)
   {
     SetSize(grid2.Dimension(), grid2.AxisSize());
@@ -2185,7 +2185,7 @@ namespace IJK {
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename NTYPE> 
   template <typename VTYPE2, typename VTYPE3>
-  DTYPE GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::EdgeDirection
+  DTYPE GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::EdgeDirection
   (const VTYPE2 endpoint0, const VTYPE3 endpoint1) const
   {
     VTYPE2 diff = endpoint0-endpoint1;
@@ -2194,7 +2194,7 @@ namespace IJK {
       if (diff == this->AxisIncrement(d)) { return(d); }
     }
 
-    IJK::PROCEDURE_ERROR error("GRID_PLUS::EdgeDirection");
+    IJK::PROCEDURE_ERROR error("GRID_PLUS_T::EdgeDirection");
     if (diff == 0) {
       error.AddMessage("Programming error. Edge endpoints are identical.");
       throw error;
@@ -2210,7 +2210,7 @@ namespace IJK {
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename NTYPE> 
   template <typename VTYPE0, typename VTYPE1, typename DIST_TYPE>
-  void GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::
+  void GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::
   GetVertexNeighbors(const VTYPE0 iv0, const DIST_TYPE distance,
                      std::vector<VTYPE1> & vlist) const
   {
@@ -2225,7 +2225,7 @@ namespace IJK {
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename NTYPE> 
   template <typename ITYPE>
-  NTYPE GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::
+  NTYPE GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::
   SharedFacet(const ITYPE icube0, const ITYPE icube1) const
   {
     const DTYPE dimension = this->Dimension();
@@ -2246,7 +2246,7 @@ namespace IJK {
       }
     }
 
-    IJK::PROCEDURE_ERROR error("GRID_PLUS::SharedFacet");
+    IJK::PROCEDURE_ERROR error("GRID_PLUS_T::SharedFacet");
     error.AddMessage
       ("Programming error. Cubes do not share a facet.");
     error.AddMessage
@@ -2261,7 +2261,7 @@ namespace IJK {
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename NTYPE> 
   template <typename ITYPE>
-  NTYPE GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::
+  NTYPE GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::
   SharedFacetOrthDir(const ITYPE icube0, const ITYPE icube1) const
   {
     const DTYPE dimension = this->Dimension();
@@ -2282,7 +2282,7 @@ namespace IJK {
       }
     }
 
-    IJK::PROCEDURE_ERROR error("GRID_PLUS::SharedFacet");
+    IJK::PROCEDURE_ERROR error("GRID_PLUS_T::SharedFacet");
     error.AddMessage
       ("Programming error. Cubes do not share a facet.");
     error.AddMessage
@@ -2295,7 +2295,7 @@ namespace IJK {
   // Return d'th coordinate of vertex \a iv.
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename NTYPE>
-  VTYPE GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::
+  VTYPE GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::
   CoordD(const VTYPE iv, const DTYPE d) const
   {
     return compute_coord_d
@@ -2306,7 +2306,7 @@ namespace IJK {
   // Return string representing cube_vertex_bitset[j].
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename NTYPE>
-  std::string GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::
+  std::string GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::
   CubeVertexBitsetString(const int j) const
   {
     const std::string s = CubeVertexBitset(j).to_string();
@@ -2319,7 +2319,7 @@ namespace IJK {
   // @brief Return true if dataset passes all checks.
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename NTYPE>
-  bool GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::
+  bool GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::
   Check(IJK::ERROR & error) const
   {
     if (!CheckCubeVertexBitset(error))
@@ -2332,7 +2332,7 @@ namespace IJK {
   // Return true if array cube_vertex_bitset[] passes check.
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename NTYPE>
-  bool GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::
+  bool GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::
   CheckCubeVertexBitset(IJK::ERROR & error) const
   {    
     const int dimension = this->Dimension();
@@ -2343,7 +2343,7 @@ namespace IJK {
     }
 
     if (!IJK::check_array_allocated
-        (cube_vertex_bitset, "GRID_PLUS::cube_vertex_bitset", error))
+        (cube_vertex_bitset, "GRID_PLUS_T::cube_vertex_bitset", error))
       { return false; }
 
     // Check that vertex location indicated by cube_vertex_bitset[j]
@@ -2411,16 +2411,16 @@ namespace IJK {
   
 
   // *****************************************************************
-  // TEMPLATE CLASS GRID_NEIGHBORS MEMBER FUNCTIONS
+  // TEMPLATE CLASS GRID_NEIGHBORS_T MEMBER FUNCTIONS
   // *****************************************************************
 
   /// Constructor.
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename DIFFTYPE, typename NTYPE> 
-  GRID_NEIGHBORS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
-  GRID_NEIGHBORS
+  GRID_NEIGHBORS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
+  GRID_NEIGHBORS_T
   (const DTYPE dimension, const ATYPE * axis_size):
-    GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE> (dimension,axis_size)
+    GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE> (dimension,axis_size)
   {
     InitLocal();
   }
@@ -2428,19 +2428,19 @@ namespace IJK {
   /// Default constructor.
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename DIFFTYPE, typename NTYPE> 
-  GRID_NEIGHBORS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
-  GRID_NEIGHBORS()
+  GRID_NEIGHBORS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
+  GRID_NEIGHBORS_T()
   {
     InitLocal();
   }
 
-  /// Constructor from another GRID_NEIGHBORS grid.
+  /// Constructor from another GRID_NEIGHBORS_T grid.
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename DIFFTYPE, typename NTYPE> 
   template <typename DTYPE2, typename ATYPE2, typename VTYPE2, typename NTYPE2>
-  GRID_NEIGHBORS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
-  GRID_NEIGHBORS(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2):
-    GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE> (grid2)
+  GRID_NEIGHBORS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
+  GRID_NEIGHBORS_T(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2):
+    GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE> (grid2)
   {
     InitLocal();
   }
@@ -2448,11 +2448,11 @@ namespace IJK {
   /// Constructor from another grid with same type.
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename DIFFTYPE, typename NTYPE> 
-  GRID_NEIGHBORS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
-  GRID_NEIGHBORS
-  (const GRID_NEIGHBORS
+  GRID_NEIGHBORS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
+  GRID_NEIGHBORS_T
+  (const GRID_NEIGHBORS_T
    <CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE> & grid2):
-    GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE> (grid2)
+    GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE> (grid2)
   {
     InitLocal();
   }
@@ -2462,7 +2462,7 @@ namespace IJK {
   /// - Set all local variables to 0.
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename DIFFTYPE, typename NTYPE> 
-  void GRID_NEIGHBORS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
+  void GRID_NEIGHBORS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
   ZeroLocal()
   {
     this->vertex_neighborC = NULL;
@@ -2477,11 +2477,11 @@ namespace IJK {
     this->num_edge_neighborsF2 = 0;
   }
 
-  /// \brief Initialize data structures in GRID_NEIGHBORS
+  /// \brief Initialize data structures in GRID_NEIGHBORS_T
   /// @pre \a dimension and \a axis_size are already set
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename DIFFTYPE, typename NTYPE> 
-  void GRID_NEIGHBORS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
+  void GRID_NEIGHBORS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
   InitLocal()
   {
     ZeroLocal();
@@ -2491,24 +2491,24 @@ namespace IJK {
   /// Destructor.
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename DIFFTYPE, typename NTYPE> 
-  GRID_NEIGHBORS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
-  ~GRID_NEIGHBORS()
+  GRID_NEIGHBORS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
+  ~GRID_NEIGHBORS_T()
   {
     FreeLocal();
   }
 
 
-  /// @brief Allocate arrays and compute data in GRID_NEIGHBORS.
+  /// @brief Allocate arrays and compute data in GRID_NEIGHBORS_T.
   /// @pre \a dimension and \a axis_size[] are already set.
   /// @pre All other arrays are set to NULL.
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename DIFFTYPE, typename NTYPE> 
-  void GRID_NEIGHBORS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
+  void GRID_NEIGHBORS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
   CreateLocal()
   {
     const DTYPE dimension = this->Dimension();
     const ATYPE * axis_size = this->AxisSize();
-    IJK::PROCEDURE_ERROR error("GRID_NEIGHBORS::CreateLocal");
+    IJK::PROCEDURE_ERROR error("GRID_NEIGHBORS_T::CreateLocal");
 
     FreeLocal();
 
@@ -2562,7 +2562,7 @@ namespace IJK {
   // - Set all local arrays to NULL and variables to 0.
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename DIFFTYPE, typename NTYPE> 
-  void GRID_NEIGHBORS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
+  void GRID_NEIGHBORS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
   FreeLocal()
   {
     if (vertex_neighborC != NULL) { delete [] vertex_neighborC; };
@@ -2577,14 +2577,14 @@ namespace IJK {
   template <const int CUBEV_BITSET_SIZE, typename DTYPE, typename ATYPE,
             typename VTYPE, typename DIFFTYPE, typename NTYPE> 
   template <typename DTYPE2, typename ATYPE2>
-  void GRID_NEIGHBORS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
+  void GRID_NEIGHBORS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
   SetSize(const DTYPE2 dimension, const ATYPE2 * axis_size)
   {
-    IJK::PROCEDURE_ERROR error("GRID_NEIGHBORS::SetSize");
+    IJK::PROCEDURE_ERROR error("GRID_NEIGHBORS_T::SetSize");
 
     FreeLocal();
 
-    GRID_PLUS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::
+    GRID_PLUS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,NTYPE>::
       SetSize(dimension, axis_size);
     CreateLocal();
   }
@@ -2593,7 +2593,7 @@ namespace IJK {
             typename VTYPE, typename DIFFTYPE, typename NTYPE> 
   template <typename DTYPE2, typename ATYPE2,
             typename VTYPE2, typename NTYPE2>
-  void GRID_NEIGHBORS<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
+  void GRID_NEIGHBORS_T<CUBEV_BITSET_SIZE,DTYPE,ATYPE,VTYPE,DIFFTYPE,NTYPE>::
   SetSize(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2)
   {
     SetSize(grid2.Dimension(), grid2.AxisSize());
@@ -2601,12 +2601,12 @@ namespace IJK {
 
 
   // *****************************************************************
-  // TEMPLATE CLASS GRID_SPACING MEMBER FUNCTIONS
+  // TEMPLATE CLASS GRID_SPACING_T MEMBER FUNCTIONS
   // *****************************************************************
 
   /// Constructor.
   template <typename SP_TYPE, typename GRID_TYPE>
-  GRID_SPACING<SP_TYPE, GRID_TYPE>::GRID_SPACING():GRID_TYPE()
+  GRID_SPACING_T<SP_TYPE, GRID_TYPE>::GRID_SPACING_T():GRID_TYPE()
   {
     InitLocal();
   }
@@ -2614,8 +2614,8 @@ namespace IJK {
   /// Constructor.
   template <typename SP_TYPE, typename GRID_TYPE>
   template <typename DTYPE2, typename ATYPE2>
-  GRID_SPACING<SP_TYPE, GRID_TYPE>::
-  GRID_SPACING(const DTYPE2 dimension, const ATYPE2 * axis_size):
+  GRID_SPACING_T<SP_TYPE, GRID_TYPE>::
+  GRID_SPACING_T(const DTYPE2 dimension, const ATYPE2 * axis_size):
     GRID_TYPE(dimension, axis_size)
   {
     InitLocal();
@@ -2625,8 +2625,8 @@ namespace IJK {
   template <typename SP_TYPE, typename GRID_TYPE>
   template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
             typename NTYPE2>
-  GRID_SPACING<SP_TYPE, GRID_TYPE>::
-  GRID_SPACING(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2):
+  GRID_SPACING_T<SP_TYPE, GRID_TYPE>::
+  GRID_SPACING_T(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2):
     GRID_TYPE(grid2)
   {
     InitLocal();
@@ -2634,8 +2634,8 @@ namespace IJK {
 
   /// Constructor from another grid with same type.
   template <typename SP_TYPE, typename GRID_TYPE>
-  GRID_SPACING<SP_TYPE, GRID_TYPE>::
-  GRID_SPACING(const GRID_SPACING<SP_TYPE, GRID_TYPE> & grid2):
+  GRID_SPACING_T<SP_TYPE, GRID_TYPE>::
+  GRID_SPACING_T(const GRID_SPACING_T<SP_TYPE, GRID_TYPE> & grid2):
     GRID_TYPE(grid2)
   {
     InitLocal();
@@ -2645,8 +2645,8 @@ namespace IJK {
   /// Copy function.
   template <typename SP_TYPE, typename GRID_TYPE>
   template <typename GTYPE2>
-  const GRID_SPACING<SP_TYPE, GRID_TYPE> &
-  GRID_SPACING<SP_TYPE, GRID_TYPE>::Copy(const GTYPE2 & right)
+  const GRID_SPACING_T<SP_TYPE, GRID_TYPE> &
+  GRID_SPACING_T<SP_TYPE, GRID_TYPE>::Copy(const GTYPE2 & right)
   {
     if (&right != this) {         // avoid self-assignment
       FreeLocal();
@@ -2659,7 +2659,7 @@ namespace IJK {
 
   /// Initialize.
   template <typename SP_TYPE, typename GRID_TYPE>
-  void GRID_SPACING<SP_TYPE, GRID_TYPE>::InitLocal()
+  void GRID_SPACING_T<SP_TYPE, GRID_TYPE>::InitLocal()
   {
     spacing = NULL;
     CreateLocal();
@@ -2668,7 +2668,7 @@ namespace IJK {
 
   /// Create data structure.
   template <typename SP_TYPE, typename GRID_TYPE>
-  void GRID_SPACING<SP_TYPE, GRID_TYPE>::CreateLocal()
+  void GRID_SPACING_T<SP_TYPE, GRID_TYPE>::CreateLocal()
   {
     FreeLocal();
     if (this->Dimension() != 0) {
@@ -2681,7 +2681,7 @@ namespace IJK {
 
   /// Free memory.
   template <typename SP_TYPE, typename GRID_TYPE>
-  void GRID_SPACING<SP_TYPE, GRID_TYPE>::FreeLocal()
+  void GRID_SPACING_T<SP_TYPE, GRID_TYPE>::FreeLocal()
   {
     if (spacing != NULL) {
       delete [] spacing;
@@ -2692,9 +2692,9 @@ namespace IJK {
   /// Set spacing along all axes to c.
   template <typename SP_TYPE, typename GRID_TYPE>
   template <typename SP_TYPE2>
-  void GRID_SPACING<SP_TYPE, GRID_TYPE>::SetAllSpacing(const SP_TYPE2 c)
+  void GRID_SPACING_T<SP_TYPE, GRID_TYPE>::SetAllSpacing(const SP_TYPE2 c)
   {
-    IJK::PROCEDURE_ERROR error("GRID_SPACING::SetAllSpacing");
+    IJK::PROCEDURE_ERROR error("GRID_SPACING_T::SetAllSpacing");
 
     if (!CheckSpacing(error)) { throw error; }
     
@@ -2706,9 +2706,9 @@ namespace IJK {
   /// Set spacing[d] to spacing2[d].
   template <typename SP_TYPE, typename GRID_TYPE>
   template <typename SP_TYPE2>
-  void GRID_SPACING<SP_TYPE, GRID_TYPE>::SetSpacing(const SP_TYPE2 * spacing2)
+  void GRID_SPACING_T<SP_TYPE, GRID_TYPE>::SetSpacing(const SP_TYPE2 * spacing2)
   {
-    IJK::PROCEDURE_ERROR error("GRID_SPACING::SetSpacing");
+    IJK::PROCEDURE_ERROR error("GRID_SPACING_T::SetSpacing");
 
     if (!CheckSpacing(error)) { throw error; }
 
@@ -2719,7 +2719,7 @@ namespace IJK {
   /// Set spacing[d] to (c*spacing2[d]).
   template <typename SP_TYPE, typename GRID_TYPE>
   template <typename SCALE_TYPE, typename SP_TYPE2>
-  void GRID_SPACING<SP_TYPE, GRID_TYPE>::
+  void GRID_SPACING_T<SP_TYPE, GRID_TYPE>::
   SetSpacing(const SCALE_TYPE c, const SP_TYPE2 * spacing2)
   {
     typedef typename GRID_TYPE::DIMENSION_TYPE DTYPE;
@@ -2731,15 +2731,15 @@ namespace IJK {
   /// Set spacing[d] to grid2.Spacing(d).
   template <typename SP_TYPE, typename GRID_TYPE>
   template <typename SP_TYPE2, typename GRID_TYPE2>
-  void GRID_SPACING<SP_TYPE, GRID_TYPE>::
-  SetSpacing(const GRID_SPACING<SP_TYPE2, GRID_TYPE2> & grid2)
+  void GRID_SPACING_T<SP_TYPE, GRID_TYPE>::
+  SetSpacing(const GRID_SPACING_T<SP_TYPE2, GRID_TYPE2> & grid2)
   {
     SetSpacing(grid2.SpacingPtrConst());
   }
 
   /// Return true if (Spacing(d) == 1) for all d.
   template <typename SP_TYPE, typename GRID_TYPE>
-  bool GRID_SPACING<SP_TYPE, GRID_TYPE>::IsUnitSpacing() const
+  bool GRID_SPACING_T<SP_TYPE, GRID_TYPE>::IsUnitSpacing() const
   {
     typedef typename GRID_TYPE::DIMENSION_TYPE DTYPE;
 
@@ -2752,7 +2752,7 @@ namespace IJK {
 
   template <typename SP_TYPE, typename GRID_TYPE>
   template <typename DTYPE2, typename ATYPE2>
-  void GRID_SPACING<SP_TYPE, GRID_TYPE>::SetSize
+  void GRID_SPACING_T<SP_TYPE, GRID_TYPE>::SetSize
   (const DTYPE2 dimension, const ATYPE2 * axis_size)
   {
     FreeLocal();
@@ -2764,7 +2764,7 @@ namespace IJK {
   template <typename SP_TYPE, typename GRID_TYPE>
   template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
             typename NTYPE2>
-  void GRID_SPACING<SP_TYPE, GRID_TYPE>::SetSize
+  void GRID_SPACING_T<SP_TYPE, GRID_TYPE>::SetSize
   (const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2)
   {
     SetSize(grid2.Dimension(), grid2.AxisSize());
@@ -2772,7 +2772,7 @@ namespace IJK {
 
   template <typename SP_TYPE, typename GRID_TYPE>
   template <typename VTYPE2, typename CTYPE>
-  void GRID_SPACING<SP_TYPE, GRID_TYPE>::
+  void GRID_SPACING_T<SP_TYPE, GRID_TYPE>::
   ComputeScaledCoord(const VTYPE2 iv, CTYPE * coord) const
   {
     compute_scaled_coord
@@ -2781,7 +2781,7 @@ namespace IJK {
 
   template <typename SP_TYPE, typename GRID_TYPE>
   template <typename VTYPE2, typename CTYPE>
-  void GRID_SPACING<SP_TYPE, GRID_TYPE>::
+  void GRID_SPACING_T<SP_TYPE, GRID_TYPE>::
   ComputeCubeCenterScaledCoord(const VTYPE2 iv, CTYPE * coord) const
   {
     typedef typename GRID_TYPE::DIMENSION_TYPE DTYPE;
@@ -2794,7 +2794,7 @@ namespace IJK {
   
   // Destructor.
   template <typename SP_TYPE, typename GRID_TYPE>
-  GRID_SPACING<SP_TYPE, GRID_TYPE>::~GRID_SPACING()
+  GRID_SPACING_T<SP_TYPE, GRID_TYPE>::~GRID_SPACING_T()
   {
     FreeLocal();
   }
@@ -2802,7 +2802,7 @@ namespace IJK {
   
   // Return true if grid *this has array spacing allocated.
   template <typename SP_TYPE, typename GRID_TYPE>
-  bool GRID_SPACING<SP_TYPE, GRID_TYPE>::
+  bool GRID_SPACING_T<SP_TYPE, GRID_TYPE>::
   CheckSpacing(IJK::ERROR & error) const
   {
     if (this->Dimension() > 0) {
@@ -2817,12 +2817,12 @@ namespace IJK {
   
 
   // *****************************************************************
-  // TEMPLATE CLASS GEOM_GRID MEMBER FUNCTIONS
+  // TEMPLATE CLASS GEOM_GRID_T MEMBER FUNCTIONS
   // *****************************************************************
 
   // Constructor.
   template <typename CTYPE, typename GRID_TYPE>
-  GEOM_GRID<CTYPE, GRID_TYPE>::GEOM_GRID():GRID_SPACING<CTYPE,GRID_TYPE>()
+  GEOM_GRID_T<CTYPE, GRID_TYPE>::GEOM_GRID_T():GRID_SPACING_T<CTYPE,GRID_TYPE>()
   {
     InitLocal();
   }
@@ -2831,9 +2831,9 @@ namespace IJK {
   // Constructor.
   template <typename CTYPE, typename GRID_TYPE>
   template <typename DTYPE2, typename ATYPE2>
-  GEOM_GRID<CTYPE, GRID_TYPE>::
-  GEOM_GRID(const DTYPE2 dimension, const ATYPE2 * axis_size):
-    GRID_SPACING<CTYPE,GRID_TYPE>(dimension, axis_size)
+  GEOM_GRID_T<CTYPE, GRID_TYPE>::
+  GEOM_GRID_T(const DTYPE2 dimension, const ATYPE2 * axis_size):
+    GRID_SPACING_T<CTYPE,GRID_TYPE>(dimension, axis_size)
   {
     InitLocal();
   }
@@ -2843,9 +2843,9 @@ namespace IJK {
   template <typename CTYPE, typename GRID_TYPE>
   template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
             typename NTYPE2>
-  GEOM_GRID<CTYPE, GRID_TYPE>::
-  GEOM_GRID(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2):
-    GRID_SPACING<CTYPE,GRID_TYPE>(grid2)
+  GEOM_GRID_T<CTYPE, GRID_TYPE>::
+  GEOM_GRID_T(const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2):
+    GRID_SPACING_T<CTYPE,GRID_TYPE>(grid2)
   {
     InitLocal();
   }
@@ -2853,9 +2853,9 @@ namespace IJK {
 
   // Constructor from another grid with same type.
   template <typename CTYPE, typename GRID_TYPE>
-  GEOM_GRID<CTYPE, GRID_TYPE>::
-  GEOM_GRID(const GEOM_GRID<CTYPE, GRID_TYPE> & grid2):
-    GRID_SPACING<CTYPE,GRID_TYPE>(grid2)
+  GEOM_GRID_T<CTYPE, GRID_TYPE>::
+  GEOM_GRID_T(const GEOM_GRID_T<CTYPE, GRID_TYPE> & grid2):
+    GRID_SPACING_T<CTYPE,GRID_TYPE>(grid2)
   {
     InitLocal();
     SetOrigin(grid2.OriginPtrConst());
@@ -2865,13 +2865,13 @@ namespace IJK {
   // Copy function.
   template <typename CTYPE, typename GRID_TYPE>
   template <typename GTYPE2>
-  const GEOM_GRID<CTYPE, GRID_TYPE> &
-  GEOM_GRID<CTYPE, GRID_TYPE>::Copy(const GTYPE2 & right)
+  const GEOM_GRID_T<CTYPE, GRID_TYPE> &
+  GEOM_GRID_T<CTYPE, GRID_TYPE>::Copy(const GTYPE2 & right)
   {
     if (&right != this) {         // avoid self-assignment
       FreeLocal();
       InitLocal();
-      GRID_SPACING<CTYPE,GRID_TYPE>::Copy(right);
+      GRID_SPACING_T<CTYPE,GRID_TYPE>::Copy(right);
       SetOrigin(right.OriginPtrConst());
     }
     return(*this);
@@ -2880,7 +2880,7 @@ namespace IJK {
 
   // Initialize.
   template <typename CTYPE, typename GRID_TYPE>
-  void GEOM_GRID<CTYPE, GRID_TYPE>::InitLocal()
+  void GEOM_GRID_T<CTYPE, GRID_TYPE>::InitLocal()
   {
     origin = NULL;
     CreateLocal();
@@ -2890,7 +2890,7 @@ namespace IJK {
 
   // Create data structure.
   template <typename CTYPE, typename GRID_TYPE>
-  void GEOM_GRID<CTYPE, GRID_TYPE>::CreateLocal()
+  void GEOM_GRID_T<CTYPE, GRID_TYPE>::CreateLocal()
   {
     FreeLocal();
     if (this->dimension > 0) {
@@ -2901,7 +2901,7 @@ namespace IJK {
 
   // Free memory.
   template <typename CTYPE, typename GRID_TYPE>
-  void GEOM_GRID<CTYPE, GRID_TYPE>::FreeLocal()
+  void GEOM_GRID_T<CTYPE, GRID_TYPE>::FreeLocal()
   {
     if (origin != NULL) {
       delete [] origin;
@@ -2913,7 +2913,7 @@ namespace IJK {
   // Set all origin coordinates to c.
   template <typename CTYPE, typename GRID_TYPE>
   template <typename CTYPE2>
-  void GEOM_GRID<CTYPE, GRID_TYPE>::SetAllOrigin(const CTYPE2 c)
+  void GEOM_GRID_T<CTYPE, GRID_TYPE>::SetAllOrigin(const CTYPE2 c)
   {
     typedef typename GRID_TYPE::DIMENSION_TYPE DTYPE;
 
@@ -2925,7 +2925,7 @@ namespace IJK {
   // Set origin[d] to origin2[d].
   template <typename CTYPE, typename GRID_TYPE>
   template <typename CTYPE2>
-  void GEOM_GRID<CTYPE, GRID_TYPE>::SetOrigin(const CTYPE2 * origin2)
+  void GEOM_GRID_T<CTYPE, GRID_TYPE>::SetOrigin(const CTYPE2 * origin2)
   {
     typedef typename GRID_TYPE::DIMENSION_TYPE DTYPE;
 
@@ -2937,8 +2937,8 @@ namespace IJK {
   // Set origin[d] to grid2.Origin(d).
   template <typename CTYPE, typename GRID_TYPE>
   template <typename CTYPE2, typename GRID_TYPE2>
-  void GEOM_GRID<CTYPE, GRID_TYPE>::
-  SetOrigin(const GEOM_GRID<CTYPE2, GRID_TYPE2> & grid2)
+  void GEOM_GRID_T<CTYPE, GRID_TYPE>::
+  SetOrigin(const GEOM_GRID_T<CTYPE2, GRID_TYPE2> & grid2)
   {
     SetOrigin(grid2.OriginPtrConst());
   }
@@ -2946,14 +2946,14 @@ namespace IJK {
 
   template <typename CTYPE, typename GRID_TYPE>
   template <typename DTYPE2, typename ATYPE2>
-  void GEOM_GRID<CTYPE, GRID_TYPE>::SetSize
+  void GEOM_GRID_T<CTYPE, GRID_TYPE>::SetSize
   (const DTYPE2 dimension, const ATYPE2 * axis_size)
   {
     FreeLocal();
 
-    // Note: GEOM_GRID is defined to always be a subclass
-    //   of GRID_SPACING.
-    GRID_SPACING<CTYPE,GRID_TYPE>::SetSize(dimension, axis_size);
+    // Note: GEOM_GRID_T is defined to always be a subclass
+    //   of GRID_SPACING_T.
+    GRID_SPACING_T<CTYPE,GRID_TYPE>::SetSize(dimension, axis_size);
 
     CreateLocal();
     SetAllOrigin(0);
@@ -2962,7 +2962,7 @@ namespace IJK {
   template <typename CTYPE, typename GRID_TYPE>
   template <typename DTYPE2, typename ATYPE2, typename VTYPE2, 
             typename NTYPE2>
-  void GEOM_GRID<CTYPE, GRID_TYPE>::SetSize
+  void GEOM_GRID_T<CTYPE, GRID_TYPE>::SetSize
   (const GRID_T<DTYPE2,ATYPE2,VTYPE2,NTYPE2> & grid2)
   {
     SetSize(grid2.Dimension(), grid2.AxisSize());
@@ -2971,7 +2971,7 @@ namespace IJK {
 
   // Destructor.
   template <typename CTYPE, typename GRID_TYPE>
-  GEOM_GRID<CTYPE, GRID_TYPE>::~GEOM_GRID()
+  GEOM_GRID_T<CTYPE, GRID_TYPE>::~GEOM_GRID_T()
   {
     FreeLocal();
   }

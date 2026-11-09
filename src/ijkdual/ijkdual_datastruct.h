@@ -49,16 +49,16 @@ namespace IJKDUAL {
   // GRID DATA STRUCTURES
   // **************************************************
 
-  typedef IJK::GRID_PLUS
+  typedef IJK::GRID_PLUS_T
   <GRID_CUBEV_BITSET_SIZE, int, AXIS_SIZE_TYPE, VERTEX_INDEX, VERTEX_INDEX> 
     GRID_PLUS;                     ///< Regular grid.
-  typedef IJK::GRID_SPACING<COORD_TYPE, GRID_PLUS>
+  typedef IJK::GRID_SPACING_T<COORD_TYPE, GRID_PLUS>
     DUALISO_GRID;                  ///< Grid and spacing information.
-  typedef IJK::SCALAR_GRID_BASE<DUALISO_GRID, SCALAR_TYPE> 
+  typedef IJK::SCALAR_GRID_BASE_T<DUALISO_GRID, SCALAR_TYPE> 
     DUALISO_SCALAR_GRID_BASE;      ///< Marching Cubes base scalar grid.
-  typedef IJK::SCALAR_GRID_WRAPPER<DUALISO_GRID, SCALAR_TYPE>
+  typedef IJK::SCALAR_GRID_WRAPPER_T<DUALISO_GRID, SCALAR_TYPE>
     DUALISO_SCALAR_GRID_WRAPPER;   ///< Marching Cubes scalar grid wrapper.
-  typedef IJK::SCALAR_GRID<DUALISO_GRID, SCALAR_TYPE> 
+  typedef IJK::SCALAR_GRID_T<DUALISO_GRID, SCALAR_TYPE> 
     DUALISO_SCALAR_GRID;           ///< Marching Cubes scalar grid.
 
 
@@ -84,7 +84,7 @@ namespace IJKDUAL {
   // CUBE DATA STRUCTURES
   // **************************************************
 
-  typedef IJK::CUBE_FACE_INFO<int, int, int>
+  typedef IJK::CUBE_FACE_INFO_T<int, int, int>
     DUALISO_CUBE_FACE_INFO;
 
 

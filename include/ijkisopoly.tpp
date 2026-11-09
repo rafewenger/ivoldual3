@@ -1732,7 +1732,7 @@ namespace IJK {
     typedef typename std::vector<CINDEX_TYPE>::size_type SIZE_TYPE;
 
     const int dimension = isodual_table.Dimension();
-    IJK::CUBE_FACE_INFO<int,int,int> cube(dimension);
+    IJK::CUBE_FACE_INFO_T<int,int,int> cube(dimension);
 
     isopoly.resize(isopoly_cube.size());
 
@@ -2743,7 +2743,7 @@ namespace IJK {
 
     const int dimension = isodual_table.Dimension();
     
-    const CUBE_FACE_INFO<int,int,int> cube_info(dimension-1);
+    const CUBE_FACE_INFO_T<int,int,int> cube_info(dimension-1);
     const int num_cube_vertices = cube_info.NumVertices();
     const int num_cube_edges = cube_info.NumEdges();
     std::vector<int> endpoint0(num_cube_edges);

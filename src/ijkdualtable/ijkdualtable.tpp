@@ -1590,12 +1590,12 @@ namespace IJKDUALTABLE {
   /// @brief Class with routines to query number of positive
   ///   or negative vertices in a cube facet and number of active facets.
   template <typename DTYPE, typename NTYPE, typename VTYPE>
-  class ISODUAL_CUBE_FACE_INFO:public IJK::CUBE_FACE_INFO<DTYPE,NTYPE,VTYPE> {
+  class ISODUAL_CUBE_FACE_INFO:public IJK::CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE> {
 
   public:
     ISODUAL_CUBE_FACE_INFO() {};
     ISODUAL_CUBE_FACE_INFO(const DTYPE dimension):
-      IJK::CUBE_FACE_INFO<DTYPE,NTYPE,VTYPE>(dimension) {};
+      IJK::CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE>(dimension) {};
 
     /*!
      *  @brief Compute number of '-' vertices and number of '+' vertices in cube facet.
@@ -1771,7 +1771,7 @@ namespace IJKDUALTABLE {
 
     /// @brief Set polytope to be a cube.
     template <typename _DTYPE, typename _NTYPE>
-    void SetToCube(const IJK::CUBE_INFO<_DTYPE,_NTYPE> & cube_info);
+    void SetToCube(const IJK::CUBE_INFO_T<_DTYPE,_NTYPE> & cube_info);
 
     /// Allocate table
     template <typename NTYPE2>
@@ -2032,8 +2032,8 @@ namespace IJKDUALTABLE {
     /*!
      *  @brief Return number of isosurface polytopes incident on isov
      *    and containing edge dual to facet kf.
-     *  @tparam CUBE_TYPE Either IJK::CUBE_FACE_INFO, or a class
-     *    derived from IJK::CUBE_FACE_INFO, or a class with similar
+     *  @tparam CUBE_TYPE Either IJK::CUBE_FACE_INFO_T, or a class
+     *    derived from IJK::CUBE_FACE_INFO_T, or a class with similar
      *    vertices, edges, and facets.
      *  @param cube Cube used to determine isosurface polytopes
      *    dual to facet edges.
@@ -2048,8 +2048,8 @@ namespace IJKDUALTABLE {
      *  @brief Return number of isosurface edges incident on isov
      *    and dual to facet kf.
      *  - Equals (CountNumIncidentIsoPolyDualToEdges()/2).
-     *  @tparam CUBE_TYPE Either IJK::CUBE_FACE_INFO, or a class
-     *    derived from IJK::CUBE_FACE_INFO, or a class with similar
+     *  @tparam CUBE_TYPE Either IJK::CUBE_FACE_INFO_T, or a class
+     *    derived from IJK::CUBE_FACE_INFO_T, or a class with similar
      *    vertices, edges, and facets.
      *  @param cube Cube used to determine isosurface polytopes
      *    dual to facet edges.
@@ -3166,7 +3166,7 @@ namespace IJKDUALTABLE {
             typename ENTRY_TYPE>
   template <typename _DTYPE, typename _NTYPE>
   void ISODUAL_TABLE_BASE<DTYPE,NTYPE,TI_TYPE,ENTRY_TYPE>::
-  SetToCube(const IJK::CUBE_INFO<_DTYPE,_NTYPE> & cube_info)
+  SetToCube(const IJK::CUBE_INFO_T<_DTYPE,_NTYPE> & cube_info)
   {
     const char * procname = "ISODUAL_TABLE_BASE::SetToCube";
 

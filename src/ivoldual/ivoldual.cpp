@@ -917,7 +917,7 @@ namespace {
    std::vector<ISO_VERTEX_INDEX> & ivolpoly_vert)
   {
     const int dimension = ivoldual_table.Dimension();
-    IJK::CUBE_FACE_INFO<int,int,int> cube(dimension);
+    IJK::CUBE_FACE_INFO_T<int,int,int> cube(dimension);
     const int num_cube_vertices = cube.NumVertices();
     const int num_facet_vertices = cube.NumFacetVertices();
 

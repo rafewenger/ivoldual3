@@ -422,7 +422,7 @@ namespace IJKDUALTABLE {
     typedef typename DUAL_TABLE_VINFO_TYPE::NUMBER_TYPE NTYPE;
 
     const int dimension = table.Dimension();
-    IJK::CUBE_FACE_INFO<NTYPE,NTYPE,NTYPE> cube(dimension);
+    IJK::CUBE_FACE_INFO_T<NTYPE,NTYPE,NTYPE> cube(dimension);
     IJK::PROCEDURE_ERROR error("compute_dual_isotable_cube_connectivity");
 
     // Check size of intersets_facet.

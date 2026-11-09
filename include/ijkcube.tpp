@@ -36,9 +36,9 @@
 
 namespace IJK {
 
-  // **************************************************
-  // TEMPLATE CUBE FACET FUNCTIONS
-  // **************************************************
+  // *****************************************************************
+  // TEMPLATE CUBE_T FACET FUNCTIONS
+  // *****************************************************************
 
   /// Return orthogonal direction to facet.
   template <typename FTYPE>
@@ -86,9 +86,9 @@ namespace IJK {
   }
 
 
-  // **************************************************
-  // TEMPLATE CLASS CUBE_INFO
-  // **************************************************
+  // *****************************************************************
+  // TEMPLATE CLASS CUBE_INFO_T
+  // *****************************************************************
 
   /*!
    *  @brief Base cube class.
@@ -99,7 +99,7 @@ namespace IJK {
    *    if d'th bit of iv is 1.
    */
   template <typename DTYPE, typename NTYPE> 
-  class CUBE_INFO {
+  class CUBE_INFO_T {
 
   protected:
     DTYPE dimension;           ///< Cube dimension
@@ -121,9 +121,9 @@ namespace IJK {
 
   public:
     // Constructors, destructor.
-    CUBE_INFO(const DTYPE dimension);     ///< Constructor.
-    CUBE_INFO();                          ///< Constructor.
-    ~CUBE_INFO();                         ///< Destructor.
+    CUBE_INFO_T(const DTYPE dimension);     ///< Constructor.
+    CUBE_INFO_T();                          ///< Constructor.
+    ~CUBE_INFO_T();                         ///< Destructor.
 
     // set functions
     template <typename DTYPE2>
@@ -219,13 +219,16 @@ namespace IJK {
 
   };
 
-  // **************************************************
-  // TEMPLATE CLASS CUBE_FACE_INFO
-  // **************************************************
 
-  /// Information about cube faces.
+  // *****************************************************************
+  // TEMPLATE CLASS CUBE_FACE_INFO_T (*** DEPRECATED ***)
+  // *****************************************************************
+
+  /// @brief Information about cube faces.
+  /// - *** DEPRECATED ***
+  /// - Replaced by ORIENTED_CUBE_FACE_INFO_T.
   template <typename DTYPE, typename NTYPE, typename VTYPE>
-  class CUBE_FACE_INFO:public CUBE_INFO<DTYPE,NTYPE> {
+  class CUBE_FACE_INFO_T:public CUBE_INFO_T<DTYPE,NTYPE> {
 
   protected:
     VTYPE * facet_vertex;                 ///< Facet vertices.
@@ -244,11 +247,21 @@ namespace IJK {
     void Init(const int dimension);
     void FreeAll();
 
-    /// Set facet vertices, edge endpoints and incident edges.
+    /// @brief Allocate memory for face information.
+    /// @pre CUBE_INFO_T::SetDimension() must be called
+    ///    before AllocateLocal().
+    void AllocateLocal();
+    
+    /// @brief Set facet vertices, edge endpoints and incident edges.
     void SetFaces();
 
     /// Set facet vertices.
     void SetFacetVertices();
+
+    /// @brief Flip orientation of facet jf.
+    /// - Change the order of the facet vertices for facet jf
+    ///   to flip the facet orientation.
+    void FlipFacetOrientation(const int jf);
 
     /*!
      *  @brief Set facet edges.
@@ -276,9 +289,9 @@ namespace IJK {
     typedef VTYPE VERTEX_INDEX;           ///< Vertex index type.
 
   public:
-    CUBE_FACE_INFO();
-    CUBE_FACE_INFO(const DTYPE dimension);
-    ~CUBE_FACE_INFO() { FreeAll(); };
+    CUBE_FACE_INFO_T();
+    CUBE_FACE_INFO_T(const DTYPE dimension);
+    ~CUBE_FACE_INFO_T() { FreeAll(); };
 
     // set functions
     template <typename DTYPE2>
@@ -391,8 +404,8 @@ namespace IJK {
 
     
     // Block copy constructors.
-    CUBE_FACE_INFO(const CUBE_FACE_INFO &) = delete;
-    CUBE_FACE_INFO & operator=(const CUBE_FACE_INFO &) = delete;
+    CUBE_FACE_INFO_T(const CUBE_FACE_INFO_T &) = delete;
+    CUBE_FACE_INFO_T & operator=(const CUBE_FACE_INFO_T &) = delete;
 
     
     // Print routines (mainly for debugging.)
@@ -437,13 +450,57 @@ namespace IJK {
   };
 
 
-  // **************************************************
-  // TEMPLATE CLASS CUBEV
-  // **************************************************
+  // *****************************************************************
+  // TEMPLATE CLASS ORIENTED_CUBE_FACE_INFO_T
+  // *****************************************************************
+
+  /*!
+   *  @brief Version of CUBE_FACE_INFO_T whose facets are
+   *    consistently oriented.
+   *  - Unfortunately, class CUBE_FACE_INFO_T does not list vertices
+   *    to consistently orient facets.
+   *  - To avoid redefining CUBE_FACE_INFO_T and possibly breaking
+   *    existing code, class ORIENTED_CUBE_FACE_INFO_T constructs
+   *    array facet_vertex[] with facet vertices ordered
+   *    so that facet orientation is consistent.
+   */
+  template <typename DTYPE, typename NTYPE, typename VTYPE>
+  class ORIENTED_CUBE_FACE_INFO_T:
+    public CUBE_FACE_INFO_T<DTYPE,NTYPE, VTYPE> {
+
+  protected:
+
+    /// @brief Set facet vertices so that all facets have consistent
+    ///    orientations.
+    void SetFacetVertices();
+
+    /// @brief Set facet vertices, edge endpoints and incident edges.
+    /// - Call version of set facet vertices with consistent
+    ///   facet orientation.
+    void SetFaces();
+
+  public:
+
+    ORIENTED_CUBE_FACE_INFO_T() {}
+    ORIENTED_CUBE_FACE_INFO_T(const DTYPE dimension)
+    { SetDimension(dimension); }
+    ~ORIENTED_CUBE_FACE_INFO_T() { };
+    
+    // set functions
+    template <typename DTYPE2>
+    void SetDimension                     ///< Set cube dimension
+    (const DTYPE2 dimension);
+
+  };
+  
+
+  // *****************************************************************
+  // TEMPLATE CLASS CUBEV_T
+  // *****************************************************************
 
   /// Cube vertices.
   template <typename DTYPE, typename NTYPE, typename CTYPE>
-  class CUBEV:public CUBE_INFO<DTYPE,NTYPE> {
+  class CUBEV_T:public CUBE_INFO_T<DTYPE,NTYPE> {
 
   protected:
     /// vertex_coord[dimension*k+j] = j'th coordinate of k'th vertex of cube
@@ -455,7 +512,7 @@ namespace IJK {
     void ZeroLocal();
     void InitLocal();
     void FreeLocal();
-    void AllocateLocal();           ///< Allocate data structures in CUBE.
+    void AllocateLocal();           ///< Allocate data structures in CUBE_T.
     void SetToUnitCube();           ///< Set coordinates to unit cube.
     void SetMaxVertexIndex();       ///< Set max vertex index.
 
@@ -465,10 +522,10 @@ namespace IJK {
   public:
     // Constructors and destructors.
     template <typename CTYPE2>
-    CUBEV(const DTYPE dimension, const CTYPE2 * vertex0_coord);
-    CUBEV(const DTYPE dimension);
-    CUBEV();
-    ~CUBEV();
+    CUBEV_T(const DTYPE dimension, const CTYPE2 * vertex0_coord);
+    CUBEV_T(const DTYPE dimension);
+    CUBEV_T();
+    ~CUBEV_T();
 
     // set functions
     template <typename DTYPE2>
@@ -547,14 +604,14 @@ namespace IJK {
   };
 
 
-  // **************************************************
-  // TEMPLATE CLASS CUBE
-  // **************************************************
+  // *****************************************************************
+  // TEMPLATE CLASS CUBE_T
+  // *****************************************************************
 
   /// Template class cube.  Stores cube vertices and cube edge length.
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
-  class CUBE:public CUBEV<DTYPE,NTYPE,CTYPE> {
+  class CUBE_T:public CUBEV_T<DTYPE,NTYPE,CTYPE> {
 
   protected:
 
@@ -573,13 +630,13 @@ namespace IJK {
   public:
     // Constructors and destructors.
     template <typename CTYPE2>
-    CUBE(const DTYPE dimension, const CTYPE2 * vertex0_coord);
+    CUBE_T(const DTYPE dimension, const CTYPE2 * vertex0_coord);
     template <typename CTYPE2, typename LTYPE2>
-    CUBE(const DTYPE dimension, 
+    CUBE_T(const DTYPE dimension,
          const CTYPE2 * vertex0_coord, const LTYPE2 edge_length);
-    CUBE(const DTYPE dimension);
-    CUBE();
-    ~CUBE();
+    CUBE_T(const DTYPE dimension);
+    CUBE_T();
+    ~CUBE_T();
 
     // set functions
     template <typename DTYPE2>
@@ -618,14 +675,14 @@ namespace IJK {
   };
 
 
-  // **************************************************
-  // TEMPLATE CLASS HRECT
-  // **************************************************
+  // *****************************************************************
+  // TEMPLATE CLASS HRECT_T
+  // *****************************************************************
 
   /// Hyper-rectangle.
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
-  class HRECT:public CUBEV<DTYPE,NTYPE,CTYPE> {
+  class HRECT_T:public CUBEV_T<DTYPE,NTYPE,CTYPE> {
 
   protected:
 
@@ -635,7 +692,7 @@ namespace IJK {
     void ZeroLocal();
     void Init();
     void FreeLocal();
-    void AllocateLocal();           ///< Allocate data structures in HRECT.
+    void AllocateLocal();           ///< Allocate data structures in HRECT_T.
     void SetToUnitCube();           ///< Set coordinates to unit cube.
 
   public:
@@ -643,9 +700,9 @@ namespace IJK {
 
   public:
     // Constructors and destructors.
-    HRECT(const DTYPE dimension);
-    HRECT();
-    ~HRECT();
+    HRECT_T(const DTYPE dimension);
+    HRECT_T();
+    ~HRECT_T();
 
     // set functions
     template <typename DTYPE2>
@@ -681,24 +738,24 @@ namespace IJK {
   };
 
 
-  // **************************************************
-  // TEMPLATE CLASS UNIT_CUBE
-  // **************************************************
+  // *****************************************************************
+  // TEMPLATE CLASS UNIT_CUBE_T
+  // *****************************************************************
 
   template <typename DTYPE, typename NTYPE, typename CTYPE> 
-  class UNIT_CUBE:public CUBE<DTYPE,NTYPE,CTYPE,CTYPE> {
+  class UNIT_CUBE_T:public CUBE_T<DTYPE,NTYPE,CTYPE,CTYPE> {
 
   public:
     // Constructors and destructors.
-    UNIT_CUBE(const DTYPE dimension);
-    UNIT_CUBE();
-    ~UNIT_CUBE() {};
+    UNIT_CUBE_T(const DTYPE dimension);
+    UNIT_CUBE_T();
+    ~UNIT_CUBE_T() {};
 
     // get functions
     CTYPE EdgeLength() const
     { return(1); }                  ///< Unit cube edge length.
 
-    // Undefine set functions which do not apply to UNIT_CUBE.
+    // Undefine set functions which do not apply to UNIT_CUBE_T.
 
     /// Undefine SetVertexCoord().
     template <typename CTYPE2, typename LTYPE2>
@@ -719,16 +776,16 @@ namespace IJK {
 
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
-  class CUBE3D:public CUBE<DTYPE,NTYPE,CTYPE,LTYPE> {
+  class CUBE3D:public CUBE_T<DTYPE,NTYPE,CTYPE,LTYPE> {
 
   public:
-    CUBE3D():CUBE<DTYPE,NTYPE,CTYPE,LTYPE>(3) {};
+    CUBE3D():CUBE_T<DTYPE,NTYPE,CTYPE,LTYPE>(3) {};
     template <typename CTYPE2>
     CUBE3D(const CTYPE2 * vertex0_coord):
-      CUBE<DTYPE,NTYPE,CTYPE,LTYPE> (3, vertex0_coord) {};
+      CUBE_T<DTYPE,NTYPE,CTYPE,LTYPE> (3, vertex0_coord) {};
     template <typename CTYPE2, typename LTYPE2>
     CUBE3D(const CTYPE2 * vertex0_coord, const LTYPE2 edge_length):
-      CUBE<DTYPE,NTYPE,CTYPE,LTYPE> (vertex0_coord, edge_length) {};
+      CUBE_T<DTYPE,NTYPE,CTYPE,LTYPE> (vertex0_coord, edge_length) {};
 
     // Undefine set functions which do not apply to CUBE3D.
 
@@ -744,18 +801,19 @@ namespace IJK {
 
   };
 
-  // **************************************************
-  // TEMPLATE CLASS UNIT_CUBE3D
-  // **************************************************
+
+  // *****************************************************************
+  // TEMPLATE CLASS UNIT_CUBE3D_T
+  // *****************************************************************
 
   template <typename DTYPE, typename NTYPE, typename CTYPE> 
-  class UNIT_CUBE3D:public CUBE3D<DTYPE,NTYPE,CTYPE,CTYPE> {
+  class UNIT_CUBE3D_T:public CUBE3D<DTYPE,NTYPE,CTYPE,CTYPE> {
 
   public:
     // Constructors and destructors.
-    UNIT_CUBE3D() {};
+    UNIT_CUBE3D_T() {};
 
-    // Undefine set functions which do not apply to UNIT_CUBE3D.
+    // Undefine set functions which do not apply to UNIT_CUBE3D_T.
 
     /// Undefine SetVertexCoord().
     template <typename CTYPE2, typename LTYPE2>
@@ -764,12 +822,12 @@ namespace IJK {
   };
 
 
-  // **************************************************
+  // *****************************************************************
   // TEMPLATE CLASS CUBE_CENTER_TO_VERTEX_DIRECTIONS
-  // **************************************************
+  // *****************************************************************
 
   template <typename DTYPE, typename NTYPE, typename CTYPE> 
-  class CUBE_CENTER_TO_VERTEX_DIRECTIONS:public CUBEV<DTYPE,NTYPE,CTYPE>
+  class CUBE_CENTER_TO_VERTEX_DIRECTIONS:public CUBEV_T<DTYPE,NTYPE,CTYPE>
   {
   protected:
     void Init(const DTYPE dimension);
@@ -813,9 +871,9 @@ namespace IJK {
   };
 
 
-  // **************************************************
+  // *****************************************************************
   // TEMPLATE FUNCTIONS: COUNTING
-  // **************************************************
+  // *****************************************************************
 
   /// Return number of cube vertices
   template <typename DTYPE> 
@@ -864,9 +922,9 @@ namespace IJK {
   }
 
 
-  // **************************************************
-  // TEMPLATE FUNCTIONS: COMPUTE CUBE DIMENSION
-  // **************************************************
+  // *****************************************************************
+  // TEMPLATE FUNCTIONS: COMPUTE CUBE_T DIMENSION
+  // *****************************************************************
 
   /*!
    *  @brief Compute dimension of cube from number of cube vertices.
@@ -887,9 +945,9 @@ namespace IJK {
   }
 
 
-  // **************************************************
+  // *****************************************************************
   // TEMPLATE FUNCTIONS: COMPUTE COORDINATES
-  // **************************************************
+  // *****************************************************************
 
   /*!
    *  @brief Compute cube vertex coordinates.
@@ -1133,7 +1191,7 @@ namespace IJK {
       simplex_vertex_list.push_back(cube_vertex[3]);
     }
     else if (dimension > DIM2) {
-      const CUBE_FACE_INFO<int,int,VTYPE> cube(dimension);
+      const CUBE_FACE_INFO_T<int,int,VTYPE> cube(dimension);
       const int num_facet_vertices = cube.NumFacetVertices();
       
       for (DTYPE d = 0; d < dimension; d++) {
@@ -1199,9 +1257,9 @@ namespace IJK {
   }
     
   
-  // **************************************************
+  // *****************************************************************
   // TEMPLATE FUNCTION: VERTEX NEIGHBOR
-  // **************************************************
+  // *****************************************************************
 
   /// Compute the neighbor of cube vertex iv in given direction.
   template <typename VTYPE1, typename DTYPE, typename VTYPE2>
@@ -1220,9 +1278,9 @@ namespace IJK {
   }
 
 
-  // **************************************************
+  // *****************************************************************
   // TEMPLATE BOUNDARY BIT FUNCTIONS
-  // **************************************************
+  // *****************************************************************
 
 
   /// Return index of boundary bit.
@@ -1234,9 +1292,9 @@ namespace IJK {
   }
 
 
-  // **************************************************
+  // *****************************************************************
   // TEMPLATE FUNCTIONS: COMPUTE CORNER IN DIRECTION
-  // **************************************************
+  // *****************************************************************
 
   /// Compute cube corner nearest to given direction.
   template <typename DTYPE, typename CTYPE, typename NTYPE>
@@ -1252,9 +1310,10 @@ namespace IJK {
     }
   }
 
-  // **************************************************
+  
+  // *****************************************************************
   // TEMPLATES TO CHECK VALUES
-  // **************************************************
+  // *****************************************************************
 
   /// @brief Check dimension.
   /// - Return true if dimension is non-negative.
@@ -1270,27 +1329,28 @@ namespace IJK {
     return(true);
   }
 
-  // **************************************************
-  // TEMPLATE CLASS CUBE_INFO MEMBER FUNCTIONS
-  // **************************************************
+  
+  // *****************************************************************
+  // TEMPLATE CLASS CUBE_INFO_T MEMBER FUNCTIONS
+  // *****************************************************************
 
   /// Constructor.
   template <typename DTYPE, typename NTYPE> 
-  CUBE_INFO<DTYPE,NTYPE>::CUBE_INFO(const DTYPE dimension)
+  CUBE_INFO_T<DTYPE,NTYPE>::CUBE_INFO_T(const DTYPE dimension)
   {
     Init(dimension);
   }
 
   /// Constructor
   template <typename DTYPE, typename NTYPE> 
-  CUBE_INFO<DTYPE,NTYPE>::CUBE_INFO()
+  CUBE_INFO_T<DTYPE,NTYPE>::CUBE_INFO_T()
   {
     Init(0);
   }
 
   /// Destructor
   template <typename DTYPE, typename NTYPE> 
-  CUBE_INFO<DTYPE,NTYPE>::~CUBE_INFO()
+  CUBE_INFO_T<DTYPE,NTYPE>::~CUBE_INFO_T()
   {
     dimension = 0;
     num_vertices = 0;
@@ -1303,7 +1363,7 @@ namespace IJK {
 
   /// Initialize
   template <typename DTYPE, typename NTYPE> 
-  void CUBE_INFO<DTYPE,NTYPE>::Init(const DTYPE dimension)
+  void CUBE_INFO_T<DTYPE,NTYPE>::Init(const DTYPE dimension)
   {
     SetDimension(dimension);
   }
@@ -1311,7 +1371,7 @@ namespace IJK {
   /// Set cube dimension
   template <typename DTYPE, typename NTYPE> 
   template <typename DTYPE2>
-  void CUBE_INFO<DTYPE,NTYPE>::SetDimension(const DTYPE2 dimension)
+  void CUBE_INFO_T<DTYPE,NTYPE>::SetDimension(const DTYPE2 dimension)
   {
     this->dimension = dimension;
     this->num_vertices = compute_num_cube_vertices(dimension);
@@ -1328,28 +1388,29 @@ namespace IJK {
       { this->num_facet_edges = 0; }
   }
 
-  // **************************************************
-  // TEMPLATE CLASS CUBE_FACE_INFO MEMBER FUNCTIONS
-  // **************************************************
+
+  // *****************************************************************
+  // TEMPLATE CLASS CUBE_FACE_INFO_T MEMBER FUNCTIONS
+  // *****************************************************************
 
   /// Constructor.
   template <typename DTYPE, typename NTYPE, typename VTYPE> 
-  CUBE_FACE_INFO<DTYPE,NTYPE,VTYPE>::
-  CUBE_FACE_INFO(const DTYPE dimension):CUBE_INFO<DTYPE,NTYPE>(dimension)
+  CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE>::
+  CUBE_FACE_INFO_T(const DTYPE dimension):CUBE_INFO_T<DTYPE,NTYPE>(dimension)
   {
     Init(dimension);
   }
 
   /// Constructor
   template <typename DTYPE, typename NTYPE, typename VTYPE> 
-  CUBE_FACE_INFO<DTYPE,NTYPE,VTYPE>::CUBE_FACE_INFO()
+  CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE>::CUBE_FACE_INFO_T()
   {
     Init();
   }
 
   // Initialize
   template <typename DTYPE, typename NTYPE, typename VTYPE> 
-  void CUBE_FACE_INFO<DTYPE,NTYPE,VTYPE>::Init()
+  void CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE>::Init()
   {
     facet_vertex = NULL;
     facet_edge = NULL;
@@ -1359,7 +1420,7 @@ namespace IJK {
 
   // Initialize
   template <typename DTYPE, typename NTYPE, typename VTYPE> 
-  void CUBE_FACE_INFO<DTYPE,NTYPE,VTYPE>::Init(const int dimension)
+  void CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE>::Init(const int dimension)
   {
     facet_vertex = NULL;
     facet_edge = NULL;
@@ -1371,7 +1432,7 @@ namespace IJK {
 
   // Free all arrays
   template <typename DTYPE, typename NTYPE, typename VTYPE> 
-  void CUBE_FACE_INFO<DTYPE,NTYPE,VTYPE>::FreeAll()
+  void CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE>::FreeAll()
   {
     if (facet_vertex != NULL) {
       delete [] facet_vertex;
@@ -1394,26 +1455,34 @@ namespace IJK {
     }
   }
 
-
-  // Set dimension.
+  
+  /// @brief Allocate memory for face information.
   template <typename DTYPE, typename NTYPE, typename VTYPE> 
-  template <typename DTYPE2>
-  void CUBE_FACE_INFO<DTYPE,NTYPE,VTYPE>::SetDimension
-  (const DTYPE2 dimension)
+  void CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE>::AllocateLocal()
   {
-    FreeAll();
-    CUBE_INFO<DTYPE,NTYPE>::SetDimension(dimension);
     facet_vertex = new VTYPE[this->NumFacetVertices()*this->NumFacets()];
     facet_edge = new VTYPE[this->NumFacetEdges()*this->NumFacets()];
     edge_endpoint = new VTYPE[this->NumEdges()*2];
-    incident_edge = new VTYPE[this->NumVertices()*this->NumIncidentEdges()];
+    incident_edge = new VTYPE[this->NumVertices()*this->NumIncidentEdges()];    
+  }
 
+  
+  // Set dimension.
+  template <typename DTYPE, typename NTYPE, typename VTYPE> 
+  template <typename DTYPE2>
+  void CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE>::SetDimension
+  (const DTYPE2 dimension)
+  {
+    FreeAll();
+    CUBE_INFO_T<DTYPE,NTYPE>::SetDimension(dimension);
+    AllocateLocal();
     SetFaces();
   }
 
+  
   // Set facet vertices, edge endpoints and incident edges.
   template <typename DTYPE, typename NTYPE, typename VTYPE> 
-  void CUBE_FACE_INFO<DTYPE,NTYPE,VTYPE>::SetFaces()
+  void CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE>::SetFaces()
   {    
     SetFacetVertices();
 
@@ -1429,9 +1498,24 @@ namespace IJK {
   }
 
   
+  // Flip orientation of facet jf.
+  template <typename DTYPE, typename NTYPE, typename VTYPE> 
+  void CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE>::
+  FlipFacetOrientation(const int jf)
+  {
+    int * facet_vertex_jf =
+      facet_vertex + jf*this->NumFacetVertices();
+
+    for (int i0 = 0; i0 < this->NumRidgeVertices(); i0++) {
+      const int i1 = i0 + this->NumRidgeVertices();
+      std::swap(facet_vertex_jf[i0], facet_vertex_jf[i1]);
+    }
+  }
+
+  
   // Set facet vertices.
   template <typename DTYPE, typename NTYPE, typename VTYPE> 
-  void CUBE_FACE_INFO<DTYPE,NTYPE,VTYPE>::SetFacetVertices()
+  void CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE>::SetFacetVertices()
   {
     const DTYPE dimension = this->Dimension();
     const NTYPE num_cube_vertices = this->NumVertices();
@@ -1446,10 +1530,6 @@ namespace IJK {
     }
 
     for (NTYPE ifacet = 0; ifacet < this->NumFacets(); ifacet++) {
-
-      /* OBSOLETE
-      DTYPE orth_dir = ifacet%dimension;
-      */
       const int orth_dir = FacetOrthDir(ifacet);
 
       // Multiply by s mod (num_cube_vertices-1) to compute vertex index.
@@ -1477,11 +1557,7 @@ namespace IJK {
 
         // Swap subfacets to get consistent facet orientation.
         if (num_facet_vertices > 1) {
-          NTYPE num_subfacet_vertices = num_facet_vertices/2;
-          for (NTYPE i = 0; i < num_subfacet_vertices; i++) {
-            std::swap(facet_vertex[i0+i], 
-                      facet_vertex[i0+i+num_subfacet_vertices]);
-          }
+          FlipFacetOrientation(ifacet);
         }
       }
     }
@@ -1491,7 +1567,7 @@ namespace IJK {
 
   // Set facet edges
   template <typename DTYPE, typename NTYPE, typename VTYPE> 
-  void CUBE_FACE_INFO<DTYPE,NTYPE,VTYPE>::SetFacetEdges()
+  void CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE>::SetFacetEdges()
   {
     const DTYPE dimension = this->Dimension();
     const NTYPE num_facet_vertices = this->NumFacetVertices();
@@ -1547,7 +1623,7 @@ namespace IJK {
   // Set edge endpoints.
   // @pre Array facet_vertex[] should be set before edge_endpoints[].
   template <typename DTYPE, typename NTYPE, typename VTYPE> 
-  void CUBE_FACE_INFO<DTYPE,NTYPE,VTYPE>::SetEdgeEndpoints()
+  void CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE>::SetEdgeEndpoints()
   {
     const DTYPE dimension = this->Dimension();
     IJK::PROCEDURE_ERROR error("SetEdgeEndpoints");
@@ -1575,7 +1651,7 @@ namespace IJK {
   // Set edges incident on vertices.
   // @pre Array facet_vertex[] should be set before edge_endpoints[].
   template <typename DTYPE, typename NTYPE, typename VTYPE> 
-  void CUBE_FACE_INFO<DTYPE,NTYPE,VTYPE>::SetIncidentEdges()
+  void CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE>::SetIncidentEdges()
   {
     const DTYPE dimension = this->Dimension();
     IJK::PROCEDURE_ERROR error("SetIncidentEdges");
@@ -1602,7 +1678,7 @@ namespace IJK {
   
   // Return index of edge "opposite" to ieA in direction dir.
   template <typename DTYPE, typename NTYPE, typename VTYPE> 
-  int CUBE_FACE_INFO<DTYPE,NTYPE,VTYPE>::
+  int CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE>::
   OppositeEdge (const VTYPE ieA, const DTYPE dir) const
   {
     const DTYPE edge_dir = EdgeDir(ieA);
@@ -1616,7 +1692,7 @@ namespace IJK {
 
   // Return true if edge is incident on vertex.
   template <typename DTYPE, typename NTYPE, typename VTYPE> 
-  bool CUBE_FACE_INFO<DTYPE,NTYPE,VTYPE>::
+  bool CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE>::
   IsEdgeIncidentOnVertex(const VTYPE ie, const VTYPE iv) const
   {
     if (iv == EdgeEndpoint(ie, 0)) { return(true); }
@@ -1627,7 +1703,7 @@ namespace IJK {
 
   // Return true if facet is incident on vertex
   template <typename DTYPE, typename NTYPE, typename VTYPE> 
-  bool CUBE_FACE_INFO<DTYPE,NTYPE,VTYPE>::
+  bool CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE>::
   IsFacetIncidentOnVertex(const VTYPE kf, const VTYPE iv) const
   {
     return (cube_facet_contains(this->Dimension(), kf, iv));
@@ -1641,7 +1717,7 @@ namespace IJK {
   // @param c2 Right delimiter.
   template <typename DTYPE, typename NTYPE, typename VTYPE> 
   template <typename OSTREAM_TYPE, typename ITYPE2>
-  void CUBE_FACE_INFO<DTYPE,NTYPE,VTYPE>::
+  void CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE>::
   PrintEdgeEndpointsX
   (OSTREAM_TYPE & out, const ITYPE2 iedge,
    const char c0, const char c1, const char c2) const
@@ -1655,7 +1731,7 @@ namespace IJK {
   template <typename DTYPE, typename NTYPE, typename VTYPE> 
   template <typename OSTREAM_TYPE, typename ITYPE2,
             typename STYPE0, typename STYPE1>
-  void CUBE_FACE_INFO<DTYPE,NTYPE,VTYPE>::
+  void CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE>::
   PrintEdgeEndpoints
     (OSTREAM_TYPE & out, const STYPE0 & s0, 
      const ITYPE2 iedge, const STYPE1 & s1) const
@@ -1666,35 +1742,139 @@ namespace IJK {
   }
 
 
-  // **************************************************
-  // TEMPLATE CLASS CUBEV MEMBER FUNCTIONS
-  // **************************************************
+  // *****************************************************************
+  // TEMPLATE CLASS ORIENTED_CUBE_FACE_INFO_T MEMBER FUNCTIONS
+  // *****************************************************************
+
+  // Set dimension.
+  template <typename DTYPE, typename NTYPE, typename VTYPE> 
+  template <typename DTYPE2>
+  void ORIENTED_CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE>::SetDimension
+  (const DTYPE2 dimension)
+  {
+    this->FreeAll();
+    CUBE_INFO_T<DTYPE,NTYPE>::SetDimension(dimension);
+    this->AllocateLocal();
+    SetFaces();
+  }
+
+  // Set facet vertices so that facets are consistently oriented.
+  template <typename DTYPE, typename NTYPE, typename VTYPE> 
+  void ORIENTED_CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE>::SetFacetVertices()
+  {
+    const DTYPE dimension = this->Dimension();
+    const NTYPE num_cube_vertices = this->NumVertices();
+    const NTYPE num_facet_vertices = this->NumFacetVertices();
+    IJK::PROCEDURE_ERROR error("SetFacetVertices");
+
+    if (dimension < 1) { return; };
+
+    if (this->facet_vertex == NULL) {
+      error.AddMessage("Programming error.  Array facet_vertex[] not allocated.");
+      throw error;
+    }
+
+    for (NTYPE ifacet = 0; ifacet < this->NumFacets(); ifacet++) {
+      const int orth_dir = this->FacetOrthDir(ifacet);
+
+      // Multiply by s mod (num_cube_vertices-1) to compute vertex index.
+      NTYPE s = 2;
+      for (int d = 0; d < orth_dir; d++)
+        { s = s*2; };
+      s = s%(num_cube_vertices-1);
+
+      NTYPE i0 = ifacet*num_facet_vertices;
+
+      if (ifacet < dimension) {
+
+        for (NTYPE i = 0; i < num_facet_vertices; i++) {
+          this->facet_vertex[i0+i] = (i*s)%(num_cube_vertices-1);
+        }
+
+        if ((this->Dimension()%2 == 0) &&
+            (ifacet%2 == 0)) {
+          // Swap subfacets to get consistent facet orientation.
+          this->FlipFacetOrientation(ifacet);
+        }
+      }
+      else {
+
+        // Translate by t mod num_cube_vertices to compute vertex index.
+        NTYPE t = 1;
+        for (DTYPE d = 0; d < orth_dir; d++)
+          { t = t*2; };
+
+        for (NTYPE i = 0; i < num_facet_vertices; i++) 
+          { this->facet_vertex[i0+i] = ((i*s)%(num_cube_vertices-1))+t; }
+
+        if (num_cube_vertices > 1) {
+          if (this->Dimension()%2 == 0) {
+            if (ifacet%2 == 1)
+            // Swap subfacets to get consistent facet orientation.
+              { this->FlipFacetOrientation(ifacet); }
+          }
+          else {
+            // Swap subfacets to get consistent facet orientation.
+            this->FlipFacetOrientation(ifacet);
+          }
+        }
+      }
+    }
+
+  }
+
+  
+  // Set facet vertices, edge endpoints and incident edges.
+  // Version in ORIENTED_CUBE_FACE_INFO_T that calls
+  // ORIENTED_CUBE_FACE_INFO_T::SetFacetVertices().
+  template <typename DTYPE, typename NTYPE, typename VTYPE> 
+  void ORIENTED_CUBE_FACE_INFO_T<DTYPE,NTYPE,VTYPE>::SetFaces()
+  {    
+    SetFacetVertices();
+
+    // Must call SetFacetVertices() before SetEdgeEndpoints().
+    this->SetEdgeEndpoints();
+
+    // Must call SetEdgeEndpoints() before SetFacetVertices().
+    this->SetIncidentEdges();
+
+    // Must call SetFacetVertices() and SetIncidentEdges()
+    //   before SetFacetEdges().
+    this->SetFacetEdges();
+  }
+  
+  // TO BE CONTINUED...
+
+  
+  // *****************************************************************
+  // TEMPLATE CLASS CUBEV_T MEMBER FUNCTIONS
+  // *****************************************************************
 
   /// Constructor.
   template <typename DTYPE, typename NTYPE, typename CTYPE>
-  CUBEV<DTYPE,NTYPE,CTYPE>::CUBEV(const DTYPE dimension):
-    CUBE_INFO<DTYPE,NTYPE>(dimension)
+  CUBEV_T<DTYPE,NTYPE,CTYPE>::CUBEV_T(const DTYPE dimension):
+    CUBE_INFO_T<DTYPE,NTYPE>(dimension)
   {
     InitLocal();
   }
 
   /// Constructor.
   template <typename DTYPE, typename NTYPE, typename CTYPE>
-  CUBEV<DTYPE,NTYPE,CTYPE>::CUBEV():CUBE_INFO<DTYPE,NTYPE>()
+  CUBEV_T<DTYPE,NTYPE,CTYPE>::CUBEV_T():CUBE_INFO_T<DTYPE,NTYPE>()
   {
     InitLocal();
   }
 
   /// Destructor
   template <typename DTYPE, typename NTYPE, typename CTYPE> 
-  CUBEV<DTYPE,NTYPE,CTYPE>::~CUBEV()
+  CUBEV_T<DTYPE,NTYPE,CTYPE>::~CUBEV_T()
   {
     FreeLocal();
   }
 
   /// Initialize.
   template <typename DTYPE, typename NTYPE, typename CTYPE> 
-  void CUBEV<DTYPE,NTYPE,CTYPE>::InitLocal()
+  void CUBEV_T<DTYPE,NTYPE,CTYPE>::InitLocal()
   {
     ZeroLocal();
     AllocateLocal();
@@ -1702,11 +1882,11 @@ namespace IJK {
     SetToUnitCube();
   }
 
-  /// Allocate local data structures in CUBEV
+  /// Allocate local data structures in CUBEV_T
   template <typename DTYPE, typename NTYPE, typename CTYPE> 
-  void CUBEV<DTYPE,NTYPE,CTYPE>::AllocateLocal()
+  void CUBEV_T<DTYPE,NTYPE,CTYPE>::AllocateLocal()
   {
-    IJK::PROCEDURE_ERROR error("CUBEV::AllocateLocal");
+    IJK::PROCEDURE_ERROR error("CUBEV_T::AllocateLocal");
 
     if (!check_cube_dimension(this->Dimension(), error)) 
       { throw error; }
@@ -1719,7 +1899,7 @@ namespace IJK {
 
   // Set max vertex index.
   template <typename DTYPE, typename NTYPE, typename CTYPE> 
-  void CUBEV<DTYPE,NTYPE,CTYPE>::SetMaxVertexIndex()
+  void CUBEV_T<DTYPE,NTYPE,CTYPE>::SetMaxVertexIndex()
   {
     if (this->NumVertices() > 0) 
       { max_vertex_index = this->NumVertices()-1; }
@@ -1729,9 +1909,9 @@ namespace IJK {
 
   // Set vertex coordinates to unit cube vertex coordinates.
   template <typename DTYPE, typename NTYPE, typename CTYPE> 
-  void CUBEV<DTYPE,NTYPE,CTYPE>::SetToUnitCube()
+  void CUBEV_T<DTYPE,NTYPE,CTYPE>::SetToUnitCube()
   {
-    IJK::PROCEDURE_ERROR error("CUBE::SetToUnitCube");
+    IJK::PROCEDURE_ERROR error("CUBE_T::SetToUnitCube");
 
     if (!check_cube_dimension(this->Dimension(), error)) 
       { throw error; }
@@ -1742,18 +1922,18 @@ namespace IJK {
       (this->Dimension(), this->vertex_coord);
   }
 
-  /// Set pointers defined in CUBE to NULL.
+  /// Set pointers defined in CUBE_T to NULL.
   template <typename DTYPE, typename NTYPE, typename CTYPE>
-  void CUBEV<DTYPE,NTYPE,CTYPE>::ZeroLocal()
+  void CUBEV_T<DTYPE,NTYPE,CTYPE>::ZeroLocal()
   {
     max_vertex_index = 0;
     this->vertex_coord = NULL;
   }
 
 
-  /// Free memory allocated in CUBEV.
+  /// Free memory allocated in CUBEV_T.
   template <typename DTYPE, typename NTYPE, typename CTYPE> 
-  void CUBEV<DTYPE,NTYPE,CTYPE>::FreeLocal()
+  void CUBEV_T<DTYPE,NTYPE,CTYPE>::FreeLocal()
   {
     if (vertex_coord != NULL) { delete [] vertex_coord; };
     ZeroLocal();
@@ -1762,26 +1942,27 @@ namespace IJK {
   /// Set cube dimension.
   template <typename DTYPE, typename NTYPE, typename CTYPE> 
   template <typename DTYPE2>
-  void CUBEV<DTYPE,NTYPE,CTYPE>::SetDimension
+  void CUBEV_T<DTYPE,NTYPE,CTYPE>::SetDimension
   (const DTYPE2 dimension)
   {
     FreeLocal();
 
-    CUBE_INFO<DTYPE,NTYPE>::SetDimension(dimension);
+    CUBE_INFO_T<DTYPE,NTYPE>::SetDimension(dimension);
     AllocateLocal();
     SetMaxVertexIndex();
     SetToUnitCube();
   }
 
-  // **************************************************
-  // TEMPLATE CLASS CUBE MEMBER FUNCTIONS
-  // **************************************************
+
+  // *****************************************************************
+  // TEMPLATE CLASS CUBE_T MEMBER FUNCTIONS
+  // *****************************************************************
 
   /// Constructor.
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
-  CUBE<DTYPE,NTYPE,CTYPE,LTYPE>::CUBE(const DTYPE dimension):
-    CUBEV<DTYPE,NTYPE,CTYPE>(dimension)
+  CUBE_T<DTYPE,NTYPE,CTYPE,LTYPE>::CUBE_T(const DTYPE dimension):
+    CUBEV_T<DTYPE,NTYPE,CTYPE>(dimension)
   {
     Init();
   }
@@ -1789,7 +1970,7 @@ namespace IJK {
   /// Constructor.
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
-  CUBE<DTYPE,NTYPE,CTYPE,LTYPE>::CUBE():CUBEV<DTYPE,NTYPE,CTYPE>()
+  CUBE_T<DTYPE,NTYPE,CTYPE,LTYPE>::CUBE_T():CUBEV_T<DTYPE,NTYPE,CTYPE>()
   {
     Init();
   }
@@ -1797,23 +1978,23 @@ namespace IJK {
   /// Destructor
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
-  CUBE<DTYPE,NTYPE,CTYPE,LTYPE>::~CUBE()
+  CUBE_T<DTYPE,NTYPE,CTYPE,LTYPE>::~CUBE_T()
   {}
 
   /// Initialize.
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
-  void CUBE<DTYPE,NTYPE,CTYPE,LTYPE>::Init()
+  void CUBE_T<DTYPE,NTYPE,CTYPE,LTYPE>::Init()
   {
     edge_length = 1;
-    CUBEV<DTYPE,NTYPE,CTYPE>::InitLocal();
+    CUBEV_T<DTYPE,NTYPE,CTYPE>::InitLocal();
   }
 
   // Return true if cube contains coordinate.
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
   template <typename CTYPE2>
-  bool CUBE<DTYPE,NTYPE,CTYPE,LTYPE>::
+  bool CUBE_T<DTYPE,NTYPE,CTYPE,LTYPE>::
   Contains(const CTYPE2 * point_coord) const
   {
     for (DTYPE d = 0; d < this->Dimension(); d++) {
@@ -1832,7 +2013,7 @@ namespace IJK {
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
   template <typename CTYPE2>
-  bool CUBE<DTYPE,NTYPE,CTYPE,LTYPE>::
+  bool CUBE_T<DTYPE,NTYPE,CTYPE,LTYPE>::
   InteriorContains(const CTYPE2 * point_coord) const
   {
     for (DTYPE d = 0; d < this->Dimension(); d++) {
@@ -1850,20 +2031,20 @@ namespace IJK {
   // Set vertex coordinates to unit cube vertex coordinates.
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
-  void CUBE<DTYPE,NTYPE,CTYPE,LTYPE>::SetToUnitCube()
+  void CUBE_T<DTYPE,NTYPE,CTYPE,LTYPE>::SetToUnitCube()
   {
     edge_length = 1;
-    CUBEV<DTYPE,NTYPE,CTYPE>::SetToUnitCube();
+    CUBEV_T<DTYPE,NTYPE,CTYPE>::SetToUnitCube();
   }
 
   /// Set cube dimension.
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
   template <typename DTYPE2>
-  void CUBE<DTYPE,NTYPE,CTYPE,LTYPE>::SetDimension
+  void CUBE_T<DTYPE,NTYPE,CTYPE,LTYPE>::SetDimension
   (const DTYPE2 dimension)
   {
-    CUBEV<DTYPE,NTYPE,CTYPE>::SetDimension(dimension);
+    CUBEV_T<DTYPE,NTYPE,CTYPE>::SetDimension(dimension);
     edge_length = 1;
   }
 
@@ -1873,7 +2054,7 @@ namespace IJK {
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
   template <typename CTYPE2, typename LTYPE2>
-  void CUBE<DTYPE,NTYPE,CTYPE,LTYPE>::
+  void CUBE_T<DTYPE,NTYPE,CTYPE,LTYPE>::
   SetVertexCoord             ///< Set cube vertex coordinates.
   (const CTYPE2 * vertex0_coord, const LTYPE2 edge_length)
   {
@@ -1883,15 +2064,15 @@ namespace IJK {
   }
 
 
-  // **************************************************
-  // TEMPLATE CLASS HRECT MEMBER FUNCTIONS
-  // **************************************************
+  // *****************************************************************
+  // TEMPLATE CLASS HRECT_T MEMBER FUNCTIONS
+  // *****************************************************************
 
   /// Constructor.
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
-  HRECT<DTYPE,NTYPE,CTYPE,LTYPE>::HRECT(const DTYPE dimension):
-    CUBEV<DTYPE,NTYPE,CTYPE>(dimension)
+  HRECT_T<DTYPE,NTYPE,CTYPE,LTYPE>::HRECT_T(const DTYPE dimension):
+    CUBEV_T<DTYPE,NTYPE,CTYPE>(dimension)
   {
     Init();
   }
@@ -1899,7 +2080,7 @@ namespace IJK {
   /// Constructor.
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
-  HRECT<DTYPE,NTYPE,CTYPE,LTYPE>::HRECT():CUBEV<DTYPE,NTYPE,CTYPE>()
+  HRECT_T<DTYPE,NTYPE,CTYPE,LTYPE>::HRECT_T():CUBEV_T<DTYPE,NTYPE,CTYPE>()
   {
     Init();
   }
@@ -1907,7 +2088,7 @@ namespace IJK {
   /// Destructor
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
-  HRECT<DTYPE,NTYPE,CTYPE,LTYPE>::~HRECT()
+  HRECT_T<DTYPE,NTYPE,CTYPE,LTYPE>::~HRECT_T()
   {
     FreeLocal();
   }
@@ -1915,28 +2096,28 @@ namespace IJK {
   /// Initialize.
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
-  void HRECT<DTYPE,NTYPE,CTYPE,LTYPE>::Init()
+  void HRECT_T<DTYPE,NTYPE,CTYPE,LTYPE>::Init()
   {
     ZeroLocal();
-    CUBEV<DTYPE,NTYPE,CTYPE>::InitLocal();
+    CUBEV_T<DTYPE,NTYPE,CTYPE>::InitLocal();
     AllocateLocal();
     SetToUnitCube();
   }
 
-  /// Set pointers defined in HRECT to NULL.
+  /// Set pointers defined in HRECT_T to NULL.
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE>
-  void HRECT<DTYPE,NTYPE,CTYPE,LTYPE>::ZeroLocal()
+  void HRECT_T<DTYPE,NTYPE,CTYPE,LTYPE>::ZeroLocal()
   {
     this->edge_length = NULL;
   }
 
-  /// Allocate local data structures in HRECT.
+  /// Allocate local data structures in HRECT_T.
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
-  void HRECT<DTYPE,NTYPE,CTYPE,LTYPE>::AllocateLocal()
+  void HRECT_T<DTYPE,NTYPE,CTYPE,LTYPE>::AllocateLocal()
   {
-    IJK::PROCEDURE_ERROR error("HRECT::AllocateLocal");
+    IJK::PROCEDURE_ERROR error("HRECT_T::AllocateLocal");
 
     if (!check_cube_dimension(this->Dimension(), error)) 
       { throw error; }
@@ -1946,10 +2127,10 @@ namespace IJK {
     this->edge_length = new CTYPE[this->Dimension()];
   }
 
-  /// Free memory allocated in HRECT
+  /// Free memory allocated in HRECT_T
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
-  void HRECT<DTYPE,NTYPE,CTYPE,LTYPE>::FreeLocal()
+  void HRECT_T<DTYPE,NTYPE,CTYPE,LTYPE>::FreeLocal()
   {
     if (edge_length != NULL) { delete [] edge_length; };
     ZeroLocal();
@@ -1959,7 +2140,7 @@ namespace IJK {
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
   template <typename CTYPE2>
-  bool HRECT<DTYPE,NTYPE,CTYPE,LTYPE>::
+  bool HRECT_T<DTYPE,NTYPE,CTYPE,LTYPE>::
   Contains(const CTYPE2 * point_coord) const
   {
     for (DTYPE d = 0; d < this->Dimension(); d++) {
@@ -1978,7 +2159,7 @@ namespace IJK {
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
   template <typename CTYPE2>
-  bool HRECT<DTYPE,NTYPE,CTYPE,LTYPE>::
+  bool HRECT_T<DTYPE,NTYPE,CTYPE,LTYPE>::
   InteriorContains(const CTYPE2 * point_coord) const
   {
     for (DTYPE d = 0; d < this->Dimension(); d++) {
@@ -1996,21 +2177,21 @@ namespace IJK {
   // Set vertex coordinates to unit cube vertex coordinates.
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
-  void HRECT<DTYPE,NTYPE,CTYPE,LTYPE>::SetToUnitCube()
+  void HRECT_T<DTYPE,NTYPE,CTYPE,LTYPE>::SetToUnitCube()
   {
     for (DTYPE d = 0; d < this->Dimension(); d++)
       { edge_length[d] = 1; }
-    CUBEV<DTYPE,NTYPE,CTYPE>::SetToUnitCube();
+    CUBEV_T<DTYPE,NTYPE,CTYPE>::SetToUnitCube();
   }
 
   /// Set cube dimension.
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
   template <typename DTYPE2>
-  void HRECT<DTYPE,NTYPE,CTYPE,LTYPE>::SetDimension
+  void HRECT_T<DTYPE,NTYPE,CTYPE,LTYPE>::SetDimension
   (const DTYPE2 dimension)
   {
-    CUBEV<DTYPE,NTYPE,CTYPE>::SetDimension(dimension);
+    CUBEV_T<DTYPE,NTYPE,CTYPE>::SetDimension(dimension);
     for (DTYPE d = 0; d < this->Dimension(); d++)
       { edge_length[d] = 1; }
   }
@@ -2021,7 +2202,7 @@ namespace IJK {
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
   template <typename CTYPE2, typename LTYPE2>
-  void HRECT<DTYPE,NTYPE,CTYPE,LTYPE>::
+  void HRECT_T<DTYPE,NTYPE,CTYPE,LTYPE>::
   SetVertexCoord             ///< Set cube vertex coordinates.
   (const CTYPE2 * vertex0_coord, const LTYPE2 * edge_length)
   {
@@ -2036,7 +2217,7 @@ namespace IJK {
   template <typename DTYPE, typename NTYPE, 
             typename CTYPE, typename LTYPE> 
   template <typename CTYPE2, typename LTYPE2>
-  void HRECT<DTYPE,NTYPE,CTYPE,LTYPE>::
+  void HRECT_T<DTYPE,NTYPE,CTYPE,LTYPE>::
   SetVertexCoord             ///< Set cube vertex coordinates.
   (const CTYPE2 * vertex0_coord, const std::vector<LTYPE2> & edge_length)
   {
@@ -2044,26 +2225,26 @@ namespace IJK {
   }
 
 
-  // **************************************************
-  // TEMPLATE CLASS UNIT_CUBE MEMBER FUNCTIONS
-  // **************************************************
+  // *****************************************************************
+  // TEMPLATE CLASS UNIT_CUBE_T MEMBER FUNCTIONS
+  // *****************************************************************
 
   /// Constructor.
   template <typename DTYPE, typename NTYPE, typename CTYPE> 
-  UNIT_CUBE<DTYPE,NTYPE,CTYPE>::UNIT_CUBE(const DTYPE dimension):
-    CUBE<DTYPE,NTYPE,CTYPE,CTYPE>(dimension)
+  UNIT_CUBE_T<DTYPE,NTYPE,CTYPE>::UNIT_CUBE_T(const DTYPE dimension):
+    CUBE_T<DTYPE,NTYPE,CTYPE,CTYPE>(dimension)
   {}
 
   /// Constructor.
   template <typename DTYPE, typename NTYPE, typename CTYPE> 
-  UNIT_CUBE<DTYPE,NTYPE,CTYPE>::UNIT_CUBE():
-    CUBE<DTYPE,NTYPE,CTYPE,CTYPE>()
+  UNIT_CUBE_T<DTYPE,NTYPE,CTYPE>::UNIT_CUBE_T():
+    CUBE_T<DTYPE,NTYPE,CTYPE,CTYPE>()
   {}
 
 
-  // **************************************************
+  // *****************************************************************
   // TEMPLATE CLASS CUBE_CENTER_TO_VERTEX_DIRECTIONS MEMBER FUNCTIONS
-  // **************************************************
+  // *****************************************************************
 
   template <typename DTYPE, typename NTYPE, typename CTYPE> 
   CUBE_CENTER_TO_VERTEX_DIRECTIONS<DTYPE,NTYPE,CTYPE>::
@@ -2093,7 +2274,7 @@ namespace IJK {
   void CUBE_CENTER_TO_VERTEX_DIRECTIONS<DTYPE,NTYPE,CTYPE>::
   SetDimension(const DTYPE dimension)
   {
-    CUBEV<DTYPE,NTYPE,CTYPE>::SetDimension(dimension);
+    CUBEV_T<DTYPE,NTYPE,CTYPE>::SetDimension(dimension);
 
     compute_cube_center_to_vertex_directions(dimension, this->vertex_coord);
   }

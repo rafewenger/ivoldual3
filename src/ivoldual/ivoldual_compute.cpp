@@ -38,7 +38,7 @@ void IVOLDUAL::compute_min_max_hexahedron_Jacobian_determinant
 {
   const int DIM3(3);
   const int POSITIVE_ORIENTATION(1);
-  IJK::CUBE_FACE_INFO<int,int,int> cube(DIM3);
+  IJK::CUBE_FACE_INFO_T<int,int,int> cube(DIM3);
 
   IJK::compute_min_max_hexahedron_Jacobian_determinant_3D
     (hex_vert, ihex, POSITIVE_ORIENTATION, vertex_coord, cube,
@@ -57,7 +57,7 @@ void IVOLDUAL::compute_hexahedron_Jacobian_determinant
 {
   const int DIM3(3);
   const int POSITIVE_ORIENTATION(1);
-  IJK::CUBE_FACE_INFO<int,int,int> cube(DIM3);
+  IJK::CUBE_FACE_INFO_T<int,int,int> cube(DIM3);
 
   IJK::compute_Jacobian_determinant_at_hex_vertex_3D
     (hex_vert, ihex, POSITIVE_ORIENTATION, vertex_coord, cube, icorner,
@@ -81,7 +81,7 @@ void IVOLDUAL::compute_hexahedron_normalized_Jacobian_determinant
 
   COORD_TYPE max_small_magnitude(0.0);
   bool flag_zero;
-  IJK::CUBE_FACE_INFO<int,int,int> cube(DIM3);
+  IJK::CUBE_FACE_INFO_T<int,int,int> cube(DIM3);
 
   IJK::compute_normalized_Jacobian_determinant_at_hex_vertex_3D
     (hex_i_vert, POSITIVE_ORIENTATION, vcoord, cube, icorner,

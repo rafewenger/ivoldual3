@@ -212,7 +212,7 @@ namespace IJK {
   void FACET_INTERSECTION_TABLE<DTYPE,VBITS_TYPE,NUM_TYPE>::
   ComputeInRidgeBits()
   {
-    IJK::UNIT_CUBE<DTYPE,NUM_TYPE,NUM_TYPE> unit_cube(Dimension());
+    IJK::UNIT_CUBE_T<DTYPE,NUM_TYPE,NUM_TYPE> unit_cube(Dimension());
 
     for (NUM_TYPE ientry = 0; ientry < NumTableEntries(); ientry++) {
       in_ridge_bits[ientry] = 0;
@@ -251,7 +251,7 @@ namespace IJK {
   void FACET_INTERSECTION_TABLE<DTYPE,VBITS_TYPE,NUM_TYPE>::
   ComputeInFacetIntersectionBits()
   {
-    IJK::UNIT_CUBE<DTYPE,NUM_TYPE,NUM_TYPE> unit_cube(Dimension());
+    IJK::UNIT_CUBE_T<DTYPE,NUM_TYPE,NUM_TYPE> unit_cube(Dimension());
 
     for (NUM_TYPE ientry = 0; ientry < NumTableEntries(); ientry++) {
       in_facet_intersection_bits[ientry] = 0;
@@ -299,7 +299,7 @@ namespace IJK {
    void FACET_INTERSECTION_TABLE<DTYPE,VBITS_TYPE,NUM_TYPE>::
    ComputeInFacetBits()
   {
-    IJK::UNIT_CUBE<DTYPE,NUM_TYPE,NUM_TYPE> unit_cube(Dimension());
+    IJK::UNIT_CUBE_T<DTYPE,NUM_TYPE,NUM_TYPE> unit_cube(Dimension());
 
     for (NUM_TYPE ientry = 0; ientry < NumTableEntries(); ientry++) {
       in_facet_bits[ientry] = 0;
@@ -433,7 +433,7 @@ namespace IJK {
   CheckBits(IJK::ERROR & error) const
   {
     const int TWO(2);
-    IJK::UNIT_CUBE<DTYPE,NUM_TYPE,NUM_TYPE> unit_cube(Dimension());
+    IJK::UNIT_CUBE_T<DTYPE,NUM_TYPE,NUM_TYPE> unit_cube(Dimension());
 
     for (NUM_TYPE ientry = 1; ientry < NumTableEntries(); ientry++) {
       for (NUM_TYPE iv = 0; iv < NumCubeVertices(); iv++) {
@@ -565,4 +565,3 @@ namespace IJK {
 }
 
 #endif
-

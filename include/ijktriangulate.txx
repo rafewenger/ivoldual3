@@ -984,7 +984,7 @@ namespace IJK {
     typedef typename HEX_MESH_TYPE::VERTEX_INDEX_TYPE VTYPE;
 
     const NTYPE DIM3(3);
-    const IJK::CUBE_FACE_INFO<NTYPE,NTYPE,NTYPE> cube_face_info(DIM3);
+    const IJK::CUBE_FACE_INFO_T<NTYPE,NTYPE,NTYPE> cube_face_info(DIM3);
     const NTYPE NUM_VERT_PER_TETRAHEDRON(4);
     const NTYPE NUM_CUBE_VERT(8);
     const NTYPE NUM_CUBE_FACETS(6);

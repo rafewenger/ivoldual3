@@ -86,11 +86,11 @@ namespace IVOLDUAL {
   /// - 1: Between lower and upper isovalue.
   /// - 2: Between lower and upper isovalue.
   /// - 3: Above upper isovalue.
-  typedef IJK::SCALAR_GRID<DUALISO_GRID, GRID_VERTEX_ENCODING> 
+  typedef IJK::SCALAR_GRID_T<DUALISO_GRID, GRID_VERTEX_ENCODING> 
   IVOLDUAL_ENCODED_GRID;
 
   /// Type of cube with face info.
-  typedef IJK::CUBE_FACE_INFO<int,int,int> CUBE_FACE_INFO;
+  typedef IJK::CUBE_FACE_INFO_T<int,int,int> CUBE_FACE_INFO;
 
   /// Directions of cube center to cube vertices.
   typedef IJK::CUBE_CENTER_TO_VERTEX_DIRECTIONS_3D<int,int,COORD_TYPE>

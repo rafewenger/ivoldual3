@@ -145,7 +145,7 @@ void IVOLDUAL::subdivide_hex_to_four
   std::unordered_map<int, int> new_vertex;
   const int DIM3(3);
   const int NUM_VERT_PER_HEX(8);
-  IJK::CUBE_FACE_INFO<int, int, int> cube(DIM3);
+  IJK::CUBE_FACE_INFO_T<int, int, int> cube(DIM3);
   std::unordered_map<VERTEX_INDEX, int> forbiden;
 
   // Polytopes dual to vertex.
