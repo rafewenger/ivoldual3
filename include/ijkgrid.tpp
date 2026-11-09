@@ -2050,6 +2050,10 @@ namespace IJK {
     const DTYPE dimension = this->Dimension();
     IJK::PROCEDURE_ERROR error("GRID_PLUS_T::Create");
 
+    // *** These should be combined into a single class. ***
+    const IJK::UNIT_CUBE_T<int,int,int> unit_cube(dimension);
+    const IJK::CUBE_FACE_INFO_T<int,int,int> cube_face_info(dimension);
+
     if (!check_dimension(dimension, error)) { throw error; };
     if (!IJK::check_is_NULL(axis_increment, "axis_increment", error))
       { throw error; }
@@ -2092,8 +2096,8 @@ namespace IJK {
       // Always true, but...
       this->cube_vertex_increment = new VTYPE[num_cube_vertices];
       compute_cube_vertex_increment
-         (dimension, this->AxisIncrement(), this->cube_vertex_increment);
-
+         (unit_cube, this->AxisIncrement(), this->cube_vertex_increment);
+      
       this->cube_vertex_bitset = new CUBEV_BITSET_TYPE[num_cube_vertices];
       compute_cube_vertex_bitset(dimension, this->cube_vertex_bitset);
     }
@@ -2104,7 +2108,7 @@ namespace IJK {
 
       for (DTYPE ifacet = 0; ifacet < this->NumCubeFacets(); ifacet++) {
         compute_facet_vertex_increment
-          (dimension, ifacet, this->cube_vertex_increment,
+          (cube_face_info, ifacet, this->cube_vertex_increment,
            this->facet_vertex_increment+this->num_facet_vertices*ifacet);
       }
     }

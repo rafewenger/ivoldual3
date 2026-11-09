@@ -1843,8 +1843,6 @@ namespace IJK {
     this->SetFacetEdges();
   }
   
-  // TO BE CONTINUED...
-
   
   // *****************************************************************
   // TEMPLATE CLASS CUBEV_T MEMBER FUNCTIONS

@@ -476,7 +476,8 @@ namespace IJK {
    *  @param axis_size[d] Number of vertices along grid axis d.
    *  @param facet_list List of facets determining subgrid.
    *    - If empty, return number of vertices in entire grid.
-   *    - Otherwise, return number of vertices contained in the intersection of all facets in facet_list.
+   *    - Otherwise, return number of vertices contained in the intersection
+   *      of all facets in facet_list.
    *  @param[out] num_vertices Number of vertices.
    */
   template <typename DTYPE, typename ATYPE, typename FTYPE, typename NTYPE>
@@ -1787,6 +1788,60 @@ namespace IJK {
   /*!
    *  @brief Compute increment to add to vertex 0 to compute vertex i 
    *    of hypercube.
+   *  @param unit_cube Unit cube.
+   *  @param axis_increment[] Axis increment.
+   *    - iv+axis_increment[d] is the next vertex after vertex iv along axis d.
+   *  @param[out] cube_vertex_increment[] Cube vertex increment.
+   *    - iv0+cube_vertex_increment[i] is the i'th vertex of the hypercube
+   *    with primary vertex iv0.
+   *  @pre Array cube_vertex_increment[] is allocated with size 
+   *    at least number of cube vertices.
+   */
+  template <typename UNIT_CUBE_TYPE, typename ITYPE1, typename ITYPE2>
+  void compute_cube_vertex_increment
+  (const UNIT_CUBE_TYPE & unit_cube,
+   const ITYPE1 * axis_increment, ITYPE2 * cube_vertex_increment)
+  {
+    const int dimension = unit_cube.Dimension();
+    const ITYPE2 num_cube_vertices = unit_cube.NumVertices();
+    IJK::PROCEDURE_ERROR error("compute_cube_vertex_increment");
+
+    // Initialize cube_vertex_increment[] to 0.
+    for (ITYPE2 j = 0; j < num_cube_vertices; j++)
+      { cube_vertex_increment[j] = 0; }
+
+    if (dimension < 1) { return; };
+
+    if (axis_increment == NULL) {
+      error.AddMessage
+        ("Programming error. Array axis_increment[] not allocated.");
+      error.AddMessage("Array axis_increment[] must be allocated and set");
+      error.AddMessage("  before calling compute_cube_vertex_increment.");
+      throw error;
+    }
+
+    if (cube_vertex_increment == NULL) {
+      error.AddMessage
+        ("Programming error. Array cube_vertex_increment[] not allocated");
+      error.AddMessage("Array cube_vertex_increment[] must be allocated");
+      error.AddMessage("  before calling compute_cube_vertex_increment.");
+      throw error;
+    }
+
+    for (ITYPE2 j = 0; j < num_cube_vertices; j++) {
+      cube_vertex_increment[j] = 0;
+      for (int d = 0; d < dimension; d++) {
+        if (unit_cube.VertexCoord(j, d) == 1)
+          { cube_vertex_increment[j] += axis_increment[d]; }
+      }
+    }
+  }
+  
+
+  /*!
+   *  @brief Compute increment to add to vertex 0 to compute vertex i 
+   *    of hypercube. (*** DEPRECATED ***)
+   *  - *** DEPRECATED ***
    *  @param dimension  Dimension of grid.
    *  @param axis_increment[] Axis increment.
    *    - iv+axis_increment[d] is the next vertex after vertex iv along axis d.
@@ -1796,9 +1851,9 @@ namespace IJK {
    *  @pre Array cube_vertex_increment[] is allocated with size 
    *    at least number of cube vertices.
    */
-  template <typename DTYPE, typename ITYPE1, typename ITYPE2>
+  template <typename ITYPE1, typename ITYPE2>
   void compute_cube_vertex_increment
-  (const DTYPE dimension, const ITYPE1 * axis_increment, 
+  (const int dimension, const ITYPE1 * axis_increment, 
    ITYPE2 * cube_vertex_increment)
   {
     const ITYPE2 num_cube_vertices = compute_num_cube_vertices(dimension);
@@ -1829,7 +1884,7 @@ namespace IJK {
     for (ITYPE2 j = 0; j < num_cube_vertices; j++) {
       cube_vertex_increment[j] = 0;
       ITYPE2 j0 = j;
-      for (DTYPE d = 0; d < dimension; d++) {
+      for (int d = 0; d < dimension; d++) {
         if ((j0 % 2) == 1) {
           cube_vertex_increment[j] += axis_increment[d];
         };
@@ -1905,9 +1960,52 @@ namespace IJK {
     }
   }
 
-  
+
   /*!
    *  @brief Compute increment to add to vertex 0 to compute vertex i of facet.
+   *  @param unit_cube Unit cube.
+   *  @param ifacet Facet index.
+   *  @param cube_vertex_increment[] Cube vertex increment.
+   *    - iv0+cube_vertex_increment[i] is the i'th vertex 
+   *      of the hypercube with primary vertex iv0.
+   *  @param[out] facet_vertex_increment[] Facet vertex increment.
+   *    - iv0+facet_vertex_increment[i] is the i'th vertex 
+   *      of the facet with primary vertex iv0.
+   *  @pre Array facet_vertex_increment[] is allocated with size 
+   *      at least number of facet vertices.
+   */
+  template <typename UNIT_CUBE_TYPE, typename ITYPE>
+  void compute_facet_vertex_increment
+  (const UNIT_CUBE_TYPE & unit_cube, const int ifacet,
+   const ITYPE * cube_vertex_increment, ITYPE * facet_vertex_increment)
+  {
+    const int dimension = unit_cube.Dimension();
+    IJK::PROCEDURE_ERROR error("compute_facet_vertex_increment");
+
+    if (dimension <= 0) { return; };
+
+    if (cube_vertex_increment == NULL) {
+      error.AddMessage("Programming error. Array cube_vertex_increment[] must be allocated and set before calling compute_facet_vertex_increment.");
+      throw error;
+    }
+
+    if (facet_vertex_increment == NULL) {
+      error.AddMessage("Programming error. Array facet_vertex_increment[] must be allocated before calling compute_facet_vertex_increment.");
+      throw error;
+    }
+    
+    const int num_facet_vertices = unit_cube.NumFacetVertices();
+
+    for (int j = 0; j < num_facet_vertices; j++) {
+      const int k = unit_cube.FacetVertex(ifacet, j);
+      facet_vertex_increment[j] = cube_vertex_increment[k];
+    }
+  }
+
+    
+  /*!
+   *  @brief Compute increment to add to vertex 0 to compute vertex i of facet.
+   *  - *** DEPRECATED ***
    *  @param dimension  Dimension of grid.
    *  @param ifacet Facet index.
    *  @param cube_vertex_increment[] Cube vertex increment.
@@ -1919,9 +2017,9 @@ namespace IJK {
    *  @pre Array facet_vertex_increment[] is allocated with size 
    *      at least number of facet vertices.
    */
-  template <typename DTYPE, typename ITYPE>
+  template <typename ITYPE>
   void compute_facet_vertex_increment
-  (const DTYPE dimension, const DTYPE ifacet,
+  (const int dimension, const int ifacet,
    const ITYPE * cube_vertex_increment, ITYPE * facet_vertex_increment)
   {
     IJK::PROCEDURE_ERROR error("compute_facet_vertex_increment");
@@ -1938,7 +2036,7 @@ namespace IJK {
       throw error;
     }
     
-    DTYPE orth_dir = ifacet%dimension;
+    int orth_dir = ifacet%dimension;
     ITYPE num_cube_vertices = compute_num_cube_vertices(dimension);
     ITYPE num_facet_vertices = compute_num_cube_facet_vertices(dimension);
 
